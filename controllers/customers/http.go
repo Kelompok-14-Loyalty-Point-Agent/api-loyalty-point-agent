@@ -1,0 +1,94 @@
+package customers
+
+import (
+	"api-loyalty-point-agent/businesses/customers"
+	"api-loyalty-point-agent/controllers"
+	"api-loyalty-point-agent/controllers/customers/request"
+	"api-loyalty-point-agent/controllers/customers/response"
+	"net/http"
+
+	"github.com/labstack/echo/v4"
+)
+
+// AuthController represents the controller for customer authentication.
+type AuthController struct {
+	authUseCase customers.Usecase
+}
+
+// NewAuthController creates a new instance of AuthController.
+func NewAuthController(authUC customers.Usecase) *AuthController {
+	return &AuthController{
+		authUseCase: authUC,
+	}
+}
+
+// Register registers a new customer.
+// @Summary Register a new customer
+// @Description Register a new customer with the given details
+// @Tags customers
+// @Accept json
+// @Produce json
+// @Param customer body request.Customer true "example value for registration; email = admin@example.com, name = admin, password = admin123"
+// @Success 200 {object} controllers.Response[response.Customer] "success"
+// @Success 201 {object} controllers.Response[response.Customer] "success"
+// @Failure 400 {object} controllers.Response[string] "failed"
+// @Router /customer/register [post]
+func (ctrl *AuthController) Register(c echo.Context) error {
+	customerInput := request.Customer{}
+	ctx := c.Request().Context()
+
+	if err := c.Bind(&customerInput); err != nil {
+		return controllers.NewResponse(c, http.StatusBadRequest, "failed", err.Error(), "")
+	}
+
+	err := customerInput.Validate()
+
+	if err != nil {
+		return controllers.NewResponse(c, http.StatusBadRequest, "failed", err.Error(), "")
+	}
+
+	customer, err := ctrl.authUseCase.Register(ctx, customerInput.ToDomain())
+
+	if err != nil {
+		return controllers.NewResponse(c, http.StatusInternalServerError, "failed", err.Error(), "")
+	}
+
+	return controllers.NewResponse(c, http.StatusCreated, "success", "customer registered", response.FromDomain(customer))
+}
+
+// Login logs in a customer.
+// @Summary Log in a customer
+// @Description Log in a customer with the given email and password
+// @Tags customers
+// @Accept json
+// @Produce json
+// @Param customer body request.Customer true "example value for login; email = admin@example.com, name = admin, password = admin123"
+// @Success 200 {object} controllers.Response[string] "success"
+// @Success 201 {object} controllers.Response[string] "success"
+// @Failure 400 {object} controllers.Response[string] "failed"
+// @Failure 401 {object} controllers.Response[string] "failed"
+// @Router /customer/login [post]
+func (ctrl *AuthController) Login(c echo.Context) error {
+	customerInput := request.Customer{}
+	ctx := c.Request().Context()
+
+	if err := c.Bind(&customerInput); err != nil {
+		return controllers.NewResponse(c, http.StatusBadRequest, "failed", err.Error(), "")
+	}
+
+	err := customerInput.Validate()
+
+	if err != nil {
+		return controllers.NewResponse(c, http.StatusBadRequest, "failed", err.Error(), "")
+	}
+
+	token, err := ctrl.authUseCase.Login(ctx, customerInput.ToDomain())
+
+	var isFailed bool = err != nil || token == ""
+
+	if isFailed {
+		return controllers.NewResponse(c, http.StatusUnauthorized, "failed", err.Error(), "")
+	}
+
+	return controllers.NewResponse(c, http.StatusOK, "success", "token created", token)
+}
