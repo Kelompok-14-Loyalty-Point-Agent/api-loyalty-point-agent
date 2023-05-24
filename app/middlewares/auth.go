@@ -87,6 +87,16 @@ func VerifyToken(next echo.HandlerFunc) echo.HandlerFunc {
 	}
 }
 
+func CheckToken(token string) bool {
+	for _, tkn := range whitelist {
+		if tkn == token {
+			return true
+		}
+	}
+
+	return false
+}
+
 func Logout(token string) bool {
 	for idx, tkn := range whitelist {
 		if tkn == token {

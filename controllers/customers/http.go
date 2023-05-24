@@ -36,6 +36,7 @@ func NewAuthController(authUC customers.Usecase) *AuthController {
 // @Failure 400 {object} controllers.Response[string] "failed"
 // @Router /customers/customersAll [get]
 func (ctrl *AuthController) GetAllCustomers(c echo.Context) error {
+	token := c.Get("user").(*jwt.Token)
 	ctx := c.Request().Context()
 
 	customerData, err := ctrl.authUseCase.GetAllCustomers(ctx)
@@ -48,6 +49,12 @@ func (ctrl *AuthController) GetAllCustomers(c echo.Context) error {
 
 	for _, customer := range customerData {
 		customers = append(customers, response.FromDomain(customer))
+	}
+
+	isListed := middlewares.CheckToken(token.Raw)
+
+	if !isListed {
+		return controllers.NewResponse(c, http.StatusUnauthorized, "failed", "invalid token!/has removed", isListed)
 	}
 
 	return controllers.NewResponse(c, http.StatusOK, "success", "all customers", customers)
@@ -137,24 +144,13 @@ func (ctrl *AuthController) Login(c echo.Context) error {
 func (ctrl *AuthController) Logout(c echo.Context) error {
 	token := c.Get("user").(*jwt.Token)
 
-	if token == nil {
-		return c.JSON(http.StatusUnauthorized, map[string]string{
-			"message": "invalid token",
-		})
+	isListed := middlewares.CheckToken(token.Raw)
+
+	if !isListed {
+		return controllers.NewResponse(c, http.StatusUnauthorized, "failed", "invalid token!/has removed", isListed)
 	}
-
-	tokenString := token.Raw
-
 	// Invalidate the token by removing it from the whitelist
-	isLoggedOut := middlewares.Logout(tokenString)
+	isLoggedOut := middlewares.Logout(token.Raw)
 
-	if !isLoggedOut {
-		return c.JSON(http.StatusInternalServerError, map[string]string{
-			"message": "failed to logout",
-		})
-	}
-
-	return c.JSON(http.StatusOK, map[string]string{
-		"message": "logout success",
-	})
+	return controllers.NewResponse(c, http.StatusOK, "success", "logout success", isLoggedOut)
 }
