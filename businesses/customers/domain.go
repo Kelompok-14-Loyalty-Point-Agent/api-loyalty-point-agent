@@ -8,21 +8,21 @@ import (
 )
 
 type Domain struct {
-	ID        uint           `json:"id" gorm:"primaryKey"`
-	CreatedAt time.Time      `json:"created_at"`
-	UpdatedAt time.Time      `json:"updated_at"`
-	DeletedAt gorm.DeletedAt `json:"deleted_at" gorm:"index"`
-	Name      string         `json:"name"`
-	Email     string         `json:"email" gorm:"unique"`
-	Password  string         `json:"password"`
+	ID        uint
+	CreatedAt time.Time
+	UpdatedAt time.Time
+	DeletedAt gorm.DeletedAt
+	Name      string
+	Email     string
+	Password  string
 }
-
 type Usecase interface {
+	GetAllCustomers(ctx context.Context) ([]Domain, error)
 	Register(ctx context.Context, userDomain *Domain) (Domain, error)
 	Login(ctx context.Context, userDomain *Domain) (string, error)
 }
-
 type Repository interface {
+	GetAllCustomers(ctx context.Context) ([]Domain, error)
 	Register(ctx context.Context, userDomain *Domain) (Domain, error)
 	GetByEmail(ctx context.Context, userDomain *Domain) (Domain, error)
 }

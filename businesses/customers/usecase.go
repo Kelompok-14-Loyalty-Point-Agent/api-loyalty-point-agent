@@ -1,20 +1,24 @@
 package customers
 
 import (
-	"context"
 	"api-loyalty-point-agent/app/middlewares"
+	"context"
 )
 
 type customerUsecase struct {
 	customerRepository Repository
-	jwtAuth        *middlewares.JWTConfig
+	jwtAuth            *middlewares.JWTConfig
 }
 
 func NewCustomerUseCase(repository Repository, jwtAuth *middlewares.JWTConfig) Usecase {
 	return &customerUsecase{
 		customerRepository: repository,
-		jwtAuth:        jwtAuth,
+		jwtAuth:            jwtAuth,
 	}
+}
+
+func (usecase *customerUsecase) GetAllCustomers(ctx context.Context) ([]Domain, error) {
+	return usecase.customerRepository.GetAllCustomers(ctx)
 }
 
 func (usecase *customerUsecase) Register(ctx context.Context, customerDomain *Domain) (Domain, error) {

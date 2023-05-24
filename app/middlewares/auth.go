@@ -47,6 +47,8 @@ func (jwtConfig *JWTConfig) GenerateToken(adminId int) (string, error) {
 	//mendapatkan token jwt dalam bentuk string
 	token, err := rawToken.SignedString([]byte(jwtConfig.SecretKey))
 
+	whitelist = append(whitelist, token)
+
 	if err != nil {
 		return "", err
 	}
@@ -55,7 +57,10 @@ func (jwtConfig *JWTConfig) GenerateToken(adminId int) (string, error) {
 }
 
 func GetCustomer(c echo.Context) (*JwtCustomClaims, error) {
-	customer := c.Get("customer").(*jwt.Token)
+	// penyebab interface {} is nil, not *jwt.Token :')
+	// customer := c.Get("customer").(*jwt.Token)
+
+	customer := c.Get("user").(*jwt.Token)
 
 	if customer == nil {
 		return nil, errors.New("invalid")
@@ -68,15 +73,16 @@ func GetCustomer(c echo.Context) (*JwtCustomClaims, error) {
 // menentukan token jwt valid atau tidak
 func VerifyToken(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		adminData, err := GetCustomer(c)
+		userData, err := GetCustomer(c)
 
-		isInvalid := adminData == nil || err != nil
+		isInvalid := userData == nil || err != nil
 
 		if isInvalid {
 			return c.JSON(http.StatusUnauthorized, map[string]string{
 				"message": "invalid token",
 			})
 		}
+
 		return next(c)
 	}
 }

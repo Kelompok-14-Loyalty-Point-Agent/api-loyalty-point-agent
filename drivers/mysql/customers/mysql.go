@@ -1,8 +1,8 @@
 package customers
 
 import (
-	"context"
 	"api-loyalty-point-agent/businesses/customers"
+	"context"
 
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
@@ -16,6 +16,22 @@ func NewMySQLRepository(conn *gorm.DB) customers.Repository {
 	return &customerRepository{
 		conn: conn,
 	}
+}
+
+func (ur *customerRepository) GetAllCustomers(ctx context.Context) ([]customers.Domain, error) {
+	var records []Customer
+
+	if err := ur.conn.WithContext(ctx).Find(&records).Error; err != nil {
+		return nil, err
+	}
+
+	customers := []customers.Domain{}
+
+	for _, customer := range records {
+		customers = append(customers, customer.ToDomain())
+	}
+
+	return customers, nil
 }
 
 func (ur *customerRepository) Register(ctx context.Context, customerDomain *customers.Domain) (customers.Domain, error) {

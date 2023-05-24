@@ -7,16 +7,16 @@ import (
 )
 
 type Customer struct {
-	Name      	string  `json:"name" validate:"required"`
-	Email    	string 	`json:"email" validate:"required,email"`
-	Password 	string 	`json:"password" validate:"required"`
+	Name     string `json:"name"`
+	Email    string `json:"email" validate:"required,email"`
+	Password string `json:"password" validate:"required"`
 }
 
 func (req *Customer) ToDomain() *customers.Domain {
 	return &customers.Domain{
-		Name: 		req.Name,
-		Email:    	req.Email,
-		Password: 	req.Password,
+		Name:     req.Name,
+		Email:    req.Email,
+		Password: req.Password,
 	}
 }
 

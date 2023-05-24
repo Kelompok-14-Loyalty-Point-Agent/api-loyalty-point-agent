@@ -24,6 +24,24 @@ func NewAuthController(authUC customers.Usecase) *AuthController {
 	}
 }
 
+func (ctrl *AuthController) GetAllCustomers(c echo.Context) error {
+	ctx := c.Request().Context()
+
+	customerData, err := ctrl.authUseCase.GetAllCustomers(ctx)
+
+	if err != nil {
+		return controllers.NewResponse(c, http.StatusInternalServerError, "failed", "failed to fetch data", "")
+	}
+
+	customers := []response.Customer{}
+
+	for _, customer := range customerData {
+		customers = append(customers, response.FromDomain(customer))
+	}
+
+	return controllers.NewResponse(c, http.StatusOK, "success", "all customers", customers)
+}
+
 // Register registers a new customer.
 // @Summary Register a new customer
 // @Description Register a new customer with the given details
@@ -105,7 +123,7 @@ func (ctrl *AuthController) Login(c echo.Context) error {
 // @Failure 401 {object} controllers.Response[string] "failed"
 // @Router /customer/logout [post]
 func (ctrl *AuthController) Logout(c echo.Context) error {
-	token := c.Get("customer").(*jwt.Token)
+	token := c.Get("user").(*jwt.Token)
 
 	if token == nil {
 		return c.JSON(http.StatusUnauthorized, map[string]string{

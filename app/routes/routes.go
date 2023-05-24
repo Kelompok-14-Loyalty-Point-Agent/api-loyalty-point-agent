@@ -2,7 +2,7 @@ package routes
 
 import (
 	"api-loyalty-point-agent/app/middlewares"
-	"api-loyalty-point-agent/controllers/customers"
+	customers "api-loyalty-point-agent/controllers/customers"
 
 	echojwt "github.com/labstack/echo-jwt/v4"
 
@@ -16,15 +16,14 @@ type ControllerList struct {
 }
 
 func (cl *ControllerList) RegisterRoutes(e *echo.Echo) {
-
 	e.Use(cl.LoggerMiddleware)
+	customer := e.Group("/customer")
+	customer.POST("/register", cl.AuthController.Register)
+	customer.POST("/login", cl.AuthController.Login)
+	customer.POST("/logout", cl.AuthController.Logout)
 
-	customers := e.Group("/customer")
-	customers.POST("/register", cl.AuthController.Register)
-	customers.POST("/login", cl.AuthController.Login)
+	customers := e.Group("/customers", echojwt.WithConfig(cl.JWTMiddleware))
+	customers.Use(middlewares.VerifyToken)
 	customers.POST("/logout", cl.AuthController.Logout)
-
-	customer := e.Group("/customerData", echojwt.WithConfig(cl.JWTMiddleware))
-	customer.Use(middlewares.VerifyToken)
-	// customer.GET("/customerAll", cl.AuthController.GetAll)
+	customers.GET("/customersAll", cl.AuthController.GetAllCustomers)
 }
