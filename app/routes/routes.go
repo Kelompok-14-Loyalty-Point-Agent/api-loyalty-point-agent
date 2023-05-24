@@ -20,7 +20,6 @@ func (cl *ControllerList) RegisterRoutes(e *echo.Echo) {
 	customer := e.Group("/customer")
 	customer.POST("/register", cl.AuthController.Register)
 	customer.POST("/login", cl.AuthController.Login)
-	customer.POST("/logout", cl.AuthController.Logout)
 
 	customers := e.Group("/customers", echojwt.WithConfig(cl.JWTMiddleware))
 	customers.Use(middlewares.VerifyToken)

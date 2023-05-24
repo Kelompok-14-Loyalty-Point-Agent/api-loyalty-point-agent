@@ -24,6 +24,17 @@ func NewAuthController(authUC customers.Usecase) *AuthController {
 	}
 }
 
+// Get Get all customers.
+// @Summary Retrieves all customers data
+// @Description Retrieves all customers data with the given details
+// @Tags customers
+// @Accept json
+// @Produce json
+// @Security BearerToken
+// @Success 200 {object} controllers.Response[response.Customer] "success"
+// @Success 201 {object} controllers.Response[response.Customer] "success"
+// @Failure 400 {object} controllers.Response[string] "failed"
+// @Router /customers/customersAll [get]
 func (ctrl *AuthController) GetAllCustomers(c echo.Context) error {
 	ctx := c.Request().Context()
 
@@ -119,9 +130,10 @@ func (ctrl *AuthController) Login(c echo.Context) error {
 // @Tags customers
 // @Accept json
 // @Produce json
+// @Security BearerToken
 // @Success 200 {object} controllers.Response[string] "success"
 // @Failure 401 {object} controllers.Response[string] "failed"
-// @Router /customer/logout [post]
+// @Router /customers/logout [post]
 func (ctrl *AuthController) Logout(c echo.Context) error {
 	token := c.Get("user").(*jwt.Token)
 
