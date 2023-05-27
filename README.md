@@ -24,12 +24,13 @@ ssh -i "capstoneAPI.pem" ec2-user@ec2-13-229-84-45.ap-southeast-1.compute.amazon
 
 3. Run any sql command
     ```
-    SHOWS DATABASES;
+    SHOW DATABASES;
     ```
 
 ### API IPv4 Adrress
 
 Use this link to test API:
+
 http://13.229.84.45
 
 
