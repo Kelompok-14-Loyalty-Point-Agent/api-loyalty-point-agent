@@ -13,7 +13,8 @@ import (
 var whitelist []string = make([]string, 5)
 
 type JwtCustomClaims struct {
-	ID int `json:"id"`
+	ID   int    `json:"id"`
+	Role string `json:"role"`
 	jwt.RegisteredClaims
 }
 
@@ -32,11 +33,12 @@ func (jwtConfig *JWTConfig) Init() echojwt.Config {
 	}
 }
 
-func (jwtConfig *JWTConfig) GenerateToken(adminId int) (string, error) {
+func (jwtConfig *JWTConfig) GenerateToken(userID int, userRole string) (string, error) {
 	expire := jwt.NewNumericDate(time.Now().Local().Add(time.Hour * time.Duration(int64(jwtConfig.ExpiresDuration))))
 
 	claims := &JwtCustomClaims{
-		adminId,
+		userID,
+		userRole,
 		jwt.RegisteredClaims{
 			ExpiresAt: expire,
 		},
@@ -56,16 +58,16 @@ func (jwtConfig *JWTConfig) GenerateToken(adminId int) (string, error) {
 	return token, nil
 }
 
-func GetCustomer(c echo.Context) (*JwtCustomClaims, error) {
+func GetUser(c echo.Context) (*JwtCustomClaims, error) {
 	// penyebab interface {} is nil, not *jwt.Token :')
-	// customer := c.Get("customer").(*jwt.Token)
+	// user := c.Get("user").(*jwt.Token)
 
-	customer := c.Get("user").(*jwt.Token)
+	user := c.Get("user").(*jwt.Token)
 
-	if customer == nil {
+	if user == nil {
 		return nil, errors.New("invalid")
 	}
-	claims := customer.Claims.(*JwtCustomClaims)
+	claims := user.Claims.(*JwtCustomClaims)
 
 	return claims, nil
 }
@@ -73,7 +75,7 @@ func GetCustomer(c echo.Context) (*JwtCustomClaims, error) {
 // menentukan token jwt valid atau tidak
 func VerifyToken(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		userData, err := GetCustomer(c)
+		userData, err := GetUser(c)
 
 		isInvalid := userData == nil || err != nil
 

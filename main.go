@@ -4,8 +4,8 @@ import (
 	_driverFactory "api-loyalty-point-agent/drivers"
 	"api-loyalty-point-agent/utils"
 
-	_customerUseCase "api-loyalty-point-agent/businesses/customers"
-	_customerController "api-loyalty-point-agent/controllers/customers"
+	_userUseCase "api-loyalty-point-agent/businesses/users"
+	_userController "api-loyalty-point-agent/controllers/users"
 
 	_dbDriver "api-loyalty-point-agent/drivers/mysql"
 
@@ -40,6 +40,8 @@ func main() {
 
 	_dbDriver.MigrateDB(db)
 
+	_dbDriver.SeedAdmin(db)
+
 	configJWT := _middleware.JWTConfig{
 		SecretKey:       utils.GetConfig("JWT_SECRET_KEY"),
 		ExpiresDuration: 1,
@@ -51,14 +53,14 @@ func main() {
 
 	e := echo.New()
 
-	customerRepo := _driverFactory.NewCustomerRepository(db)
-	customerUsecase := _customerUseCase.NewCustomerUseCase(customerRepo, &configJWT)
-	customerCtrl := _customerController.NewAuthController(customerUsecase)
+	userRepo := _driverFactory.NewUserRepository(db)
+	userUsecase := _userUseCase.NewUserUseCase(userRepo, &configJWT)
+	userCtrl := _userController.NewAuthController(userUsecase)
 
 	routesInit := _routes.ControllerList{
 		LoggerMiddleware:   configLogger.Init(),
 		JWTMiddleware:      configJWT.Init(),
-		AuthController:     *customerCtrl,
+		AuthController:     *userCtrl,
 	}
 
 	handleSwagger := echoSwagger.WrapHandler

@@ -1,13 +1,13 @@
 package response
 
 import (
-	"api-loyalty-point-agent/businesses/customers"
+	"api-loyalty-point-agent/businesses/users"
 	"time"
 
 	"gorm.io/gorm"
 )
 
-type Customer struct {
+type User struct {
 	ID        uint           `json:"id" gorm:"primaryKey"`
 	CreatedAt time.Time      `json:"created_at"`
 	UpdatedAt time.Time      `json:"updated_at"`
@@ -15,14 +15,16 @@ type Customer struct {
 	Name      string         `json:"name"`
 	Email     string         `json:"email"`
 	Password  string         `json:"password"`
+	Role      string         `json:"role"`
 }
 
-func FromDomain(domain customers.Domain) Customer {
-	return Customer{
+func FromDomain(domain users.Domain) User {
+	return User{
 		ID:        domain.ID,
 		Name:      domain.Name,
 		Email:     domain.Email,
 		Password:  domain.Password,
+		Role:      domain.Role,
 		CreatedAt: domain.CreatedAt,
 		UpdatedAt: domain.UpdatedAt,
 		DeletedAt: domain.DeletedAt,

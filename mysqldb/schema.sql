@@ -1,0 +1,1 @@
+CREATE DATABASE IF NOT EXISTS api_loyalty_point_agent_db;
