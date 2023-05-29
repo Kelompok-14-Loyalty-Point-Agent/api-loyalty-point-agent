@@ -1,4 +1,4 @@
-package customers
+package users
 
 import (
 	"context"
@@ -15,6 +15,7 @@ type Domain struct {
 	Name      string
 	Email     string
 	Password  string
+	Role      string
 }
 type Usecase interface {
 	GetAllCustomers(ctx context.Context) ([]Domain, error)

@@ -1,13 +1,13 @@
-package customers
+package users
 
 import (
-	"api-loyalty-point-agent/businesses/customers"
+	"api-loyalty-point-agent/businesses/users"
 	"time"
 
 	"gorm.io/gorm"
 )
 
-type Customer struct {
+type User struct {
 	ID        uint           `json:"id" gorm:"primaryKey"`
 	CreatedAt time.Time      `json:"created_at"`
 	UpdatedAt time.Time      `json:"updated_at"`
@@ -15,10 +15,11 @@ type Customer struct {
 	Name      string         `json:"name"`
 	Email     string         `json:"email" gorm:"unique"`
 	Password  string         `json:"password"`
+	Role      string         `json:"role" gorm:"type:enum('admin', 'customer');default:'customer';not_null"`
 }
 
-func (rec *Customer) ToDomain() customers.Domain {
-	return customers.Domain{
+func (rec *User) ToDomain() users.Domain {
+	return users.Domain{
 		ID:        rec.ID,
 		CreatedAt: rec.CreatedAt,
 		UpdatedAt: rec.UpdatedAt,
@@ -26,11 +27,12 @@ func (rec *Customer) ToDomain() customers.Domain {
 		Name:      rec.Name,
 		Email:     rec.Email,
 		Password:  rec.Password,
+		Role:      rec.Role,
 	}
 }
 
-func FromDomain(domain *customers.Domain) *Customer {
-	return &Customer{
+func FromDomain(domain *users.Domain) *User {
+	return &User{
 		ID:        domain.ID,
 		CreatedAt: domain.CreatedAt,
 		UpdatedAt: domain.UpdatedAt,
@@ -38,5 +40,6 @@ func FromDomain(domain *customers.Domain) *Customer {
 		Name:      domain.Name,
 		Email:     domain.Email,
 		Password:  domain.Password,
+		Role:      domain.Role,
 	}
 }

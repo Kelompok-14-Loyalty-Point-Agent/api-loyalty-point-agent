@@ -2,12 +2,12 @@ package drivers
 
 import (
 
-	customerDomain "api-loyalty-point-agent/businesses/customers"
-	customerDB "api-loyalty-point-agent/drivers/mysql/customers"
+	userDomain "api-loyalty-point-agent/businesses/users"
+	userDB "api-loyalty-point-agent/drivers/mysql/users"
 
 	"gorm.io/gorm"
 )
 
-func NewCustomerRepository(conn *gorm.DB) customerDomain.Repository {
-	return customerDB.NewMySQLRepository(conn)
+func NewUserRepository(conn *gorm.DB) userDomain.Repository {
+	return userDB.NewMySQLRepository(conn)
 }
