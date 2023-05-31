@@ -16,17 +16,17 @@ type Domain struct {
 	URL       string
 }
 type Usecase interface {
-	GetAll(ctx context.Context) ([]Domain, error)
-	GetByID(ctx context.Context, id string) (Domain, error)
-	Create(ctx context.Context, providerDomain *Domain) (Domain, error)
-	Update(ctx context.Context, providerDomain *Domain, id string) (Domain, error)
-	Delete(ctx context.Context, id string) error
+	GetAllProvider(ctx context.Context) ([]Domain, error)
+	GetByIDProvider(ctx context.Context, id string) (Domain, error)
+	CreateProvider(ctx context.Context, providerDomain *Domain) (Domain, error)
+	UpdateProvider(ctx context.Context, providerDomain *Domain, id string) (Domain, error)
+	DeleteProvider(ctx context.Context, id string) error
 }
 
 type Repository interface {
-	GetAll(ctx context.Context) ([]Domain, error)
-	GetByID(ctx context.Context, id string) (Domain, error)
-	Create(ctx context.Context, providerDomain *Domain) (Domain, error)
-	Update(ctx context.Context, providerDomain *Domain, id string) (Domain, error)
-	Delete(ctx context.Context, id string) error
+	GetAllProvider(ctx context.Context) ([]Domain, error)
+	GetByIDProvider(ctx context.Context, id string) (Domain, error)
+	CreateProvider(ctx context.Context, providerDomain *Domain) (Domain, error)
+	UpdateProvider(ctx context.Context, providerDomain *Domain, id string) (Domain, error)
+	DeleteProvider(ctx context.Context, id string) error
 }

@@ -17,23 +17,22 @@ func NewProviderUseCase(repository Repository, jwtAuth *middlewares.JWTConfig) U
 	}
 }
 
-func (usecase *providerUsecase) GetAll(ctx context.Context) ([]Domain, error) {
-	return usecase.providerRepository.GetAll(ctx)
+func (usecase *providerUsecase) GetAllProvider(ctx context.Context) ([]Domain, error) {
+	return usecase.providerRepository.GetAllProvider(ctx)
 }
 
-func (usecase *providerUsecase) GetByID(ctx context.Context, id string) (Domain, error) {
-	return usecase.providerRepository.GetByID(ctx, id)
+func (usecase *providerUsecase) GetByIDProvider(ctx context.Context, id string) (Domain, error) {
+	return usecase.providerRepository.GetByIDProvider(ctx, id)
 }
 
-func (usecase *providerUsecase) Create(ctx context.Context, providerDomain *Domain) (Domain, error) {
-	return usecase.providerRepository.Create(ctx, providerDomain)
+func (usecase *providerUsecase) CreateProvider(ctx context.Context, providerDomain *Domain) (Domain, error) {
+	return usecase.providerRepository.CreateProvider(ctx, providerDomain)
 }
 
-func (usecase *providerUsecase) Update(ctx context.Context, providerDomain *Domain, id string) (Domain, error) {
-	return usecase.providerRepository.Update(ctx, providerDomain, id)
+func (usecase *providerUsecase) UpdateProvider(ctx context.Context, providerDomain *Domain, id string) (Domain, error) {
+	return usecase.providerRepository.UpdateProvider(ctx, providerDomain, id)
 }
 
-func (usecase *providerUsecase) Delete(ctx context.Context, id string) error {
-	return usecase.providerRepository.Delete(ctx, id)
+func (usecase *providerUsecase) DeleteProvider(ctx context.Context, id string) error {
+	return usecase.providerRepository.DeleteProvider(ctx, id)
 }
-
