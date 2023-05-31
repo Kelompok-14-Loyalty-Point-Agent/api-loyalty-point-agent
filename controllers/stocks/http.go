@@ -56,7 +56,7 @@ func (cc *StockController) Create(c echo.Context) error {
 	ctx := c.Request().Context()
 
 	if err := c.Bind(&input); err != nil {
-		return controllers.NewResponse(c, http.StatusBadRequest, "failed", "validation failed", "")
+		return controllers.NewResponse(c, http.StatusBadRequest, "failed", "invalid request", "")
 	}
 
 	err := input.Validate()
@@ -81,7 +81,7 @@ func (cc *StockController) Update(c echo.Context) error {
 	input := request.Stock{}
 
 	if err := c.Bind(&input); err != nil {
-		return controllers.NewResponse(c, http.StatusBadRequest, "failed", "validation failed", "")
+		return controllers.NewResponse(c, http.StatusBadRequest, "failed", "invalid request", "")
 	}
 
 	err := input.Validate()

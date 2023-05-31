@@ -1,14 +1,12 @@
 package providers
 
 import (
-	"api-loyalty-point-agent/app/middlewares"
 	"api-loyalty-point-agent/businesses/providers"
 	"api-loyalty-point-agent/controllers"
 	"api-loyalty-point-agent/controllers/providers/request"
 	"api-loyalty-point-agent/controllers/providers/response"
 	"net/http"
 
-	"github.com/golang-jwt/jwt/v4"
 
 	"github.com/labstack/echo/v4"
 )
@@ -23,11 +21,10 @@ func NewProviderController(providerUC providers.Usecase) *ProviderController {
 	}
 }
 
-func (cc *ProviderController) GetAllProvider(c echo.Context) error {
-	token := c.Get("user").(*jwt.Token)
+func (cc *ProviderController) GetAll(c echo.Context) error {
 	ctx := c.Request().Context()
 
-	providersData, err := cc.providerUsecase.GetAllProvider(ctx)
+	providersData, err := cc.providerUsecase.GetAll(ctx)
 
 	if err != nil {
 		return controllers.NewResponse(c, http.StatusInternalServerError, "failed", "failed to fetch data", "")
@@ -39,20 +36,14 @@ func (cc *ProviderController) GetAllProvider(c echo.Context) error {
 		providers = append(providers, response.FromDomain(provider))
 	}
 
-	isListed := middlewares.CheckToken(token.Raw)
-
-	if !isListed {
-		return controllers.NewResponse(c, http.StatusUnauthorized, "failed", "invalid token", "")
-	}
-
 	return controllers.NewResponse(c, http.StatusOK, "success", "all providers", providers)
 }
 
-func (cc *ProviderController) GetByIDProvider(c echo.Context) error {
+func (cc *ProviderController) GetByID(c echo.Context) error {
 	var providerID string = c.Param("id")
 	ctx := c.Request().Context()
 
-	provider, err := cc.providerUsecase.GetByIDProvider(ctx, providerID)
+	provider, err := cc.providerUsecase.GetByID(ctx, providerID)
 
 	if err != nil {
 		return controllers.NewResponse(c, http.StatusNotFound, "failed", "provider not found", "")
@@ -61,12 +52,12 @@ func (cc *ProviderController) GetByIDProvider(c echo.Context) error {
 	return controllers.NewResponse(c, http.StatusOK, "success", "provider found", response.FromDomain(provider))
 }
 
-func (cc *ProviderController) CreateProvider(c echo.Context) error {
+func (cc *ProviderController) Create(c echo.Context) error {
 	input := request.Provider{}
 	ctx := c.Request().Context()
 
 	if err := c.Bind(&input); err != nil {
-		return controllers.NewResponse(c, http.StatusBadRequest, "failed", "validation failed", "")
+		return controllers.NewResponse(c, http.StatusBadRequest, "failed", "invalid request", "")
 	}
 
 	err := input.Validate()
@@ -75,7 +66,7 @@ func (cc *ProviderController) CreateProvider(c echo.Context) error {
 		return controllers.NewResponse(c, http.StatusBadRequest, "failed", "validation failed", "")
 	}
 
-	provider, err := cc.providerUsecase.CreateProvider(ctx, input.ToDomain())
+	provider, err := cc.providerUsecase.Create(ctx, input.ToDomain())
 
 	if err != nil {
 		return controllers.NewResponse(c, http.StatusInternalServerError, "failed", "failed to create a provider", "")
@@ -84,14 +75,14 @@ func (cc *ProviderController) CreateProvider(c echo.Context) error {
 	return controllers.NewResponse(c, http.StatusCreated, "success", "provider created", response.FromDomain(provider))
 }
 
-func (cc *ProviderController) UpdateProvider(c echo.Context) error {
+func (cc *ProviderController) Update(c echo.Context) error {
 	var providerID string = c.Param("id")
 	ctx := c.Request().Context()
 
 	input := request.Provider{}
 
 	if err := c.Bind(&input); err != nil {
-		return controllers.NewResponse(c, http.StatusBadRequest, "failed", "validation failed", "")
+		return controllers.NewResponse(c, http.StatusBadRequest, "failed", "invalid request", "")
 	}
 
 	err := input.Validate()
@@ -100,7 +91,7 @@ func (cc *ProviderController) UpdateProvider(c echo.Context) error {
 		return controllers.NewResponse(c, http.StatusBadRequest, "failed", "validation failed", "")
 	}
 
-	provider, err := cc.providerUsecase.UpdateProvider(ctx, input.ToDomain(), providerID)
+	provider, err := cc.providerUsecase.Update(ctx, input.ToDomain(), providerID)
 
 	if err != nil {
 		return controllers.NewResponse(c, http.StatusInternalServerError, "failed", "update provider failed", "")
@@ -109,11 +100,11 @@ func (cc *ProviderController) UpdateProvider(c echo.Context) error {
 	return controllers.NewResponse(c, http.StatusOK, "success", "provider updated", response.FromDomain(provider))
 }
 
-func (cc *ProviderController) DeleteProvider(c echo.Context) error {
+func (cc *ProviderController) Delete(c echo.Context) error {
 	var providerID string = c.Param("id")
 	ctx := c.Request().Context()
 
-	err := cc.providerUsecase.DeleteProvider(ctx, providerID)
+	err := cc.providerUsecase.Delete(ctx, providerID)
 
 	if err != nil {
 		return controllers.NewResponse(c, http.StatusInternalServerError, "failed", "delete provider failed", "")

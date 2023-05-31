@@ -8,22 +8,16 @@ import (
 )
 
 type Stock struct {
-	Name       string           `json:"name"`
-	Type       string           `json:"type"`
-	Stock      float64          `json:"stock"`
-	Price      float64          `json:"price"`
-	Quantity   float64          `json:"quantity"`
-	ProviderID uint             `json:"provider_id"`
+	Type       string           `json:"type" validate:"required"`
+	TotalStock float64          `json:"total_stock" validate:"required"`
+	ProviderID uint             `json:"provider_id" validate:"required"`
 	Provider   providers.Domain `json:"-"`
 }
 
 func (req *Stock) ToDomain() *stocks.Domain {
 	return &stocks.Domain{
-		Name:       req.Name,
 		Type:       req.Type,
-		Stock:      req.Stock,
-		Price:      req.Price,
-		Quantity:   req.Quantity,
+		TotalStock: req.TotalStock,
 		Provider:   req.Provider,
 		ProviderID: req.ProviderID,
 	}

@@ -1,4 +1,4 @@
-package providers
+package stock_details
 
 import (
 	"context"
@@ -12,21 +12,22 @@ type Domain struct {
 	CreatedAt time.Time
 	UpdatedAt time.Time
 	DeletedAt gorm.DeletedAt
-	Name      string
-	URL       string
+	Stock     float64
+	Price     float64
+	Quantity  float64
+	StockID   uint
 }
 type Usecase interface {
 	GetAll(ctx context.Context) ([]Domain, error)
 	GetByID(ctx context.Context, id string) (Domain, error)
-	Create(ctx context.Context, providerDomain *Domain) (Domain, error)
-	Update(ctx context.Context, providerDomain *Domain, id string) (Domain, error)
+	Create(ctx context.Context, stock_detailDomain *Domain) (Domain, error)
+	Update(ctx context.Context, stock_detailDomain *Domain, id string) (Domain, error)
 	Delete(ctx context.Context, id string) error
 }
-
 type Repository interface {
 	GetAll(ctx context.Context) ([]Domain, error)
 	GetByID(ctx context.Context, id string) (Domain, error)
-	Create(ctx context.Context, providerDomain *Domain) (Domain, error)
-	Update(ctx context.Context, providerDomain *Domain, id string) (Domain, error)
+	Create(ctx context.Context, stock_detailDomain *Domain) (Domain, error)
+	Update(ctx context.Context, stock_detailDomain *Domain, id string) (Domain, error)
 	Delete(ctx context.Context, id string) error
 }
