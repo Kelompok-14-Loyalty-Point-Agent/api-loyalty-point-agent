@@ -12,8 +12,8 @@ type Provider struct {
 	CreatedAt time.Time      `json:"created_at"`
 	UpdatedAt time.Time      `json:"updated_at"`
 	DeletedAt gorm.DeletedAt `json:"deleted_at" gorm:"index"`
-	Name      string         `json:"name"`
-	URL       string         `json:"url"`
+	Name      string         `json:"name" gorm:"unique"`
+	URL       string         `json:"url" gorm:"unique"`
 }
 
 func (rec *Provider) ToDomain() providers.Domain {

@@ -36,6 +36,10 @@ func (cl *ControllerList) RegisterRoutes(e *echo.Echo) {
 	providers := e.Group("/providers", echojwt.WithConfig(cl.JWTMiddleware))
 	providers.Use(middlewares.VerifyToken)
 	providers.GET("", cl.ProviderController.GetAll)
+	// read image from bucket
+	providers.GET("/read", cl.ProviderController.ReadFile)
+	// download image from bucket
+	providers.GET("/image/download", cl.ProviderController.DownloadFile)
 	providers.GET("/:id", cl.ProviderController.GetByID)
 	providers.POST("", cl.ProviderController.Create)
 	providers.PUT("/:id", cl.ProviderController.Update)

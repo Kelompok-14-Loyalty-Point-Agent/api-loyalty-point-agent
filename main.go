@@ -79,11 +79,11 @@ func main() {
 	stock_detailCtrl := _stock_detailController.NewStockDetailController(stock_detailUsecase)
 
 	routesInit := _routes.ControllerList{
-		LoggerMiddleware:   configLogger.Init(),
-		JWTMiddleware:      configJWT.Init(),
-		AuthController:     *userCtrl,
-		StockController:    *stockCtrl,
-		ProviderController: *providerCtrl,
+		LoggerMiddleware:      configLogger.Init(),
+		JWTMiddleware:         configJWT.Init(),
+		AuthController:        *userCtrl,
+		StockController:       *stockCtrl,
+		ProviderController:    *providerCtrl,
 		StockDetailController: *stock_detailCtrl,
 	}
 
