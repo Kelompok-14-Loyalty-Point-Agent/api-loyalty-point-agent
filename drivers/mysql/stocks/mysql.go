@@ -1,8 +1,8 @@
 package stocks
 
 import (
-	"context"
 	"api-loyalty-point-agent/businesses/stocks"
+	"context"
 
 	"gorm.io/gorm"
 )
@@ -68,8 +68,14 @@ func (cr *stockRepository) Update(ctx context.Context, stockDomain *stocks.Domai
 
 	updatedStock := FromDomain(&stock)
 
-	updatedStock.Name = stockDomain.Name
+	if updatedStock.Type != stockDomain.Type{
+		updatedStock.Type = stockDomain.Type
+	}
 
+	if updatedStock.TotalStock != stockDomain.TotalStock {
+		updatedStock.TotalStock = stockDomain.TotalStock
+	}
+	
 	if err := cr.conn.WithContext(ctx).Save(&updatedStock).Error; err != nil {
 		return stocks.Domain{}, err
 	}
@@ -92,3 +98,4 @@ func (cr *stockRepository) Delete(ctx context.Context, id string) error {
 
 	return nil
 }
+

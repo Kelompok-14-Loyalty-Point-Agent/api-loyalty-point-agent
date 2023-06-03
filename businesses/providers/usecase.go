@@ -36,4 +36,3 @@ func (usecase *providerUsecase) Update(ctx context.Context, providerDomain *Doma
 func (usecase *providerUsecase) Delete(ctx context.Context, id string) error {
 	return usecase.providerRepository.Delete(ctx, id)
 }
-

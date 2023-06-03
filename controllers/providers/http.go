@@ -5,7 +5,15 @@ import (
 	"api-loyalty-point-agent/controllers"
 	"api-loyalty-point-agent/controllers/providers/request"
 	"api-loyalty-point-agent/controllers/providers/response"
+	"encoding/json"
+
+	// "io"
+
+	aws_driver "api-loyalty-point-agent/drivers/aws"
+	// "api-loyalty-point-agent/utils"
 	"net/http"
+	// "os"
+	// "path/filepath"
 
 	"github.com/labstack/echo/v4"
 )
@@ -51,27 +59,77 @@ func (cc *ProviderController) GetByID(c echo.Context) error {
 	return controllers.NewResponse(c, http.StatusOK, "success", "provider found", response.FromDomain(provider))
 }
 
+func (cc *ProviderController) ReadFile(c echo.Context) error {
+	key, err := aws_driver.ReadAllFilesFromBucket()
+
+	if err != nil {
+		return controllers.NewResponse(c, http.StatusBadRequest, "failed", err.Error(), "")
+	}
+
+	_, err = json.Marshal(&key)
+
+	if err != nil {
+		return err
+	}
+
+	return controllers.NewResponse(c, http.StatusOK, "success", "read data from bucket", key)
+}
+
+func (cc *ProviderController) DownloadFile(c echo.Context) error {
+	name := c.FormValue("filename")
+
+	err := aws_driver.DownloadFileFromBucket(name, "./assets/providers/")
+
+	if err != nil {
+		return controllers.NewResponse(c, http.StatusBadRequest, "failed", err.Error(), "")
+	}
+
+	return controllers.NewResponse(c, http.StatusOK, "success", "downloaded data from bucket", "")
+}
+
 func (cc *ProviderController) Create(c echo.Context) error {
-	input := request.Provider{}
+	name := c.FormValue("name")
+	file, err := c.FormFile("picture")
+
+	if err != nil {
+		return controllers.NewResponse(c, http.StatusBadRequest, "failed", "failed to upload file", "")
+	}
+
+	src, err := file.Open()
+	if err != nil {
+		return err
+	}
+	defer src.Close()
+
+	result, err := aws_driver.UploadFileToBucket(file.Filename, src)
+	if err != nil {
+		return controllers.NewResponse(c, http.StatusBadRequest, "failed", err.Error(), "")
+	}
+
+	input := request.Provider{
+		Name: name,
+		URL: result,
+	}
+
+	jsonBody, err := json.Marshal(&input)
+
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(jsonBody, &input)
+	if err != nil {
+		return err
+	}
+
 	ctx := c.Request().Context()
 
-	if err := c.Bind(&input); err != nil {
-		return controllers.NewResponse(c, http.StatusBadRequest, "failed", "validation failed", "")
-	}
-
-	err := input.Validate()
-
-	if err != nil {
-		return controllers.NewResponse(c, http.StatusBadRequest, "failed", "validation failed", "")
-	}
-
 	provider, err := cc.providerUsecase.Create(ctx, input.ToDomain())
-
 	if err != nil {
-		return controllers.NewResponse(c, http.StatusInternalServerError, "failed", "failed to create a provider", "")
+		return err
 	}
 
-	return controllers.NewResponse(c, http.StatusCreated, "success", "provider created", response.FromDomain(provider))
+	return controllers.NewResponse(c, http.StatusOK, "success", "file uploaded successfully", response.FromDomain(provider))
 }
 
 func (cc *ProviderController) Update(c echo.Context) error {
@@ -81,7 +139,7 @@ func (cc *ProviderController) Update(c echo.Context) error {
 	input := request.Provider{}
 
 	if err := c.Bind(&input); err != nil {
-		return controllers.NewResponse(c, http.StatusBadRequest, "failed", "validation failed", "")
+		return controllers.NewResponse(c, http.StatusBadRequest, "failed", "invalid request", "")
 	}
 
 	err := input.Validate()

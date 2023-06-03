@@ -13,11 +13,8 @@ type Domain struct {
 	CreatedAt  time.Time
 	UpdatedAt  time.Time
 	DeletedAt  gorm.DeletedAt
-	Name       string
 	Type       string
-	Stock      float64
-	Price      float64
-	Quantity   float64
+	TotalStock float64
 	Provider   providers.Domain
 	ProviderID uint
 }

@@ -7,6 +7,15 @@ import (
 	_userUseCase "api-loyalty-point-agent/businesses/users"
 	_userController "api-loyalty-point-agent/controllers/users"
 
+	_providerUseCase "api-loyalty-point-agent/businesses/providers"
+	_providerController "api-loyalty-point-agent/controllers/providers"
+
+	_stockUseCase "api-loyalty-point-agent/businesses/stocks"
+	_stockController "api-loyalty-point-agent/controllers/stocks"
+
+	_stock_detailUseCase "api-loyalty-point-agent/businesses/stock_details"
+	_stock_detailController "api-loyalty-point-agent/controllers/stock_details"
+
 	_dbDriver "api-loyalty-point-agent/drivers/mysql"
 
 	_middleware "api-loyalty-point-agent/app/middlewares"
@@ -57,10 +66,25 @@ func main() {
 	userUsecase := _userUseCase.NewUserUseCase(userRepo, &configJWT)
 	userCtrl := _userController.NewAuthController(userUsecase)
 
+	providerRepo := _driverFactory.NewProviderRepository(db)
+	providerUsecase := _providerUseCase.NewProviderUseCase(providerRepo, &configJWT)
+	providerCtrl := _providerController.NewProviderController(providerUsecase)
+
+	stockRepo := _driverFactory.NewStockRepository(db)
+	stockUsecase := _stockUseCase.NewStockUseCase(stockRepo, &configJWT)
+	stockCtrl := _stockController.NewStockController(stockUsecase)
+
+	stock_detailRepo := _driverFactory.NewStockDetailRepository(db)
+	stock_detailUsecase := _stock_detailUseCase.NewStockDetailUseCase(stock_detailRepo, &configJWT)
+	stock_detailCtrl := _stock_detailController.NewStockDetailController(stock_detailUsecase)
+
 	routesInit := _routes.ControllerList{
-		LoggerMiddleware:   configLogger.Init(),
-		JWTMiddleware:      configJWT.Init(),
-		AuthController:     *userCtrl,
+		LoggerMiddleware:      configLogger.Init(),
+		JWTMiddleware:         configJWT.Init(),
+		AuthController:        *userCtrl,
+		StockController:       *stockCtrl,
+		ProviderController:    *providerCtrl,
+		StockDetailController: *stock_detailCtrl,
 	}
 
 	handleSwagger := echoSwagger.WrapHandler
