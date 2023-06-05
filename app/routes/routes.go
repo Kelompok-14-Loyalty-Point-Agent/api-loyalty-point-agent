@@ -2,11 +2,12 @@ package routes
 
 import (
 	"api-loyalty-point-agent/app/middlewares"
-	// "api-loyalty-point-agent/businesses/providers"
+
 	providers "api-loyalty-point-agent/controllers/providers"
 	stock_details "api-loyalty-point-agent/controllers/stock_details"
 	stocks "api-loyalty-point-agent/controllers/stocks"
 	users "api-loyalty-point-agent/controllers/users"
+	user_details "api-loyalty-point-agent/controllers/user_details"
 
 	echojwt "github.com/labstack/echo-jwt/v4"
 
@@ -20,6 +21,7 @@ type ControllerList struct {
 	ProviderController    providers.ProviderController
 	StockController       stocks.StockController
 	StockDetailController stock_details.StockDetailController
+	UserDetailController user_details.UserDetailController
 }
 
 func (cl *ControllerList) RegisterRoutes(e *echo.Echo) {
@@ -32,6 +34,13 @@ func (cl *ControllerList) RegisterRoutes(e *echo.Echo) {
 	users.Use(middlewares.VerifyToken)
 	users.POST("/logout", cl.AuthController.Logout)
 	users.GET("/customers", cl.AuthController.GetAllCustomers)
+
+	user_details := e.Group("/users/details", echojwt.WithConfig(cl.JWTMiddleware))
+	user_details.Use(middlewares.VerifyToken)
+	user_details.GET("", cl.UserDetailController.GetAll)
+	user_details.GET("", cl.UserDetailController.GetByID)
+	user_details.PUT("/:id", cl.UserDetailController.Update)
+	user_details.DELETE("/:id", cl.UserDetailController.Delete)
 
 	providers := e.Group("/providers", echojwt.WithConfig(cl.JWTMiddleware))
 	providers.Use(middlewares.VerifyToken)
@@ -53,13 +62,13 @@ func (cl *ControllerList) RegisterRoutes(e *echo.Echo) {
 	stocks.PUT("/:id", cl.StockController.Update)
 	stocks.DELETE("/:id", cl.StockController.Delete)
 
-	stock_detail := e.Group("/stocks/details", echojwt.WithConfig(cl.JWTMiddleware))
-	stock_detail.Use(middlewares.VerifyToken)
-	stock_detail.GET("", cl.StockDetailController.GetAll)
-	stock_detail.GET("/:id", cl.StockDetailController.GetByID)
-	stock_detail.POST("", cl.StockDetailController.Create)
-	stock_detail.PUT("/:id", cl.StockDetailController.Update)
-	stock_detail.DELETE("/:id", cl.StockDetailController.Delete)
+	stock_details := e.Group("/stocks/details", echojwt.WithConfig(cl.JWTMiddleware))
+	stock_details.Use(middlewares.VerifyToken)
+	stock_details.GET("", cl.StockDetailController.GetAll)
+	stock_details.GET("/:id", cl.StockDetailController.GetByID)
+	stock_details.POST("", cl.StockDetailController.Create)
+	stock_details.PUT("/:id", cl.StockDetailController.Update)
+	stock_details.DELETE("/:id", cl.StockDetailController.Delete)
 
 	// admin := e.Group("/admin", echojwt.WithConfig(cl.JWTMiddleware))
 	// admin.Use(middlewares.VerifyToken)

@@ -2,6 +2,7 @@ package users
 
 import (
 	"api-loyalty-point-agent/businesses/users"
+	"api-loyalty-point-agent/drivers/mysql/user_details"
 	"context"
 
 	"golang.org/x/crypto/bcrypt"
@@ -35,6 +36,14 @@ func (ur *userRepository) GetAllCustomers(ctx context.Context) ([]users.Domain, 
 }
 
 func (ur *userRepository) Register(ctx context.Context, userDomain *users.Domain) (users.Domain, error) {
+	var user_detail user_details.UserDetail
+
+	// user_detail.Email = userDomain.Email
+
+	if err := ur.conn.WithContext(ctx).Create(&user_detail).Error; err != nil {
+		return users.Domain{}, err
+	}
+
 	password, err := bcrypt.GenerateFromPassword([]byte(userDomain.Password), bcrypt.DefaultCost)
 
 	if err != nil {
