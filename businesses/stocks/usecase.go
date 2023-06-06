@@ -1,6 +1,7 @@
 package stocks
 
 import (
+	"api-loyalty-point-agent/businesses/stock_transactions"
 	"api-loyalty-point-agent/app/middlewares"
 	"context"
 )
@@ -35,4 +36,8 @@ func (usecase *stockUsecase) Update(ctx context.Context, stockDomain *Domain, id
 
 func (usecase *stockUsecase) Delete(ctx context.Context, id string) error {
 	return usecase.stockRepository.Delete(ctx, id)
+}
+
+func (usecase *stockUsecase) AddStock(ctx context.Context, stock_transactionDomain *stock_transactions.Domain) (stock_transactions.Domain, error) {
+	return usecase.stockRepository.AddStock(ctx, stock_transactionDomain)
 }

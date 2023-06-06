@@ -10,7 +10,7 @@ https://drive.google.com/file/d/1242WI-erRCbZGjgtHbMGi5yP8kSGbGqB/view?usp=share
 ssh -i "capstoneAPI.pem" ec2-user@ec2-13-229-84-45.ap-southeast-1.compute.amazonaws.com
 ```
 
-### Connect to MySQL trough docker-compose
+### Connect to MySQL through docker-compose
 
 1. Use docker-compose exec to get into container service
     ```

@@ -3,6 +3,7 @@ package mysql_driver
 import (
 	"api-loyalty-point-agent/drivers/mysql/providers"
 	"api-loyalty-point-agent/drivers/mysql/stock_details"
+	"api-loyalty-point-agent/drivers/mysql/stock_transactions"
 	"api-loyalty-point-agent/drivers/mysql/stocks"
 	"api-loyalty-point-agent/drivers/mysql/users"
 	"os"
@@ -50,7 +51,7 @@ func (config *DBConfig) InitDB() *gorm.DB {
 
 // perform migration
 func MigrateDB(db *gorm.DB) {
-	err := db.AutoMigrate(&users.User{}, &providers.Provider{}, &stocks.Stock{}, &stock_details.StockDetail{})
+	err := db.AutoMigrate(&users.User{}, &providers.Provider{}, &stocks.Stock{}, &stock_details.StockDetail{}, &stock_transactions.StockTransaction{})
 
 	if err != nil {
 		log.Fatalf("failed to perform database migration: %s\n", err)
@@ -117,7 +118,7 @@ func SeedProvider(db *gorm.DB) {
 
 		defer file.Close()
 
-		url, err := aws_driver.UploadFileToBucket(file.Name(), file)
+		url, err := aws_driver.UploadFileToBucket("tsel.png", file)
 		if err != nil {
 			log.Fatalf("failed to create provider: %s\n", err.Error())
 		}
@@ -138,7 +139,7 @@ func SeedProvider(db *gorm.DB) {
 		}
 		defer file.Close()
 
-		url, err = aws_driver.UploadFileToBucket(file.Name(), file)
+		url, err = aws_driver.UploadFileToBucket("xl.png", file)
 		if err != nil {
 			log.Fatalf("failed to create provider: %s\n", err.Error())
 		}
