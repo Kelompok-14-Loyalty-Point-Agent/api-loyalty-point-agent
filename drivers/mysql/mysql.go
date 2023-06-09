@@ -7,7 +7,6 @@ import (
 	"api-loyalty-point-agent/drivers/mysql/stocks"
 	"api-loyalty-point-agent/drivers/mysql/users"
 	"os"
-	"time"
 
 	aws_driver "api-loyalty-point-agent/drivers/aws"
 
