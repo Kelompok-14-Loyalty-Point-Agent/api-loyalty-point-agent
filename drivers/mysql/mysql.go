@@ -7,6 +7,7 @@ import (
 	"api-loyalty-point-agent/drivers/mysql/stocks"
 	"api-loyalty-point-agent/drivers/mysql/users"
 	"os"
+	"time"
 
 	aws_driver "api-loyalty-point-agent/drivers/aws"
 
@@ -162,24 +163,28 @@ func SeedStock(db *gorm.DB) {
 		Type:       "data",
 		TotalStock: 500,
 		ProviderID: 1,
+		LastTopUp: time.Now(),
 	}
 
 	var stock2 = stocks.Stock{
 		Type:       "credit",
 		TotalStock: 1000000,
 		ProviderID: 1,
+		LastTopUp: time.Now(),
 	}
 
 	var stock3 = stocks.Stock{
 		Type:       "data",
 		TotalStock: 500,
 		ProviderID: 2,
+		LastTopUp: time.Now(),
 	}
 
 	var stock4 = stocks.Stock{
 		Type:       "credit",
 		TotalStock: 1000000,
 		ProviderID: 2,
+		LastTopUp: time.Now(),
 	}
 
 	var record stocks.Stock
