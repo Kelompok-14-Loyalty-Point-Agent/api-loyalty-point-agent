@@ -51,7 +51,6 @@ func (cl *ControllerList) RegisterRoutes(e *echo.Echo) {
 	stocks.Use(middlewares.VerifyToken)
 	stocks.GET("", cl.StockController.GetAll)
 	stocks.GET("/:id", cl.StockController.GetByID)
-	stocks.POST("", cl.StockController.Create)
 	// add stock and create stock transaction data
 	stocks.POST("/add", cl.StockController.AddStock)
 	stocks.PUT("/:id", cl.StockController.Update)

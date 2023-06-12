@@ -53,29 +53,6 @@ func (cc *StockController) GetByID(c echo.Context) error {
 	return controllers.NewResponse(c, http.StatusOK, "success", "stock found", response.FromDomain(stock))
 }
 
-func (cc *StockController) Create(c echo.Context) error {
-	input := request.Stock{}
-	ctx := c.Request().Context()
-
-	if err := c.Bind(&input); err != nil {
-		return controllers.NewResponse(c, http.StatusBadRequest, "failed", "invalid request", "")
-	}
-
-	err := input.Validate()
-
-	if err != nil {
-		return controllers.NewResponse(c, http.StatusBadRequest, "failed", "validation failed", "")
-	}
-
-	stock, err := cc.stockUsecase.Create(ctx, input.ToDomain())
-
-	if err != nil {
-		return controllers.NewResponse(c, http.StatusInternalServerError, "failed", "failed to create a stock", "")
-	}
-
-	return controllers.NewResponse(c, http.StatusCreated, "success", "stock created", response.FromDomain(stock))
-}
-
 func (cc *StockController) AddStock(c echo.Context) error {
 	input := _reqStockTransaction.StockTransaction{}
 	ctx := c.Request().Context()

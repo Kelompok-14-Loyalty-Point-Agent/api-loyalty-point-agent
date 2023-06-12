@@ -268,28 +268,82 @@ func SeedProvider(db *gorm.DB) {
 }
 
 func SeedStock(db *gorm.DB) {
+	// tsel stock
 	var stock1 = stocks.Stock{
 		Type:       "data",
-		TotalStock: 500,
+		TotalStock: 0,
 		ProviderID: 1,
 	}
 
 	var stock2 = stocks.Stock{
 		Type:       "credit",
-		TotalStock: 1000000,
+		TotalStock: 0,
 		ProviderID: 1,
 	}
 
+	// xl stock
 	var stock3 = stocks.Stock{
 		Type:       "data",
-		TotalStock: 500,
+		TotalStock: 0,
 		ProviderID: 2,
 	}
 
 	var stock4 = stocks.Stock{
 		Type:       "credit",
-		TotalStock: 1000000,
+		TotalStock: 0,
 		ProviderID: 2,
+	}
+
+	// smartfren stock
+	var stock5 = stocks.Stock{
+		Type:       "data",
+		TotalStock: 0,
+		ProviderID: 3,
+	}
+
+	var stock6 = stocks.Stock{
+		Type:       "credit",
+		TotalStock: 0,
+		ProviderID: 3,
+	}
+
+	// indosat stock
+	var stock7 = stocks.Stock{
+		Type:       "data",
+		TotalStock: 0,
+		ProviderID: 4,
+	}
+
+	var stock8 = stocks.Stock{
+		Type:       "credit",
+		TotalStock: 0,
+		ProviderID: 4,
+	}
+
+	// axis stock
+	var stock9 = stocks.Stock{
+		Type:       "data",
+		TotalStock: 0,
+		ProviderID: 5,
+	}
+
+	var stock10 = stocks.Stock{
+		Type:       "credit",
+		TotalStock: 0,
+		ProviderID: 5,
+	}
+
+	// 3 stock
+	var stock11 = stocks.Stock{
+		Type:       "data",
+		TotalStock: 0,
+		ProviderID: 6,
+	}
+
+	var stock12 = stocks.Stock{
+		Type:       "credit",
+		TotalStock: 0,
+		ProviderID: 6,
 	}
 
 	var record stocks.Stock
@@ -323,6 +377,54 @@ func SeedStock(db *gorm.DB) {
 			log.Fatalf("failed to create stock4: %s\n", result.Error)
 		}
 
-		log.Println("4 stocks created")
+		result = db.Create(&stock5)
+
+		if result.Error != nil {
+			log.Fatalf("failed to create stock5: %s\n", result.Error)
+		}
+
+		result = db.Create(&stock6)
+
+		if result.Error != nil {
+			log.Fatalf("failed to create stock6: %s\n", result.Error)
+		}
+
+		result = db.Create(&stock7)
+
+		if result.Error != nil {
+			log.Fatalf("failed to create stock7: %s\n", result.Error)
+		}
+
+		result = db.Create(&stock8)
+
+		if result.Error != nil {
+			log.Fatalf("failed to create stock8: %s\n", result.Error)
+		}
+
+		result = db.Create(&stock9)
+
+		if result.Error != nil {
+			log.Fatalf("failed to create stock9: %s\n", result.Error)
+		}
+
+		result = db.Create(&stock10)
+
+		if result.Error != nil {
+			log.Fatalf("failed to create stock10: %s\n", result.Error)
+		}
+
+		result = db.Create(&stock11)
+
+		if result.Error != nil {
+			log.Fatalf("failed to create stock11: %s\n", result.Error)
+		}
+
+		result = db.Create(&stock12)
+
+		if result.Error != nil {
+			log.Fatalf("failed to create stock12: %s\n", result.Error)
+		}
+
+		log.Println("12 stocks created")
 	}
 }
