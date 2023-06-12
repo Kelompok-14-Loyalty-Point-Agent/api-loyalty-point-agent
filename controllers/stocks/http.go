@@ -5,6 +5,8 @@ import (
 	"api-loyalty-point-agent/controllers"
 	"api-loyalty-point-agent/controllers/stocks/request"
 	"api-loyalty-point-agent/controllers/stocks/response"
+	_reqStockTransaction "api-loyalty-point-agent/controllers/stock_transactions/request"
+	_resStockTransaction "api-loyalty-point-agent/controllers/stock_transactions/response"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -72,6 +74,29 @@ func (cc *StockController) Create(c echo.Context) error {
 	}
 
 	return controllers.NewResponse(c, http.StatusCreated, "success", "stock created", response.FromDomain(stock))
+}
+
+func (cc *StockController) AddStock(c echo.Context) error {
+	input := _reqStockTransaction.StockTransaction{}
+	ctx := c.Request().Context()
+
+	if err := c.Bind(&input); err != nil {
+		return controllers.NewResponse(c, http.StatusBadRequest, "failed", "invalid request", "")
+	}
+
+	err := input.Validate()
+
+	if err != nil {
+		return controllers.NewResponse(c, http.StatusBadRequest, "failed", "validation failed", "")
+	}
+
+	stock_transaction, err := cc.stockUsecase.AddStock(ctx, input.ToDomain())
+
+	if err != nil {
+		return controllers.NewResponse(c, http.StatusInternalServerError, "failed", err.Error(), "")
+	}
+
+	return controllers.NewResponse(c, http.StatusCreated, "success", "stock transaction created", _resStockTransaction.FromDomain(stock_transaction))
 }
 
 func (cc *StockController) Update(c echo.Context) error {

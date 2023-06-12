@@ -51,6 +51,10 @@ func main() {
 
 	_dbDriver.SeedAdmin(db)
 
+	_dbDriver.SeedProvider(db)
+
+	_dbDriver.SeedStock(db)
+
 	configJWT := _middleware.JWTConfig{
 		SecretKey:       utils.GetConfig("JWT_SECRET_KEY"),
 		ExpiresDuration: 1,

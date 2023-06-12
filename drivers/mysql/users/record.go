@@ -2,20 +2,22 @@ package users
 
 import (
 	"api-loyalty-point-agent/businesses/users"
+	"api-loyalty-point-agent/drivers/mysql/stock_transactions"
 	"time"
 
 	"gorm.io/gorm"
 )
 
 type User struct {
-	ID        uint           `json:"id" gorm:"primaryKey"`
-	CreatedAt time.Time      `json:"created_at"`
-	UpdatedAt time.Time      `json:"updated_at"`
-	DeletedAt gorm.DeletedAt `json:"deleted_at" gorm:"index"`
-	Name      string         `json:"name"`
-	Email     string         `json:"email" gorm:"unique"`
-	Password  string         `json:"password"`
-	Role      string         `json:"role" gorm:"type:enum('admin', 'customer');default:'customer';not_null"`
+	ID               uint                                  `json:"id" gorm:"primaryKey"`
+	CreatedAt        time.Time                             `json:"created_at"`
+	UpdatedAt        time.Time                             `json:"updated_at"`
+	DeletedAt        gorm.DeletedAt                        `json:"deleted_at" gorm:"index"`
+	Name             string                                `json:"name"`
+	Email            string                                `json:"email" gorm:"unique"`
+	Password         string                                `json:"password"`
+	Role             string                                `json:"role" gorm:"type:enum('admin', 'customer');default:'customer';not_null"`
+	StockTransaction []stock_transactions.StockTransaction `json:"-"`
 }
 
 func (rec *User) ToDomain() users.Domain {

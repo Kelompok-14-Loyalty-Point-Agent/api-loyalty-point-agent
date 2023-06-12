@@ -5,6 +5,7 @@ import (
 	// "api-loyalty-point-agent/businesses/providers"
 	providers "api-loyalty-point-agent/controllers/providers"
 	stock_details "api-loyalty-point-agent/controllers/stock_details"
+	stock_transactions "api-loyalty-point-agent/controllers/stock_transactions"
 	stocks "api-loyalty-point-agent/controllers/stocks"
 	users "api-loyalty-point-agent/controllers/users"
 
@@ -20,6 +21,7 @@ type ControllerList struct {
 	ProviderController    providers.ProviderController
 	StockController       stocks.StockController
 	StockDetailController stock_details.StockDetailController
+	StockTransactionController stock_transactions.StockTransactionController
 }
 
 func (cl *ControllerList) RegisterRoutes(e *echo.Echo) {
@@ -50,6 +52,8 @@ func (cl *ControllerList) RegisterRoutes(e *echo.Echo) {
 	stocks.GET("", cl.StockController.GetAll)
 	stocks.GET("/:id", cl.StockController.GetByID)
 	stocks.POST("", cl.StockController.Create)
+	// add stock and create stock transaction data
+	stocks.POST("/add", cl.StockController.AddStock)
 	stocks.PUT("/:id", cl.StockController.Update)
 	stocks.DELETE("/:id", cl.StockController.Delete)
 
@@ -60,6 +64,12 @@ func (cl *ControllerList) RegisterRoutes(e *echo.Echo) {
 	stock_detail.POST("", cl.StockDetailController.Create)
 	stock_detail.PUT("/:id", cl.StockDetailController.Update)
 	stock_detail.DELETE("/:id", cl.StockDetailController.Delete)
+
+	stock_transaction := e.Group("/stocks/transactions", echojwt.WithConfig(cl.JWTMiddleware))
+	stock_transaction.Use(middlewares.VerifyToken)
+	stock_transaction.GET("", cl.StockTransactionController.GetAll)
+	stock_transaction.GET("/:id", cl.StockTransactionController.GetByID)
+
 
 	// admin := e.Group("/admin", echojwt.WithConfig(cl.JWTMiddleware))
 	// admin.Use(middlewares.VerifyToken)
