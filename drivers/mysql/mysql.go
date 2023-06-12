@@ -102,6 +102,26 @@ func SeedProvider(db *gorm.DB) {
 		URL:  "",
 	}
 
+	var provider3 = providers.Provider{
+		Name: "Smartfren",
+		URL:  "",
+	}
+
+	var provider4 = providers.Provider{
+		Name: "Indosat Ooredoo",
+		URL:  "",
+	}
+
+	var provider5 = providers.Provider{
+		Name: "Axis",
+		URL:  "",
+	}
+
+	var provider6 = providers.Provider{
+		Name: "3",
+		URL:  "",
+	}
+
 	var record providers.Provider
 
 	_ = db.First(&record, "name = ?", provider1.Name)
@@ -109,6 +129,7 @@ func SeedProvider(db *gorm.DB) {
 	if record.ID != 0 {
 		log.Printf("provider already exists\n")
 	} else {
+		// tsel
 		filePath := "./assets/providers/tsel.png"
 
 		file, err := os.Open(filePath)
@@ -131,6 +152,7 @@ func SeedProvider(db *gorm.DB) {
 			log.Fatalf("failed to create provider: %s\n", err.Error())
 		}
 
+		// xl
 		filePath = "./assets/providers/xl.png"
 
 		file, err = os.Open(filePath)
@@ -149,10 +171,98 @@ func SeedProvider(db *gorm.DB) {
 		result = db.Create(&provider2)
 
 		if result.Error != nil {
-			log.Fatalf("failed to create admin: %s\n", err.Error())
+			log.Fatalf("failed to create provider: %s\n", err.Error())
 		}
 
-		log.Println("2 providers created")
+		// smartfren
+		filePath = "./assets/providers/smartfren.png"
+
+		file, err = os.Open(filePath)
+		if err != nil {
+			log.Fatalf("failed to create provider: %s\n", err.Error())
+		}
+		defer file.Close()
+
+		url, err = aws_driver.UploadFileToBucket("smartfren.png", file)
+		if err != nil {
+			log.Fatalf("failed to create provider: %s\n", err.Error())
+		}
+
+		provider3.URL = url
+
+		result = db.Create(&provider3)
+
+		if result.Error != nil {
+			log.Fatalf("failed to create provider: %s\n", err.Error())
+		}
+
+		// indosat ooredoo
+		filePath = "./assets/providers/indosat.png"
+
+		file, err = os.Open(filePath)
+		if err != nil {
+			log.Fatalf("failed to create provider: %s\n", err.Error())
+		}
+		defer file.Close()
+
+		url, err = aws_driver.UploadFileToBucket("indosat.png", file)
+		if err != nil {
+			log.Fatalf("failed to create provider: %s\n", err.Error())
+		}
+
+		provider4.URL = url
+
+		result = db.Create(&provider4)
+
+		if result.Error != nil {
+			log.Fatalf("failed to create provider: %s\n", err.Error())
+		}
+
+		// axis
+		filePath = "./assets/providers/axis.png"
+
+		file, err = os.Open(filePath)
+		if err != nil {
+			log.Fatalf("failed to create provider: %s\n", err.Error())
+		}
+		defer file.Close()
+
+		url, err = aws_driver.UploadFileToBucket("axis.png", file)
+		if err != nil {
+			log.Fatalf("failed to create provider: %s\n", err.Error())
+		}
+
+		provider5.URL = url
+
+		result = db.Create(&provider5)
+
+		if result.Error != nil {
+			log.Fatalf("failed to create provider: %s\n", err.Error())
+		}
+
+		// 3
+		filePath = "./assets/providers/3.png"
+
+		file, err = os.Open(filePath)
+		if err != nil {
+			log.Fatalf("failed to create provider: %s\n", err.Error())
+		}
+		defer file.Close()
+
+		url, err = aws_driver.UploadFileToBucket("3.png", file)
+		if err != nil {
+			log.Fatalf("failed to create provider: %s\n", err.Error())
+		}
+
+		provider6.URL = url
+
+		result = db.Create(&provider6)
+
+		if result.Error != nil {
+			log.Fatalf("failed to create provider: %s\n", err.Error())
+		}
+
+		log.Println("6 providers created")
 	}
 
 }
