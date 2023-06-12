@@ -71,14 +71,14 @@ func (cr *stockRepository) Update(ctx context.Context, stockDomain *stocks.Domai
 
 	updatedStock := FromDomain(&stock)
 
-	if updatedStock.Type != stockDomain.Type{
+	if updatedStock.Type != stockDomain.Type {
 		updatedStock.Type = stockDomain.Type
 	}
 
 	if updatedStock.TotalStock != stockDomain.TotalStock {
 		updatedStock.TotalStock = stockDomain.TotalStock
 	}
-	
+
 	if err := cr.conn.WithContext(ctx).Save(&updatedStock).Error; err != nil {
 		return stocks.Domain{}, err
 	}
@@ -121,17 +121,17 @@ func (cr *stockRepository) AddStock(ctx context.Context, stock_transactionDomain
 		return stock_transactions.Domain{}, err
 	}
 
-	if stock.Type == "data"{
+	if stock.Type == "data" {
 		// 1 GB / Rp.10000
 		record.PayAmount = record.InputStock * 10000
-	}else if stock.Type == "credit"{
+	} else if stock.Type == "credit" {
 		if record.InputStock < 10000 {
 			return stock_transactions.Domain{}, errors.New("credit input minimum is 10000")
-		}else{
+		} else {
 			// 10000 / Rp.12000
 			record.PayAmount = record.InputStock / 10000 * 12000
 		}
-		
+
 	}
 
 	record.Status = "success"
@@ -147,7 +147,5 @@ func (cr *stockRepository) AddStock(ctx context.Context, stock_transactionDomain
 		return stock_transactions.Domain{}, err
 	}
 
-
 	return record.ToDomain(), nil
 }
-

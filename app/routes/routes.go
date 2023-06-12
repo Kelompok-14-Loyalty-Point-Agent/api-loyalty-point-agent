@@ -7,6 +7,7 @@ import (
 	stock_details "api-loyalty-point-agent/controllers/stock_details"
 	stock_transactions "api-loyalty-point-agent/controllers/stock_transactions"
 	stocks "api-loyalty-point-agent/controllers/stocks"
+	transaction "api-loyalty-point-agent/controllers/transaction"
 	users "api-loyalty-point-agent/controllers/users"
 
 	echojwt "github.com/labstack/echo-jwt/v4"
@@ -15,13 +16,14 @@ import (
 )
 
 type ControllerList struct {
-	LoggerMiddleware      echo.MiddlewareFunc
-	JWTMiddleware         echojwt.Config
-	AuthController        users.AuthController
-	ProviderController    providers.ProviderController
-	StockController       stocks.StockController
-	StockDetailController stock_details.StockDetailController
+	LoggerMiddleware           echo.MiddlewareFunc
+	JWTMiddleware              echojwt.Config
+	AuthController             users.AuthController
+	ProviderController         providers.ProviderController
+	StockController            stocks.StockController
+	StockDetailController      stock_details.StockDetailController
 	StockTransactionController stock_transactions.StockTransactionController
+	TransactionController      transaction.TransactionController
 }
 
 func (cl *ControllerList) RegisterRoutes(e *echo.Echo) {
@@ -34,6 +36,12 @@ func (cl *ControllerList) RegisterRoutes(e *echo.Echo) {
 	users.Use(middlewares.VerifyToken)
 	users.POST("/logout", cl.AuthController.Logout)
 	users.GET("/customers", cl.AuthController.GetAllCustomers)
+
+	transactions := e.Group("/transactions", echojwt.WithConfig(cl.JWTMiddleware))
+	transactions.Use(middlewares.VerifyToken)
+	transactions.GET("", cl.TransactionController.GetAll)
+	transactions.GET("/:id", cl.TransactionController.GetByID)
+	transactions.POST("", cl.TransactionController.Create)
 
 	providers := e.Group("/providers", echojwt.WithConfig(cl.JWTMiddleware))
 	providers.Use(middlewares.VerifyToken)
@@ -69,7 +77,6 @@ func (cl *ControllerList) RegisterRoutes(e *echo.Echo) {
 	stock_transaction.Use(middlewares.VerifyToken)
 	stock_transaction.GET("", cl.StockTransactionController.GetAll)
 	stock_transaction.GET("/:id", cl.StockTransactionController.GetByID)
-
 
 	// admin := e.Group("/admin", echojwt.WithConfig(cl.JWTMiddleware))
 	// admin.Use(middlewares.VerifyToken)
