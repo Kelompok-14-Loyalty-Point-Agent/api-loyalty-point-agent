@@ -18,7 +18,7 @@ type Stock struct {
 	DeletedAt         gorm.DeletedAt                        `json:"deleted_at" gorm:"index"`
 	Type              string                                `json:"type" gorm:"type:enum('credit', 'data')"`
 	TotalStock        float64                               `json:"total_stock"`
-	LastTopUp         time.Time                             `json:"last_top_up"`
+	LastTopUp         time.Time                             `json:"last_top_up" gorm:"type:datetime;default:null"`
 	ProviderID        uint                                  `json:"provider_id"`
 	Provider          providers.Provider                    `json:"-" gorm:"foreignKey:ProviderID"`
 	StockDetails      []stock_details.StockDetail           `json:"-" gorm:"foreignKey:StockID"`

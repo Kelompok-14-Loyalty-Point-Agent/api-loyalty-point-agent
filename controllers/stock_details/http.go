@@ -65,6 +65,10 @@ func (cc *StockDetailController) Create(c echo.Context) error {
 		return controllers.NewResponse(c, http.StatusBadRequest, "failed", "validation failed", "")
 	}
 
+	if input.StockID == 0 {
+		return controllers.NewResponse(c, http.StatusBadRequest, "failed", "stock_id is required", "")
+	}
+
 	stock_detail, err := cc.stock_detailUsecase.Create(ctx, input.ToDomain())
 
 	if err != nil {
