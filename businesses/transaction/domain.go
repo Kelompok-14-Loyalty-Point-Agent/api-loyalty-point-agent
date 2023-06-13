@@ -1,7 +1,11 @@
 package transaction
 
 import (
-	"api-loyalty-point-agent/businesses/stocks"
+	stock_details "api-loyalty-point-agent/businesses/stock_details"
+
+	// stock_details "api-loyalty-point-agent/businesses/Stock_details"
+	// "api-loyalty-point-agent/businesses/stocks"
+
 	"context"
 	"time"
 
@@ -14,9 +18,10 @@ type Domain struct {
 	UpdatedAt      time.Time
 	DeletedAt      gorm.DeletedAt
 	Phone          string
+	StockDetailsID uint
+	StockDetails   stock_details.Domain
 	StockID        uint
-	Stock          stocks.Domain
-	Type           string
+	Price          float64
 	Product        uint
 	Payment_method uint
 	Point          uint

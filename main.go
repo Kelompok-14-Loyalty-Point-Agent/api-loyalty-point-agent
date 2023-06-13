@@ -41,6 +41,7 @@ import (
 // @host localhost:8080
 // @BasePath /
 
+// ini
 func main() {
 
 	configDB := _dbDriver.DBConfig{
