@@ -1,7 +1,7 @@
-package transaction
+package transactions
 
 import (
-	"api-loyalty-point-agent/businesses/transaction"
+	"api-loyalty-point-agent/businesses/transactions"
 	"api-loyalty-point-agent/drivers/mysql/stock_details"
 
 	// "api-loyalty-point-agent/drivers/mysql/stocks"
@@ -26,8 +26,8 @@ type Transaction struct {
 	Point          uint                      `json:"point"`
 }
 
-func (rec *Transaction) ToDomain() transaction.Domain {
-	return transaction.Domain{
+func (rec *Transaction) ToDomain() transactions.Domain {
+	return transactions.Domain{
 		ID:             rec.ID,
 		CreatedAt:      rec.CreatedAt,
 		UpdatedAt:      rec.UpdatedAt,
@@ -43,7 +43,7 @@ func (rec *Transaction) ToDomain() transaction.Domain {
 	}
 }
 
-func FromDomain(domain *transaction.Domain) *Transaction {
+func FromDomain(domain *transactions.Domain) *Transaction {
 	return &Transaction{
 		ID:             domain.ID,
 		CreatedAt:      domain.CreatedAt,

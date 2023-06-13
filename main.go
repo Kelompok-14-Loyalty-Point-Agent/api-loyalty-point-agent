@@ -20,8 +20,8 @@ import (
 	_stock_transactionUseCase "api-loyalty-point-agent/businesses/stock_transactions"
 	_stock_transactionController "api-loyalty-point-agent/controllers/stock_transactions"
 
-	_transactionUseCase "api-loyalty-point-agent/businesses/transaction"
-	_transactionController "api-loyalty-point-agent/controllers/transaction"
+	_transactionUseCase "api-loyalty-point-agent/businesses/transactions"
+	_transactionController "api-loyalty-point-agent/controllers/transactions"
 
 	_dbDriver "api-loyalty-point-agent/drivers/mysql"
 

@@ -1,20 +1,20 @@
-package transaction
+package transactions
 
 import (
-	"api-loyalty-point-agent/businesses/transaction"
+	"api-loyalty-point-agent/businesses/transactions"
 	"api-loyalty-point-agent/controllers"
-	"api-loyalty-point-agent/controllers/transaction/request"
-	"api-loyalty-point-agent/controllers/transaction/response"
+	"api-loyalty-point-agent/controllers/transactions/request"
+	"api-loyalty-point-agent/controllers/transactions/response"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
 )
 
 type TransactionController struct {
-	transactionUsecase transaction.Usecase
+	transactionUsecase transactions.Usecase
 }
 
-func NewTransactionController(transactionUC transaction.Usecase) *TransactionController {
+func NewTransactionController(transactionUC transactions.Usecase) *TransactionController {
 	return &TransactionController{
 		transactionUsecase: transactionUC,
 	}

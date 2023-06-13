@@ -4,7 +4,7 @@ import (
 	// "api-loyalty-point-agent/businesses/stocks"
 	"api-loyalty-point-agent/businesses/stock_details"
 
-	"api-loyalty-point-agent/businesses/transaction"
+	"api-loyalty-point-agent/businesses/transactions"
 
 	"time"
 
@@ -26,7 +26,7 @@ type Transaction struct {
 	Point          uint                 `json:"point"`
 }
 
-func FromDomain(domain transaction.Domain) Transaction {
+func FromDomain(domain transactions.Domain) Transaction {
 	return Transaction{
 		ID:             domain.ID,
 		Phone:          domain.Phone,
