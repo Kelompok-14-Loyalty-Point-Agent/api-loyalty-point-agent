@@ -18,15 +18,9 @@ type Domain struct {
 type Usecase interface {
 	GetAll(ctx context.Context) ([]Domain, error)
 	GetByID(ctx context.Context, id string) (Domain, error)
-	Create(ctx context.Context, providerDomain *Domain) (Domain, error)
-	Update(ctx context.Context, providerDomain *Domain, id string) (Domain, error)
-	Delete(ctx context.Context, id string) error
 }
 
 type Repository interface {
 	GetAll(ctx context.Context) ([]Domain, error)
 	GetByID(ctx context.Context, id string) (Domain, error)
-	Create(ctx context.Context, providerDomain *Domain) (Domain, error)
-	Update(ctx context.Context, providerDomain *Domain, id string) (Domain, error)
-	Delete(ctx context.Context, id string) error
 }

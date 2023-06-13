@@ -53,9 +53,6 @@ func (cl *ControllerList) RegisterRoutes(e *echo.Echo) {
 	// download image from bucket
 	providers.GET("/image/download", cl.ProviderController.DownloadFile)
 	providers.GET("/:id", cl.ProviderController.GetByID)
-	providers.POST("", cl.ProviderController.Create)
-	providers.PUT("/:id", cl.ProviderController.Update)
-	providers.DELETE("/:id", cl.ProviderController.Delete)
 
 	stocks := e.Group("/stocks", echojwt.WithConfig(cl.JWTMiddleware))
 	stocks.Use(middlewares.VerifyToken)
@@ -63,8 +60,6 @@ func (cl *ControllerList) RegisterRoutes(e *echo.Echo) {
 	stocks.GET("/:id", cl.StockController.GetByID)
 	// add stock and create stock transaction data
 	stocks.POST("/add", cl.StockController.AddStock)
-	stocks.PUT("/:id", cl.StockController.Update)
-	stocks.DELETE("/:id", cl.StockController.Delete)
 
 	stock_detail := e.Group("/stocks/details", echojwt.WithConfig(cl.JWTMiddleware))
 	stock_detail.Use(middlewares.VerifyToken)

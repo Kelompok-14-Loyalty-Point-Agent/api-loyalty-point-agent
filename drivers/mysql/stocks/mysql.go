@@ -46,46 +46,6 @@ func (cr *stockRepository) GetByID(ctx context.Context, id string) (stocks.Domai
 	return stock.ToDomain(), nil
 }
 
-func (cr *stockRepository) Update(ctx context.Context, stockDomain *stocks.Domain, id string) (stocks.Domain, error) {
-	stock, err := cr.GetByID(ctx, id)
-
-	if err != nil {
-		return stocks.Domain{}, err
-	}
-
-	updatedStock := FromDomain(&stock)
-
-	if updatedStock.Type != stockDomain.Type {
-		updatedStock.Type = stockDomain.Type
-	}
-
-	if updatedStock.TotalStock != stockDomain.TotalStock {
-		updatedStock.TotalStock = stockDomain.TotalStock
-	}
-
-	if err := cr.conn.WithContext(ctx).Save(&updatedStock).Error; err != nil {
-		return stocks.Domain{}, err
-	}
-
-	return updatedStock.ToDomain(), nil
-}
-
-func (cr *stockRepository) Delete(ctx context.Context, id string) error {
-	stock, err := cr.GetByID(ctx, id)
-
-	if err != nil {
-		return err
-	}
-
-	deletedStock := FromDomain(&stock)
-
-	if err := cr.conn.WithContext(ctx).Unscoped().Delete(&deletedStock).Error; err != nil {
-		return err
-	}
-
-	return nil
-}
-
 func (cr *stockRepository) AddStock(ctx context.Context, stock_transactionDomain *stock_transactions.Domain) (stock_transactions.Domain, error) {
 	record := _dbStockTransaction.FromDomain(stock_transactionDomain)
 

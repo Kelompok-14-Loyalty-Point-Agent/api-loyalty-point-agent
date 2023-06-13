@@ -3,7 +3,6 @@ package stocks
 import (
 	"api-loyalty-point-agent/businesses/stocks"
 	"api-loyalty-point-agent/controllers"
-	"api-loyalty-point-agent/controllers/stocks/request"
 	"api-loyalty-point-agent/controllers/stocks/response"
 	_reqStockTransaction "api-loyalty-point-agent/controllers/stock_transactions/request"
 	_resStockTransaction "api-loyalty-point-agent/controllers/stock_transactions/response"
@@ -74,42 +73,4 @@ func (cc *StockController) AddStock(c echo.Context) error {
 	}
 
 	return controllers.NewResponse(c, http.StatusCreated, "success", "stock transaction created", _resStockTransaction.FromDomain(stock_transaction))
-}
-
-func (cc *StockController) Update(c echo.Context) error {
-	var stockID string = c.Param("id")
-	ctx := c.Request().Context()
-
-	input := request.Stock{}
-
-	if err := c.Bind(&input); err != nil {
-		return controllers.NewResponse(c, http.StatusBadRequest, "failed", "invalid request", "")
-	}
-
-	err := input.Validate()
-
-	if err != nil {
-		return controllers.NewResponse(c, http.StatusBadRequest, "failed", "validation failed", "")
-	}
-
-	stock, err := cc.stockUsecase.Update(ctx, input.ToDomain(), stockID)
-
-	if err != nil {
-		return controllers.NewResponse(c, http.StatusInternalServerError, "failed", "update stock failed", "")
-	}
-
-	return controllers.NewResponse(c, http.StatusOK, "success", "stock updated", response.FromDomain(stock))
-}
-
-func (cc *StockController) Delete(c echo.Context) error {
-	var stockID string = c.Param("id")
-	ctx := c.Request().Context()
-
-	err := cc.stockUsecase.Delete(ctx, stockID)
-
-	if err != nil {
-		return controllers.NewResponse(c, http.StatusInternalServerError, "failed", "delete stock failed", "")
-	}
-
-	return controllers.NewResponse(c, http.StatusOK, "success", "stock deleted", "")
 }
