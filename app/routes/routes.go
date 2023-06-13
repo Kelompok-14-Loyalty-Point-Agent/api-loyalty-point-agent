@@ -7,7 +7,7 @@ import (
 	stock_details "api-loyalty-point-agent/controllers/stock_details"
 	stock_transactions "api-loyalty-point-agent/controllers/stock_transactions"
 	stocks "api-loyalty-point-agent/controllers/stocks"
-	transaction "api-loyalty-point-agent/controllers/transaction"
+	transactions "api-loyalty-point-agent/controllers/transactions"
 	users "api-loyalty-point-agent/controllers/users"
 
 	echojwt "github.com/labstack/echo-jwt/v4"
@@ -24,7 +24,7 @@ type ControllerList struct {
 	StockController            stocks.StockController
 	StockDetailController      stock_details.StockDetailController
 	StockTransactionController stock_transactions.StockTransactionController
-	TransactionController      transaction.TransactionController
+	TransactionController      transactions.TransactionController
 }
 
 func (cl *ControllerList) RegisterRoutes(e *echo.Echo) {

@@ -4,7 +4,7 @@ import (
 	"api-loyalty-point-agent/businesses/stocks"
 
 	"api-loyalty-point-agent/businesses/stock_details"
-	"api-loyalty-point-agent/businesses/transaction"
+	"api-loyalty-point-agent/businesses/transactions"
 
 	"github.com/go-playground/validator/v10"
 )
@@ -20,8 +20,8 @@ type Transaction struct {
 	Point          uint                 `json:"point" validate:"required"`
 }
 
-func (req *Transaction) ToDomain() *transaction.Domain {
-	return &transaction.Domain{
+func (req *Transaction) ToDomain() *transactions.Domain {
+	return &transactions.Domain{
 		Phone:          req.Phone,
 		StockDetailsID: req.StockDetailsID,
 		StockDetails:   req.StockDetails,

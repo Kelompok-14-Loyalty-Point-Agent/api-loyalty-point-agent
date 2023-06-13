@@ -1,4 +1,4 @@
-package transaction
+package transactions
 
 import (
 	stock_details "api-loyalty-point-agent/businesses/stock_details"
