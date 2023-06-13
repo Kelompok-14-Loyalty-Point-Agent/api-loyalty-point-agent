@@ -7,7 +7,7 @@ import (
 )
 
 type StockDetail struct {
-	StockID  uint    `json:"stock_id" validate:"required"`
+	StockID  uint    `json:"stock_id"`
 	Stock    float64 `json:"stock" validate:"required"`
 	Price    float64 `json:"price" validate:"required"`
 	Quantity float64 `json:"quantity" validate:"required"`

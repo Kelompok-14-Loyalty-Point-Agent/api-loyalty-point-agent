@@ -19,6 +19,9 @@ import (
 	stockTransactionDomain "api-loyalty-point-agent/businesses/stock_transactions"
 	stockTransactionDB "api-loyalty-point-agent/drivers/mysql/stock_transactions"
 
+	stock_transactionDomain "api-loyalty-point-agent/businesses/stock_transactions"
+	stock_transactionDB "api-loyalty-point-agent/drivers/mysql/stock_transactions"
+
 	"gorm.io/gorm"
 )
 
@@ -44,4 +47,7 @@ func NewTransactionRepository(conn *gorm.DB) transactionDomain.Repository {
 
 func NewStockTransactionRepository(conn *gorm.DB) stockTransactionDomain.Repository {
 	return stockTransactionDB.NewMySQLRepository(conn)
+
+func NewStockTransactionRepository(conn *gorm.DB) stock_transactionDomain.Repository {
+	return stock_transactionDB.NewMySQLRepository(conn)
 }

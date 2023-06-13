@@ -2,7 +2,7 @@ package routes
 
 import (
 	"api-loyalty-point-agent/app/middlewares"
-	// "api-loyalty-point-agent/businesses/providers"
+
 	providers "api-loyalty-point-agent/controllers/providers"
 	stock_details "api-loyalty-point-agent/controllers/stock_details"
 	stock_transactions "api-loyalty-point-agent/controllers/stock_transactions"
@@ -18,6 +18,7 @@ import (
 type ControllerList struct {
 	LoggerMiddleware           echo.MiddlewareFunc
 	JWTMiddleware              echojwt.Config
+	CORSMiddleware             echo.MiddlewareFunc
 	AuthController             users.AuthController
 	ProviderController         providers.ProviderController
 	StockController            stocks.StockController
@@ -28,6 +29,7 @@ type ControllerList struct {
 
 func (cl *ControllerList) RegisterRoutes(e *echo.Echo) {
 	e.Use(cl.LoggerMiddleware)
+	e.Use(cl.CORSMiddleware)
 	auth := e.Group("auth")
 	auth.POST("/register", cl.AuthController.Register)
 	auth.POST("/login", cl.AuthController.Login)
@@ -59,7 +61,6 @@ func (cl *ControllerList) RegisterRoutes(e *echo.Echo) {
 	stocks.Use(middlewares.VerifyToken)
 	stocks.GET("", cl.StockController.GetAll)
 	stocks.GET("/:id", cl.StockController.GetByID)
-	stocks.POST("", cl.StockController.Create)
 	// add stock and create stock transaction data
 	stocks.POST("/add", cl.StockController.AddStock)
 	stocks.PUT("/:id", cl.StockController.Update)
