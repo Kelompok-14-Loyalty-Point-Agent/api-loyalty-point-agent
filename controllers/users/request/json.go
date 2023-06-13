@@ -13,6 +13,7 @@ type UserLogin struct {
 	Role     string `json:"role"`
 }
 
+// user registration with Name
 type UserRegistration struct {
 	Name     string `json:"name" validate:"required,nameNotEmpty"`
 	Email    string `json:"email" validate:"required,email"`
