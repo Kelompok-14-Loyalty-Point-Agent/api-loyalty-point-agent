@@ -16,6 +16,7 @@ type Domain struct {
 	Phone          string
 	StockID        uint
 	Stock          stocks.Domain
+	Type           string
 	Product        uint
 	Payment_method uint
 	Point          uint

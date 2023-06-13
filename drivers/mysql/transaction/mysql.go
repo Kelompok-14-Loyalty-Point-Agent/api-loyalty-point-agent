@@ -20,11 +20,13 @@ func NewMySQLRepository(conn *gorm.DB) transaction.Repository {
 func (cr *transactionRepository) GetAll(ctx context.Context) ([]transaction.Domain, error) {
 	var records []Transaction
 
-	if err := cr.conn.WithContext(ctx).Find(&records).Error; err != nil {
+	if err := cr.conn.WithContext(ctx).Preload("Stock").Find(&records).Error; err != nil {
 		return nil, err
 	}
 
 	transactions := []transaction.Domain{}
+
+	// fmt.Println(transactions)
 
 	for _, transaction := range records {
 		transactions = append(transactions, transaction.ToDomain())
@@ -54,7 +56,7 @@ func (cr *transactionRepository) Create(ctx context.Context, transactionDomain *
 		return transaction.Domain{}, err
 	}
 
-	if err := result.Last(&record).Error; err != nil {
+	if err := result.Preload("Stock").Last(&record).Error; err != nil {
 		return transaction.Domain{}, err
 	}
 

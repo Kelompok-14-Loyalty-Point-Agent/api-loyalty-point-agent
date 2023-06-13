@@ -17,7 +17,8 @@ type Transaction struct {
 	// Amount         uint           `json:"amount"`
 	Phone          string        `json:"phone"`
 	StockID        uint          `json:"stock_id"`
-	Stock          stocks.Domain `json:"-"`
+	Stock          stocks.Domain `json:"stock"`
+	Type           string        `json:"type"`
 	Product        uint          `json:"product"`
 	Payment_method uint          `json:"payment_method"`
 	Point          uint          `json:"point"`
@@ -31,6 +32,7 @@ func FromDomain(domain transaction.Domain) Transaction {
 		Product:        domain.Product,
 		StockID:        domain.StockID,
 		Stock:          domain.Stock,
+		Type:           domain.Stock.Type,
 		Payment_method: domain.Payment_method,
 		Point:          domain.Point,
 		CreatedAt:      domain.CreatedAt,

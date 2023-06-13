@@ -16,7 +16,7 @@ type Transaction struct {
 	DeletedAt      gorm.DeletedAt `json:"deleted_at" gorm:"index"`
 	Phone          string         `json:"phone"`
 	StockID        uint           `json:"stock_id"`
-	Stock          stocks.Stock   `json:"-" gorm:"foreignKey:StockID"`
+	Stock          stocks.Stock   `json:"stock" gorm:"foreignKey:StockID"`
 	Product        uint           `json:"product"`
 	Payment_method uint           `json:"payment_method"`
 	Point          uint           `json:"point"`
@@ -32,6 +32,7 @@ func (rec *Transaction) ToDomain() transaction.Domain {
 		Phone:          rec.Phone,
 		StockID:        rec.StockID,
 		Stock:          rec.Stock.ToDomain(),
+		Type:           rec.Stock.Type,
 		Product:        rec.Product,
 		Payment_method: rec.Payment_method,
 		Point:          rec.Point,
