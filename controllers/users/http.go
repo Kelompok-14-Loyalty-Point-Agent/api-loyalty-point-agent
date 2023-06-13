@@ -72,20 +72,20 @@ func (ctrl *AuthController) GetAllCustomers(c echo.Context) error {
 // @Failure 400 {object} controllers.Response[string] "failed"
 // @Router /user/register [post]
 func (ctrl *AuthController) Register(c echo.Context) error {
-	userInput := request.User{}
+	userInput := request.UserRegistration{}
 	ctx := c.Request().Context()
 
 	if err := c.Bind(&userInput); err != nil {
 		return controllers.NewResponse(c, http.StatusBadRequest, "failed", err.Error(), "")
 	}
 
-	err := userInput.Validate()
+	err := userInput.ValidateRegistration()
 
 	if err != nil {
 		return controllers.NewResponse(c, http.StatusBadRequest, "failed", err.Error(), "")
 	}
 
-	user, err := ctrl.authUseCase.Register(ctx, userInput.ToDomain())
+	user, err := ctrl.authUseCase.Register(ctx, userInput.ToDomainRegistration())
 
 	if err != nil {
 		return controllers.NewResponse(c, http.StatusInternalServerError, "failed", err.Error(), "")
@@ -107,20 +107,20 @@ func (ctrl *AuthController) Register(c echo.Context) error {
 // @Failure 401 {object} controllers.Response[string] "failed"
 // @Router /user/login [post]
 func (ctrl *AuthController) Login(c echo.Context) error {
-	userInput := request.User{}
+	userInput := request.UserLogin{}
 	ctx := c.Request().Context()
 
 	if err := c.Bind(&userInput); err != nil {
 		return controllers.NewResponse(c, http.StatusBadRequest, "failed", err.Error(), "")
 	}
 
-	err := userInput.Validate()
+	err := userInput.ValidateLogin()
 
 	if err != nil {
 		return controllers.NewResponse(c, http.StatusBadRequest, "failed", err.Error(), "")
 	}
 
-	token, err := ctrl.authUseCase.Login(ctx, userInput.ToDomain())
+	token, err := ctrl.authUseCase.Login(ctx, userInput.ToDomainLogin())
 
 	var isFailed bool = err != nil || token == ""
 

@@ -1,7 +1,7 @@
 package request
 
 import (
-	"api-loyalty-point-agent/businesses/providers"
+	// "api-loyalty-point-agent/businesses/providers"
 	"api-loyalty-point-agent/businesses/stocks"
 	"time"
 
@@ -9,18 +9,18 @@ import (
 )
 
 type Stock struct {
-	Type       string           `json:"type" validate:"required"`
-	TotalStock float64          `json:"total_stock" validate:"required"`
-	LastTopUp  time.Time        `json:"last_top_up"`
-	ProviderID uint             `json:"provider_id" validate:"required"`
-	Provider   providers.Domain `json:"-"`
+	Type       string    `json:"type" validate:"required"`
+	TotalStock float64   `json:"total_stock" validate:"required"`
+	LastTopUp  time.Time `json:"last_top_up"`
+	ProviderID uint      `json:"provider_id" validate:"required"`
+	// Provider   providers.Domain `json:"-"`
 }
 
 func (req *Stock) ToDomain() *stocks.Domain {
 	return &stocks.Domain{
 		Type:       req.Type,
 		TotalStock: req.TotalStock,
-		Provider:   req.Provider,
+		// Provider:   req.Provider,
 		ProviderID: req.ProviderID,
 	}
 }

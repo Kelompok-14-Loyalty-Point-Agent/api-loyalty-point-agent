@@ -18,6 +18,7 @@ type Domain struct {
 	PaymentMethod string
 	Status        string
 	StockID       uint
+	Stocks        string
 	UserID        uint
 }
 type Usecase interface {
