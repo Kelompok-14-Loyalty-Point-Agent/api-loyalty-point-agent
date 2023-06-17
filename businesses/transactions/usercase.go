@@ -1,4 +1,4 @@
-package transaction
+package transactions
 
 import (
 	"api-loyalty-point-agent/app/middlewares"

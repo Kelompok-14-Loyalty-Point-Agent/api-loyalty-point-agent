@@ -3,6 +3,7 @@ package main
 import (
 	_driverFactory "api-loyalty-point-agent/drivers"
 	"api-loyalty-point-agent/utils"
+	"net/http"
 
 	_userUseCase "api-loyalty-point-agent/businesses/users"
 	_userController "api-loyalty-point-agent/controllers/users"
@@ -19,8 +20,8 @@ import (
 	_stock_transactionUseCase "api-loyalty-point-agent/businesses/stock_transactions"
 	_stock_transactionController "api-loyalty-point-agent/controllers/stock_transactions"
 
-	_transactionUseCase "api-loyalty-point-agent/businesses/transaction"
-	_transactionController "api-loyalty-point-agent/controllers/transaction"
+	_transactionUseCase "api-loyalty-point-agent/businesses/transactions"
+	_transactionController "api-loyalty-point-agent/controllers/transactions"
 
 	_dbDriver "api-loyalty-point-agent/drivers/mysql"
 
@@ -71,6 +72,11 @@ func main() {
 		Format: "[${time_rfc3339}] ${status} ${method} ${host} ${path} ${latency_human}" + "\n",
 	}
 
+	configCORS := _middleware.CORSConfig{
+		AllowOrigins: []string{"*"},
+		AllowMethods: []string{http.MethodGet, http.MethodHead, http.MethodPut, http.MethodPatch, http.MethodPost, http.MethodDelete},
+	}
+
 	e := echo.New()
 
 	userRepo := _driverFactory.NewUserRepository(db)
@@ -96,9 +102,11 @@ func main() {
 	transactionRepo := _driverFactory.NewTransactionRepository(db)
 	transactionUsecase := _transactionUseCase.NewTransactionUseCase(transactionRepo, &configJWT)
 	transactionCtrl := _transactionController.NewTransactionController(transactionUsecase)
+  
 	routesInit := _routes.ControllerList{
 		LoggerMiddleware:           configLogger.Init(),
 		JWTMiddleware:              configJWT.Init(),
+		CORSMiddleware:             configCORS.Init(),
 		AuthController:             *userCtrl,
 		StockController:            *stockCtrl,
 		ProviderController:         *providerCtrl,

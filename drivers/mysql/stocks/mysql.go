@@ -46,22 +46,6 @@ func (cr *stockRepository) GetByID(ctx context.Context, id string) (stocks.Domai
 	return stock.ToDomain(), nil
 }
 
-func (cr *stockRepository) Create(ctx context.Context, stockDomain *stocks.Domain) (stocks.Domain, error) {
-	record := FromDomain(stockDomain)
-
-	result := cr.conn.WithContext(ctx).Create(&record)
-
-	if err := result.Error; err != nil {
-		return stocks.Domain{}, err
-	}
-
-	if err := result.Last(&record).Error; err != nil {
-		return stocks.Domain{}, err
-	}
-
-	return record.ToDomain(), nil
-}
-
 func (cr *stockRepository) Update(ctx context.Context, stockDomain *stocks.Domain, id string) (stocks.Domain, error) {
 	stock, err := cr.GetByID(ctx, id)
 
