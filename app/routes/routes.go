@@ -18,7 +18,6 @@ import (
 type ControllerList struct {
 	LoggerMiddleware           echo.MiddlewareFunc
 	JWTMiddleware              echojwt.Config
-	CORSMiddleware             echo.MiddlewareFunc
 	AuthController             users.AuthController
 	ProviderController         providers.ProviderController
 	StockController            stocks.StockController
@@ -29,7 +28,6 @@ type ControllerList struct {
 
 func (cl *ControllerList) RegisterRoutes(e *echo.Echo) {
 	e.Use(cl.LoggerMiddleware)
-	e.Use(cl.CORSMiddleware)
 	auth := e.Group("auth")
 	auth.POST("/register", cl.AuthController.Register)
 	auth.POST("/login", cl.AuthController.Login)

@@ -31,6 +31,7 @@ import (
 	_ "api-loyalty-point-agent/docs"
 
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 	echoSwagger "github.com/swaggo/echo-swagger"
 )
 
@@ -72,12 +73,13 @@ func main() {
 		Format: "[${time_rfc3339}] ${status} ${method} ${host} ${path} ${latency_human}" + "\n",
 	}
 
-	configCORS := _middleware.CORSConfig{
-		AllowOrigins: []string{"*"},
-		AllowMethods: []string{http.MethodGet, http.MethodHead, http.MethodPut, http.MethodPatch, http.MethodPost, http.MethodDelete},
-	}
-
 	e := echo.New()
+	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins:     []string{"*"},
+		AllowMethods:     []string{http.MethodGet, http.MethodHead, http.MethodPut, http.MethodPatch, http.MethodPost, http.MethodDelete},
+		AllowCredentials: true,
+		AllowHeaders:     []string{"Authorization", "Content-Type", "Origin"},
+	}))
 
 	userRepo := _driverFactory.NewUserRepository(db)
 	userUsecase := _userUseCase.NewUserUseCase(userRepo, &configJWT)
@@ -102,11 +104,10 @@ func main() {
 	transactionRepo := _driverFactory.NewTransactionRepository(db)
 	transactionUsecase := _transactionUseCase.NewTransactionUseCase(transactionRepo, &configJWT)
 	transactionCtrl := _transactionController.NewTransactionController(transactionUsecase)
-  
+
 	routesInit := _routes.ControllerList{
 		LoggerMiddleware:           configLogger.Init(),
 		JWTMiddleware:              configJWT.Init(),
-		CORSMiddleware:             configCORS.Init(),
 		AuthController:             *userCtrl,
 		StockController:            *stockCtrl,
 		ProviderController:         *providerCtrl,
