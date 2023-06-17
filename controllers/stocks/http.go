@@ -3,8 +3,9 @@ package stocks
 import (
 	"api-loyalty-point-agent/businesses/stocks"
 	"api-loyalty-point-agent/controllers"
-	"api-loyalty-point-agent/controllers/stocks/request"
 	"api-loyalty-point-agent/controllers/stocks/response"
+	_reqStockTransaction "api-loyalty-point-agent/controllers/stock_transactions/request"
+	_resStockTransaction "api-loyalty-point-agent/controllers/stock_transactions/response"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -51,8 +52,8 @@ func (cc *StockController) GetByID(c echo.Context) error {
 	return controllers.NewResponse(c, http.StatusOK, "success", "stock found", response.FromDomain(stock))
 }
 
-func (cc *StockController) Create(c echo.Context) error {
-	input := request.Stock{}
+func (cc *StockController) AddStock(c echo.Context) error {
+	input := _reqStockTransaction.StockTransaction{}
 	ctx := c.Request().Context()
 
 	if err := c.Bind(&input); err != nil {
@@ -65,49 +66,11 @@ func (cc *StockController) Create(c echo.Context) error {
 		return controllers.NewResponse(c, http.StatusBadRequest, "failed", "validation failed", "")
 	}
 
-	stock, err := cc.stockUsecase.Create(ctx, input.ToDomain())
+	stock_transaction, err := cc.stockUsecase.AddStock(ctx, input.ToDomain())
 
 	if err != nil {
-		return controllers.NewResponse(c, http.StatusInternalServerError, "failed", "failed to create a stock", "")
+		return controllers.NewResponse(c, http.StatusInternalServerError, "failed", err.Error(), "")
 	}
 
-	return controllers.NewResponse(c, http.StatusCreated, "success", "stock created", response.FromDomain(stock))
-}
-
-func (cc *StockController) Update(c echo.Context) error {
-	var stockID string = c.Param("id")
-	ctx := c.Request().Context()
-
-	input := request.Stock{}
-
-	if err := c.Bind(&input); err != nil {
-		return controllers.NewResponse(c, http.StatusBadRequest, "failed", "invalid request", "")
-	}
-
-	err := input.Validate()
-
-	if err != nil {
-		return controllers.NewResponse(c, http.StatusBadRequest, "failed", "validation failed", "")
-	}
-
-	stock, err := cc.stockUsecase.Update(ctx, input.ToDomain(), stockID)
-
-	if err != nil {
-		return controllers.NewResponse(c, http.StatusInternalServerError, "failed", "update stock failed", "")
-	}
-
-	return controllers.NewResponse(c, http.StatusOK, "success", "stock updated", response.FromDomain(stock))
-}
-
-func (cc *StockController) Delete(c echo.Context) error {
-	var stockID string = c.Param("id")
-	ctx := c.Request().Context()
-
-	err := cc.stockUsecase.Delete(ctx, stockID)
-
-	if err != nil {
-		return controllers.NewResponse(c, http.StatusInternalServerError, "failed", "delete stock failed", "")
-	}
-
-	return controllers.NewResponse(c, http.StatusOK, "success", "stock deleted", "")
+	return controllers.NewResponse(c, http.StatusCreated, "success", "stock transaction created", _resStockTransaction.FromDomain(stock_transaction))
 }

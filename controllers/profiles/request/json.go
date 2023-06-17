@@ -7,12 +7,12 @@ import (
 )
 
 type UpdateProfileRequest struct {
-	Name    string `json:"name"`
-	Address string `json:"address"`
+	Name    string `json:"name" validate:"required"`
+	Address string `json:"address" validate:"required"`
 }
 
 type ChangePasswordRequest struct {
-	Password string `json:"password"`
+	Password string `json:"password" validate:"required"`
 }
 
 func (req *UpdateProfileRequest) ToDomain() *profiles.Domain {

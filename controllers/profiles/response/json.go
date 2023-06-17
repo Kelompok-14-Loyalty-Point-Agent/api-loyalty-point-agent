@@ -12,9 +12,9 @@ type Profile struct {
 	CreatedAt time.Time      `json:"created_at"`
 	UpdatedAt time.Time      `json:"updated_at"`
 	DeletedAt gorm.DeletedAt `json:"deleted_at"`
-	Name      string         `json:"name"`
-	Address   string         `json:"address"`
-	Password  string         `json:"password"`
+	Name      string         `json:"name" validate:"required"`
+	Address   string         `json:"address" validate:"required"`
+	Password  string         `json:"password" validate:"required"`
 }
 
 func FromDomain(domain profiles.Domain) Profile {

@@ -68,10 +68,18 @@ func (cr *stock_detailRepository) Update(ctx context.Context, stock_detailDomain
 
 	updatedStockDetail := FromDomain(&stock_detail)
 
-	updatedStockDetail.Price = stock_detailDomain.Price
-	updatedStockDetail.Quantity = stock_detailDomain.Quantity
-	updatedStockDetail.Stock = stock_detailDomain.Stock
+	if updatedStockDetail.Price != stock_detailDomain.Price {
+		updatedStockDetail.Price = stock_detailDomain.Price
+	}
 
+	if updatedStockDetail.Quantity != stock_detailDomain.Quantity {
+		updatedStockDetail.Quantity = stock_detailDomain.Quantity
+	}
+	
+	if updatedStockDetail.Stock != stock_detailDomain.Stock {
+		updatedStockDetail.Stock = stock_detailDomain.Stock
+	}
+	
 	if err := cr.conn.WithContext(ctx).Save(&updatedStockDetail).Error; err != nil {
 		return stock_details.Domain{}, err
 	}

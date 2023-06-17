@@ -1,7 +1,6 @@
 package users
 
 import (
-	"api-loyalty-point-agent/businesses/user_details"
 	"context"
 	"time"
 
@@ -9,16 +8,14 @@ import (
 )
 
 type Domain struct {
-	ID           uint
-	CreatedAt    time.Time
-	UpdatedAt    time.Time
-	DeletedAt    gorm.DeletedAt
-	Name         string
-	Email        string
-	Password     string
-	Role         string
-	UserDetailID uint
-	UserDetail   user_details.Domain
+	ID        uint
+	CreatedAt time.Time
+	UpdatedAt time.Time
+	DeletedAt gorm.DeletedAt
+	Name      string
+	Email     string
+	Password  string
+	Role      string
 }
 type Usecase interface {
 	GetAllCustomers(ctx context.Context) ([]Domain, error)

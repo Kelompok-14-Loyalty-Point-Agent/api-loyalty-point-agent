@@ -1,8 +1,11 @@
 package stocks
 
 import (
+	"api-loyalty-point-agent/businesses/stock_transactions"
 	"api-loyalty-point-agent/businesses/stocks"
+	_dbStockTransaction "api-loyalty-point-agent/drivers/mysql/stock_transactions"
 	"context"
+	"errors"
 
 	"gorm.io/gorm"
 )
@@ -43,59 +46,50 @@ func (cr *stockRepository) GetByID(ctx context.Context, id string) (stocks.Domai
 	return stock.ToDomain(), nil
 }
 
-func (cr *stockRepository) Create(ctx context.Context, stockDomain *stocks.Domain) (stocks.Domain, error) {
-	record := FromDomain(stockDomain)
+func (cr *stockRepository) AddStock(ctx context.Context, stock_transactionDomain *stock_transactions.Domain) (stock_transactions.Domain, error) {
+	record := _dbStockTransaction.FromDomain(stock_transactionDomain)
 
 	result := cr.conn.WithContext(ctx).Create(&record)
 
 	if err := result.Error; err != nil {
-		return stocks.Domain{}, err
+		return stock_transactions.Domain{}, err
 	}
 
 	if err := result.Last(&record).Error; err != nil {
-		return stocks.Domain{}, err
+		return stock_transactions.Domain{}, err
+	}
+
+	var stock Stock
+
+	if err := cr.conn.WithContext(ctx).First(&stock, "id = ?", record.StockID).Error; err != nil {
+		return stock_transactions.Domain{}, err
+	}
+
+	if stock.Type == "data" {
+		// 1 GB / Rp.10000
+		record.PayAmount = record.InputStock * 10000
+	} else if stock.Type == "credit" {
+		if record.InputStock < 10000 {
+			return stock_transactions.Domain{}, errors.New("credit input minimum is 10000")
+		} else {
+			// 10000 / Rp.12000
+			record.PayAmount = record.InputStock / 10000 * 12000
+		}
+
+	}
+
+	record.Status = "success"
+
+	if err := cr.conn.WithContext(ctx).Save(&record).Error; err != nil {
+		return stock_transactions.Domain{}, err
+	}
+
+	stock.TotalStock += record.InputStock
+	stock.LastTopUp = record.CreatedAt
+
+	if err := cr.conn.WithContext(ctx).Save(&stock).Error; err != nil {
+		return stock_transactions.Domain{}, err
 	}
 
 	return record.ToDomain(), nil
 }
-
-func (cr *stockRepository) Update(ctx context.Context, stockDomain *stocks.Domain, id string) (stocks.Domain, error) {
-	stock, err := cr.GetByID(ctx, id)
-
-	if err != nil {
-		return stocks.Domain{}, err
-	}
-
-	updatedStock := FromDomain(&stock)
-
-	if updatedStock.Type != stockDomain.Type{
-		updatedStock.Type = stockDomain.Type
-	}
-
-	if updatedStock.TotalStock != stockDomain.TotalStock {
-		updatedStock.TotalStock = stockDomain.TotalStock
-	}
-	
-	if err := cr.conn.WithContext(ctx).Save(&updatedStock).Error; err != nil {
-		return stocks.Domain{}, err
-	}
-
-	return updatedStock.ToDomain(), nil
-}
-
-func (cr *stockRepository) Delete(ctx context.Context, id string) error {
-	stock, err := cr.GetByID(ctx, id)
-
-	if err != nil {
-		return err
-	}
-
-	deletedStock := FromDomain(&stock)
-
-	if err := cr.conn.WithContext(ctx).Unscoped().Delete(&deletedStock).Error; err != nil {
-		return err
-	}
-
-	return nil
-}
-

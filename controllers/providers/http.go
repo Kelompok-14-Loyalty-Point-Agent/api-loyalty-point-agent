@@ -3,7 +3,6 @@ package providers
 import (
 	"api-loyalty-point-agent/businesses/providers"
 	"api-loyalty-point-agent/controllers"
-	"api-loyalty-point-agent/controllers/providers/request"
 	"api-loyalty-point-agent/controllers/providers/response"
 	"encoding/json"
 
@@ -87,85 +86,48 @@ func (cc *ProviderController) DownloadFile(c echo.Context) error {
 	return controllers.NewResponse(c, http.StatusOK, "success", "downloaded data from bucket", "")
 }
 
-func (cc *ProviderController) Create(c echo.Context) error {
-	name := c.FormValue("name")
-	file, err := c.FormFile("picture")
+// func (cc *ProviderController) Create(c echo.Context) error {
+// 	name := c.FormValue("name")
+// 	file, err := c.FormFile("picture")
 
-	if err != nil {
-		return controllers.NewResponse(c, http.StatusBadRequest, "failed", "failed to upload file", "")
-	}
+// 	if err != nil {
+// 		return controllers.NewResponse(c, http.StatusBadRequest, "failed", "failed to upload file", "")
+// 	}
 
-	src, err := file.Open()
-	if err != nil {
-		return err
-	}
-	defer src.Close()
+// 	src, err := file.Open()
+// 	if err != nil {
+// 		return err
+// 	}
+// 	defer src.Close()
 
-	result, err := aws_driver.UploadFileToBucket(file.Filename, src)
-	if err != nil {
-		return controllers.NewResponse(c, http.StatusBadRequest, "failed", err.Error(), "")
-	}
+// 	result, err := aws_driver.UploadFileToBucket(file.Filename, src)
+// 	if err != nil {
+// 		return controllers.NewResponse(c, http.StatusBadRequest, "failed", err.Error(), "")
+// 	}
 
-	input := request.Provider{
-		Name: name,
-		URL: result,
-	}
+// 	input := request.Provider{
+// 		Name: name,
+// 		URL: result,
+// 	}
 
-	jsonBody, err := json.Marshal(&input)
+// 	jsonBody, err := json.Marshal(&input)
 
-	if err != nil {
-		return err
-	}
+// 	if err != nil {
+// 		return err
+// 	}
 
-	err = json.Unmarshal(jsonBody, &input)
-	if err != nil {
-		return err
-	}
+// 	err = json.Unmarshal(jsonBody, &input)
+// 	if err != nil {
+// 		return err
+// 	}
 
-	ctx := c.Request().Context()
+// 	ctx := c.Request().Context()
 
-	provider, err := cc.providerUsecase.Create(ctx, input.ToDomain())
-	if err != nil {
-		return err
-	}
+// 	provider, err := cc.providerUsecase.Create(ctx, input.ToDomain())
+// 	if err != nil {
+// 		return err
+// 	}
 
-	return controllers.NewResponse(c, http.StatusOK, "success", "file uploaded successfully", response.FromDomain(provider))
-}
+// 	return controllers.NewResponse(c, http.StatusOK, "success", "file uploaded successfully", response.FromDomain(provider))
+// }
 
-func (cc *ProviderController) Update(c echo.Context) error {
-	var providerID string = c.Param("id")
-	ctx := c.Request().Context()
-
-	input := request.Provider{}
-
-	if err := c.Bind(&input); err != nil {
-		return controllers.NewResponse(c, http.StatusBadRequest, "failed", "invalid request", "")
-	}
-
-	err := input.Validate()
-
-	if err != nil {
-		return controllers.NewResponse(c, http.StatusBadRequest, "failed", "validation failed", "")
-	}
-
-	provider, err := cc.providerUsecase.Update(ctx, input.ToDomain(), providerID)
-
-	if err != nil {
-		return controllers.NewResponse(c, http.StatusInternalServerError, "failed", "update provider failed", "")
-	}
-
-	return controllers.NewResponse(c, http.StatusOK, "success", "provider updated", response.FromDomain(provider))
-}
-
-func (cc *ProviderController) Delete(c echo.Context) error {
-	var providerID string = c.Param("id")
-	ctx := c.Request().Context()
-
-	err := cc.providerUsecase.Delete(ctx, providerID)
-
-	if err != nil {
-		return controllers.NewResponse(c, http.StatusInternalServerError, "failed", "delete provider failed", "")
-	}
-
-	return controllers.NewResponse(c, http.StatusOK, "success", "provider deleted", "")
-}

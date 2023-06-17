@@ -34,7 +34,7 @@ func (jwtConfig *JWTConfig) Init() echojwt.Config {
 }
 
 func (jwtConfig *JWTConfig) GenerateToken(userID int, userRole string) (string, error) {
-	expire := jwt.NewNumericDate(time.Now().Local().Add(time.Hour * time.Duration(int64(jwtConfig.ExpiresDuration))))
+	expire := jwt.NewNumericDate(time.Now().Local().Add(730 * time.Hour * time.Duration(int64(jwtConfig.ExpiresDuration))))
 
 	claims := &JwtCustomClaims{
 		userID,
