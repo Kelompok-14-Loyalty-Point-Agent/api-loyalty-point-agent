@@ -14,10 +14,17 @@ type Transaction struct {
 	Phone          string               `json:"phone" validate:"required"`
 	StockDetailsID uint                 `json:"stock_details_id" validate:"required"`
 	StockDetails   stock_details.Domain `json:"-"`
-	Price          float64              `json:"price"`
-	Product        uint                 `json:"product" validate:"required"`
-	Payment_method uint                 `json:"payment_method" validate:"required"`
-	Point          uint                 `json:"point" validate:"required"`
+	Price          float64              `json:"-"`
+	Product        string               `json:"-"`
+	Payment_method string               `json:"payment_method" validate:"required"`
+	Point          uint                 `json:"-"`
+	Status         string               `json:"-"`
+	Description    string               `json:"-"`
+	UserID         uint                 `json:"user_id" validate:"required"`
+}
+
+type TransactionPoint struct {
+	Point uint `json:"point" validate:"required"`
 }
 
 func (req *Transaction) ToDomain() *transactions.Domain {
@@ -30,10 +37,27 @@ func (req *Transaction) ToDomain() *transactions.Domain {
 		Product:        req.Product,
 		Payment_method: req.Payment_method,
 		Point:          req.Point,
+		Status:         req.Status,
+		Description:    req.Description,
+		UserID:         req.UserID,
+	}
+}
+
+func (req *TransactionPoint) ToDomain() *transactions.Domain {
+	return &transactions.Domain{
+		Point: req.Point,
 	}
 }
 
 func (req *Transaction) Validate() error {
+	validate := validator.New()
+
+	err := validate.Struct(req)
+
+	return err
+}
+
+func (req *TransactionPoint) Validate() error {
 	validate := validator.New()
 
 	err := validate.Struct(req)

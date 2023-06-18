@@ -28,3 +28,11 @@ func (usecase *transactionUsecase) GetByID(ctx context.Context, id string) (Doma
 func (usecase *transactionUsecase) Create(ctx context.Context, transactionDomain *Domain) (Domain, error) {
 	return usecase.transactionRepository.Create(ctx, transactionDomain)
 }
+
+func (usecase *transactionUsecase) GetAllByUserID(ctx context.Context, userid string) ([]Domain, error) {
+	return usecase.transactionRepository.GetAllByUserID(ctx, userid)
+}
+
+func (usecase *transactionUsecase) UpdatePoint(ctx context.Context, transactionDomain *Domain, id string) (Domain, error) {
+	return usecase.transactionRepository.UpdatePoint(ctx, transactionDomain, id)
+}
