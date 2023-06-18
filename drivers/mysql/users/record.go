@@ -3,6 +3,7 @@ package users
 import (
 	"api-loyalty-point-agent/businesses/users"
 	"api-loyalty-point-agent/drivers/mysql/stock_transactions"
+	"api-loyalty-point-agent/drivers/mysql/transactions"
 	"time"
 
 	"gorm.io/gorm"
@@ -17,7 +18,8 @@ type User struct {
 	Email            string                                `json:"email" gorm:"unique"`
 	Password         string                                `json:"password"`
 	Role             string                                `json:"role" gorm:"type:enum('admin', 'customer');default:'customer';not_null"`
-	StockTransaction []stock_transactions.StockTransaction `json:"-"`
+	StockTransaction []stock_transactions.StockTransaction `json:"-" gorm:"foreignKey:UserID"`
+	Transaction      []transactions.Transaction            `json:"-" gorm:"foreignKey:UserID"`
 }
 
 func (rec *User) ToDomain() users.Domain {

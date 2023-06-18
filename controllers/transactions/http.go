@@ -45,10 +45,10 @@ func (cc *TransactionController) GetByID(c echo.Context) error {
 	transaction, err := cc.transactionUsecase.GetByID(ctx, transactionID)
 
 	if err != nil {
-		return controllers.NewResponse(c, http.StatusNotFound, "failed", "stock_detail not found", "")
+		return controllers.NewResponse(c, http.StatusNotFound, "failed", "transaction not found", "")
 	}
 
-	return controllers.NewResponse(c, http.StatusOK, "success", "stock_detail found", response.FromDomain(transaction))
+	return controllers.NewResponse(c, http.StatusOK, "success", "transaction found", response.FromDomain(transaction))
 }
 
 func (cc *TransactionController) Create(c echo.Context) error {
@@ -62,14 +62,57 @@ func (cc *TransactionController) Create(c echo.Context) error {
 	err := input.Validate()
 
 	if err != nil {
-		return controllers.NewResponse(c, http.StatusBadRequest, "failed", "validation failed", "")
+		return controllers.NewResponse(c, http.StatusBadRequest, "failed", err.Error(), "")
 	}
 
 	transaction, err := cc.transactionUsecase.Create(ctx, input.ToDomain())
 
 	if err != nil {
-		return controllers.NewResponse(c, http.StatusInternalServerError, "failed", "failed to create a stock_detail", "")
+		return controllers.NewResponse(c, http.StatusInternalServerError, "failed", err.Error(), "")
 	}
 
-	return controllers.NewResponse(c, http.StatusCreated, "success", "stock_detail created", response.FromDomain(transaction))
+	return controllers.NewResponse(c, http.StatusCreated, "success", "transaction created", response.FromDomain(transaction))
+}
+
+func (cc *TransactionController) GetAllByUserID(c echo.Context) error {
+	var userID string = c.Param("id")
+	ctx := c.Request().Context()
+
+	transactionData, err := cc.transactionUsecase.GetAllByUserID(ctx, userID)
+
+	if err != nil {
+		return controllers.NewResponse(c, http.StatusInternalServerError, "failed", err.Error(), "")
+	}
+
+	transactions := []response.Transaction{}
+
+	for _, transaction := range transactionData {
+		transactions = append(transactions, response.FromDomain(transaction))
+	}
+
+	return controllers.NewResponse(c, http.StatusOK, "success", "all transactions of an user", transactions)
+}
+
+func (cc *TransactionController) UpdatePoint(c echo.Context) error {
+	var transactionID string = c.Param("id")
+	input := request.TransactionPoint{}
+	ctx := c.Request().Context()
+
+	if err := c.Bind(&input); err != nil {
+		return controllers.NewResponse(c, http.StatusBadRequest, "failed", "invalid request", "")
+	}
+
+	err := input.Validate()
+
+	if err != nil {
+		return controllers.NewResponse(c, http.StatusBadRequest, "failed", err.Error(), "")
+	}
+
+	transaction, err := cc.transactionUsecase.UpdatePoint(ctx, input.ToDomain(), transactionID)
+
+	if err != nil {
+		return controllers.NewResponse(c, http.StatusInternalServerError, "failed", err.Error(), "")
+	}
+
+	return controllers.NewResponse(c, http.StatusCreated, "success", "transaction point updated", response.FromDomain(transaction))
 }

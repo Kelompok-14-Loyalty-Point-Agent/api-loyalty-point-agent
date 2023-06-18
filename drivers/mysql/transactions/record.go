@@ -20,10 +20,13 @@ type Transaction struct {
 	DeletedAt      gorm.DeletedAt            `json:"deleted_at" gorm:"index"`
 	Phone          string                    `json:"phone"`
 	StockDetailsID uint                      `json:"stock_details_id"`
-	StockDetails   stock_details.StockDetail `json:"StockDetails" gorm:"foreignKey:stock_details_id"`
-	Product        uint                      `json:"product"`
-	Payment_method uint                      `json:"payment_method"`
+	StockDetails   stock_details.StockDetail `json:"Stock_details" gorm:"foreignKey:stock_details_id"`
+	Product        string                    `json:"product"`
+	Payment_method string                    `json:"payment_method"`
 	Point          uint                      `json:"point"`
+	Status         string                    `json:"status" gorm:"type:enum('success', 'failed', 'on-process');default:'success';not_null"`
+	Description    string                    `json:"description" gorm:"type:enum('top up');default:'top up';not_null"`
+	UserID         uint                      `json:"user_id"`
 }
 
 func (rec *Transaction) ToDomain() transactions.Domain {
@@ -40,6 +43,9 @@ func (rec *Transaction) ToDomain() transactions.Domain {
 		Product:        rec.Product,
 		Payment_method: rec.Payment_method,
 		Point:          rec.Point,
+		Status:         rec.Status,
+		Description:    rec.Description,
+		UserID:         rec.UserID,
 	}
 }
 
@@ -54,5 +60,8 @@ func FromDomain(domain *transactions.Domain) *Transaction {
 		Product:        domain.Product,
 		Payment_method: domain.Payment_method,
 		Point:          domain.Point,
+		Status:         domain.Status,
+		Description:    domain.Description,
+		UserID:         domain.UserID,
 	}
 }

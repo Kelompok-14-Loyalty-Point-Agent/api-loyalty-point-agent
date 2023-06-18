@@ -18,8 +18,8 @@ type StockTransaction struct {
 	PaymentMethod string         `json:"payment_method" `
 	Status        string         `json:"status" `
 	StockID       uint           `json:"stock_id"`
-	Stocks        string         `json:"stocks"`
-	UserID        uint           `json:"user_id"`
+	Stocks        string         `json:"-"`
+	UserID        uint           `json:"-"`
 }
 
 func FromDomain(domain stock_transactions.Domain) StockTransaction {
