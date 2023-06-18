@@ -115,3 +115,22 @@ func (cc *StockDetailController) Delete(c echo.Context) error {
 
 	return controllers.NewResponse(c, http.StatusOK, "success", "stock_detail deleted", "")
 }
+
+func (cc *StockDetailController) GetAllByStockID(c echo.Context) error {
+	var stockID string = c.Param("id")
+	ctx := c.Request().Context()
+
+	stock_detailsData, err := cc.stock_detailUsecase.GetAllByStockID(ctx, stockID)
+
+	if err != nil {
+		return controllers.NewResponse(c, http.StatusInternalServerError, "failed", "failed to fetch data", "")
+	}
+
+	stock_details := []response.StockDetail{}
+
+	for _, stock_detail := range stock_detailsData {
+		stock_details = append(stock_details, response.FromDomain(stock_detail))
+	}
+
+	return controllers.NewResponse(c, http.StatusOK, "success", "all stock_details by stock_id", stock_details)
+}

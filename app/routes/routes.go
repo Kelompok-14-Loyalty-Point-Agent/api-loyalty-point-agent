@@ -68,6 +68,7 @@ func (cl *ControllerList) RegisterRoutes(e *echo.Echo) {
 	stock_detail.POST("", cl.StockDetailController.Create)
 	stock_detail.PUT("/:id", cl.StockDetailController.Update)
 	stock_detail.DELETE("/:id", cl.StockDetailController.Delete)
+	stock_detail.GET("/bystocks/:id", cl.StockDetailController.GetAllByStockID)
 
 	stock_transaction := e.Group("/stocks/transactions", echojwt.WithConfig(cl.JWTMiddleware))
 	stock_transaction.Use(middlewares.VerifyToken)
