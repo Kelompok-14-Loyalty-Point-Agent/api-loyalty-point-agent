@@ -36,3 +36,7 @@ func (usecase *stock_detailUsecase) Update(ctx context.Context, stock_detailDoma
 func (usecase *stock_detailUsecase) Delete(ctx context.Context, id string) error {
 	return usecase.stock_detailRepository.Delete(ctx, id)
 }
+
+func (usecase *stock_detailUsecase) GetAllByStockID(ctx context.Context, stockid string) ([]Domain, error) {
+	return usecase.stock_detailRepository.GetAllByStockID(ctx, stockid)
+}

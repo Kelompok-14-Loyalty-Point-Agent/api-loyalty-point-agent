@@ -102,3 +102,19 @@ func (cr *stock_detailRepository) Delete(ctx context.Context, id string) error {
 
 	return nil
 }
+
+func (cr *stock_detailRepository) GetAllByStockID(ctx context.Context, stockid string) ([]stock_details.Domain, error) {
+	var records []StockDetail
+
+	if err := cr.conn.WithContext(ctx).Find(&records, `stock_id = ?`, stockid).Error; err != nil {
+		return nil, err
+	}
+
+	stock_details := []stock_details.Domain{}
+
+	for _, stock_detail := range records {
+		stock_details = append(stock_details, stock_detail.ToDomain())
+	}
+
+	return stock_details, nil
+}

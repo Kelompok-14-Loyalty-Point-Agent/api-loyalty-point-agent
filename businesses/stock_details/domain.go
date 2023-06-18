@@ -23,6 +23,7 @@ type Usecase interface {
 	Create(ctx context.Context, stock_detailDomain *Domain) (Domain, error)
 	Update(ctx context.Context, stock_detailDomain *Domain, id string) (Domain, error)
 	Delete(ctx context.Context, id string) error
+	GetAllByStockID(ctx context.Context, stockid string) ([]Domain, error)
 }
 type Repository interface {
 	GetAll(ctx context.Context) ([]Domain, error)
@@ -30,4 +31,5 @@ type Repository interface {
 	Create(ctx context.Context, stock_detailDomain *Domain) (Domain, error)
 	Update(ctx context.Context, stock_detailDomain *Domain, id string) (Domain, error)
 	Delete(ctx context.Context, id string) error
+	GetAllByStockID(ctx context.Context, stockid string) ([]Domain, error)
 }
