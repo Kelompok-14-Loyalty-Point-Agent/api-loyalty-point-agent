@@ -40,3 +40,23 @@ func (usecase *userUsecase) Login(ctx context.Context, userDomain *Domain) (stri
 
 	return token, nil
 }
+
+func (usecase *userUsecase) GetByID(ctx context.Context, id string) (Domain, error) {
+	return usecase.userRepository.GetByID(ctx, id)
+}
+
+func (usecase *userUsecase) UpdateProfileCustomer(ctx context.Context, userDomain *Domain, id string) (Domain, error) {
+	return usecase.userRepository.UpdateProfileCustomer(ctx, userDomain, id)
+}
+
+func (usecase *userUsecase) UpdateProfileAdmin(ctx context.Context, userDomain *Domain, id string) (Domain, error) {
+	return usecase.userRepository.UpdateProfileAdmin(ctx, userDomain, id)
+}
+
+func (usecase *userUsecase) ChangePassword(ctx context.Context, userDomain *Domain, id string) (Domain, error) {
+	return usecase.userRepository.ChangePassword(ctx, userDomain, id)
+}
+
+func (usecase *userUsecase) DeleteCustomer(ctx context.Context, id string) (error) {
+	return usecase.userRepository.DeleteCustomer(ctx, id)
+}

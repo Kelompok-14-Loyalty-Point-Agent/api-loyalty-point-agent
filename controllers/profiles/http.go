@@ -112,11 +112,11 @@ func (cc *ProfileController) Update(c echo.Context) error {
 	}
 
 	// Update profile data
-	profile.Name = profileInput.Name
+	// profile.Name = profileInput.Name
 	profile.Address = profileInput.Address
 
 	// Update password
-	profile.Password = passwordInput.Password
+	// profile.Password = passwordInput.Password
 
 	updatedProfile, err := cc.profileUsecase.Update(ctx, profileInput.ToDomain(), profileID)
 	if err != nil {

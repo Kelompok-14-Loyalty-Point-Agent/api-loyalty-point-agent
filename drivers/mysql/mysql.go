@@ -7,6 +7,7 @@ import (
 	"api-loyalty-point-agent/drivers/mysql/stocks"
 	"api-loyalty-point-agent/drivers/mysql/transactions"
 	"api-loyalty-point-agent/drivers/mysql/users"
+	"api-loyalty-point-agent/drivers/mysql/profiles"
 
 	"os"
 
@@ -53,7 +54,7 @@ func (config *DBConfig) InitDB() *gorm.DB {
 
 // perform migration
 func MigrateDB(db *gorm.DB) {
-	err := db.AutoMigrate(&users.User{}, &providers.Provider{}, &stocks.Stock{}, &stock_details.StockDetail{}, &stock_transactions.StockTransaction{}, &transactions.Transaction{})
+	err := db.AutoMigrate(&profiles.Profile{}, &users.User{}, &providers.Provider{}, &stocks.Stock{}, &stock_details.StockDetail{}, &stock_transactions.StockTransaction{}, &transactions.Transaction{})
 
 	if err != nil {
 		log.Fatalf("failed to perform database migration: %s\n", err)
@@ -66,6 +67,8 @@ func SeedAdmin(db *gorm.DB) {
 		Password: "admin123",
 		Email:    "admin@example.com",
 		Role:     "admin",
+		ProfileID: 0,
+		Profile: profiles.Profile{},
 	}
 
 	password, err := bcrypt.GenerateFromPassword([]byte(admin.Password), bcrypt.DefaultCost)
@@ -83,7 +86,18 @@ func SeedAdmin(db *gorm.DB) {
 	if record.ID != 0 {
 		log.Printf("admin already exists\n")
 	} else {
-		result := db.Create(&admin)
+		var profile profiles.Profile
+
+		result := db.Create(&profile)
+
+		if result.Error != nil {
+			log.Fatalf("failed to create admin's profile: %s\n", result.Error)
+		}
+
+		admin.ProfileID = profile.ID
+		admin.Profile = profile
+
+		result = db.Create(&admin)
 
 		if result.Error != nil {
 			log.Fatalf("failed to create admin: %s\n", result.Error)

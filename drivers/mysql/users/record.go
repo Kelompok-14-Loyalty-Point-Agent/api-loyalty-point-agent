@@ -4,6 +4,7 @@ import (
 	"api-loyalty-point-agent/businesses/users"
 	"api-loyalty-point-agent/drivers/mysql/stock_transactions"
 	"api-loyalty-point-agent/drivers/mysql/transactions"
+	"api-loyalty-point-agent/drivers/mysql/profiles"
 	"time"
 
 	"gorm.io/gorm"
@@ -20,6 +21,8 @@ type User struct {
 	Role             string                                `json:"role" gorm:"type:enum('admin', 'customer');default:'customer';not_null"`
 	StockTransaction []stock_transactions.StockTransaction `json:"-" gorm:"foreignKey:UserID"`
 	Transaction      []transactions.Transaction            `json:"-" gorm:"foreignKey:UserID"`
+	ProfileID        uint                                  `json:"-" gorm:"uniqueIndex"`
+	Profile          profiles.Profile                      `json:"-" gorm:"foreignKey:ProfileID"`
 }
 
 func (rec *User) ToDomain() users.Domain {
@@ -32,6 +35,8 @@ func (rec *User) ToDomain() users.Domain {
 		Email:     rec.Email,
 		Password:  rec.Password,
 		Role:      rec.Role,
+		ProfileID: rec.ProfileID,
+		Profile: rec.Profile.ToDomain(),
 	}
 }
 
@@ -45,5 +50,7 @@ func FromDomain(domain *users.Domain) *User {
 		Email:     domain.Email,
 		Password:  domain.Password,
 		Role:      domain.Role,
+		ProfileID: domain.ProfileID,
+		Profile: *profiles.FromDomain(&domain.Profile),
 	}
 }
