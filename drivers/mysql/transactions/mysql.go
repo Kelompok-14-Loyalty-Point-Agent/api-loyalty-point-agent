@@ -58,7 +58,7 @@ func (cr *transactionRepository) Create(ctx context.Context, transactionDomain *
 		return transactions.Domain{}, err
 	}
 
-	if stock_detail.Quantity - 1 < 0{
+	if stock_detail.Quantity-1 < 0 {
 		err := errors.New("run out of quantity")
 		return transactions.Domain{}, err
 	}
@@ -72,7 +72,7 @@ func (cr *transactionRepository) Create(ctx context.Context, transactionDomain *
 		return transactions.Domain{}, err
 	}
 
-	if stock.TotalStock - stock_detail.Stock < 0{
+	if stock.TotalStock-stock_detail.Stock < 0 {
 		err := errors.New("run out of stock")
 		return transactions.Domain{}, err
 	}
@@ -142,12 +142,15 @@ func (cr *transactionRepository) UpdatePoint(ctx context.Context, transactionDom
 
 	updatedTransaction := FromDomain(&transaction)
 
-	if transactionDomain.Point < 0{
+	if transactionDomain.Point < 0 {
 		err := errors.New("invalid point")
 		return transactions.Domain{}, err
 	}
 
 	updatedTransaction.Point = transactionDomain.Point
+	updatedTransaction.StockDetailsID = transactionDomain.StockDetailsID
+	updatedTransaction.StockDetails = stock_details.StockDetail(transaction.StockDetails)
+	updatedTransaction.StockDetails.Price = transaction.Price
 
 	if err := cr.conn.WithContext(ctx).Save(&updatedTransaction).Error; err != nil {
 		return transactions.Domain{}, err
