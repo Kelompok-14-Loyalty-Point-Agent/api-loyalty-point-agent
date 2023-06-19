@@ -17,7 +17,7 @@ type ChangePasswordRequest struct {
 
 func (req *UpdateProfileRequest) ToDomain() *profiles.Domain {
 	return &profiles.Domain{
-		Name:    req.Name,
+		// Name:    req.Name,
 		Address: req.Address,
 	}
 }
@@ -32,7 +32,7 @@ func (req *UpdateProfileRequest) Validate() error {
 
 func (req *ChangePasswordRequest) ToDomain() *profiles.Domain {
 	return &profiles.Domain{
-		Password: req.Password,
+		// Password: req.Password,
 	}
 }
 

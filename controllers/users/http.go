@@ -36,7 +36,6 @@ func NewAuthController(authUC users.Usecase) *AuthController {
 // @Failure 400 {object} controllers.Response[string] "failed"
 // @Router /users/usersAll [get]
 func (ctrl *AuthController) GetAllCustomers(c echo.Context) error {
-	token := c.Get("user").(*jwt.Token)
 	ctx := c.Request().Context()
 
 	userData, err := ctrl.authUseCase.GetAllCustomers(ctx)
@@ -49,12 +48,6 @@ func (ctrl *AuthController) GetAllCustomers(c echo.Context) error {
 
 	for _, user := range userData {
 		users = append(users, response.FromDomain(user))
-	}
-
-	isListed := middlewares.CheckToken(token.Raw)
-
-	if !isListed {
-		return controllers.NewResponse(c, http.StatusUnauthorized, "failed", "invalid token", "")
 	}
 
 	return controllers.NewResponse(c, http.StatusOK, "success", "all customers", users)
@@ -154,3 +147,89 @@ func (ctrl *AuthController) Logout(c echo.Context) error {
 
 	return controllers.NewResponse(c, http.StatusOK, "success", "logout success", isLoggedOut)
 }
+
+func (ctrl *AuthController) GetByID(c echo.Context) error {
+	var userID string = c.Param("id")
+
+	ctx := c.Request().Context()
+
+	user, err := ctrl.authUseCase.GetByID(ctx, userID)
+
+	if err != nil {
+		return controllers.NewResponse(c, http.StatusNotFound, "failed", err.Error(), "")
+	}
+
+	return controllers.NewResponse(c, http.StatusOK, "success", "get user by id", response.FromDomain(user))
+}
+
+func (ctrl *AuthController) UpdateProfileCustomer(c echo.Context) error {
+	var userID string = c.Param("id")
+	input := request.CustomerProfile{}
+
+	ctx := c.Request().Context()
+
+	if err := c.Bind(&input); err != nil {
+		return controllers.NewResponse(c, http.StatusBadRequest, "failed", "invalid request", "")
+	}
+
+	user, err := ctrl.authUseCase.UpdateProfileCustomer(ctx, input.ToDomainProfileCustomer(), userID)
+
+	if err != nil {
+		return controllers.NewResponse(c, http.StatusNotFound, "failed", err.Error(), "")
+	}
+
+	return controllers.NewResponse(c, http.StatusOK, "success", "customer updated", response.FromDomain(user))
+}
+
+func (ctrl *AuthController) UpdateProfileAdmin(c echo.Context) error {
+	var userID string = c.Param("id")
+	input := request.AdminProfile{}
+
+	ctx := c.Request().Context()
+
+	if err := c.Bind(&input); err != nil {
+		return controllers.NewResponse(c, http.StatusBadRequest, "failed", "invalid request", "")
+	}
+
+	user, err := ctrl.authUseCase.UpdateProfileAdmin(ctx, input.ToDomainProfileAdmin(), userID)
+
+	if err != nil {
+		return controllers.NewResponse(c, http.StatusNotFound, "failed", err.Error(), "")
+	}
+
+	return controllers.NewResponse(c, http.StatusOK, "success", "admin updated", response.FromDomain(user))
+}
+
+func (ctrl *AuthController) ChangePassword(c echo.Context) error {
+	var userID string = c.Param("id")
+	input := request.InputPassword{}
+
+	ctx := c.Request().Context()
+
+	if err := c.Bind(&input); err != nil {
+		return controllers.NewResponse(c, http.StatusBadRequest, "failed", "invalid request", "")
+	}
+
+	user, err := ctrl.authUseCase.ChangePassword(ctx, input.ToDomainProfilePassword(), userID)
+
+	if err != nil {
+		return controllers.NewResponse(c, http.StatusNotFound, "failed", err.Error(), "")
+	}
+
+	return controllers.NewResponse(c, http.StatusOK, "success", "password changed", response.FromDomain(user))
+}
+
+func (ctrl *AuthController) DeleteCustomer(c echo.Context) error {
+	var userID string = c.Param("id")
+
+	ctx := c.Request().Context()
+
+	err := ctrl.authUseCase.DeleteCustomer(ctx, userID)
+
+	if err != nil {
+		return controllers.NewResponse(c, http.StatusNotFound, "failed", err.Error(), "")
+	}
+
+	return controllers.NewResponse(c, http.StatusOK, "success", "customer deleted", "")
+}
+

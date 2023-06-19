@@ -8,14 +8,19 @@ import (
 )
 
 type Domain struct {
-	ID        uint
-	CreatedAt time.Time
-	UpdatedAt time.Time
-	DeletedAt gorm.DeletedAt
-	Name      string
-	Address   string
-	Password  string
-	IsEditing bool
+	ID                 uint
+	CreatedAt          time.Time
+	UpdatedAt          time.Time
+	DeletedAt          gorm.DeletedAt
+	Address            string
+	Age                uint
+	Gender             string
+	Phone              string
+	Point              uint
+	Member             string
+	TransactionMade    uint
+	MonthlyTransaction uint
+	TotalRedeem        uint
 }
 type Usecase interface {
 	GetAll(ctx context.Context) ([]Domain, error)

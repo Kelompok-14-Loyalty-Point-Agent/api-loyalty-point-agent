@@ -32,7 +32,8 @@ func (usecase *profileUsecase) Update(ctx context.Context, profileDomain *Domain
 		return Domain{}, err
 	}
 
-	if existingProfile.IsEditing {
+	// existingProfile.IsEditing
+	if true {
 		// Jika profil sedang dalam mode edit, lakukan update data
 		profileDomain, err := usecase.profileRepository.Update(ctx, profileDomain, id)
 		if err != nil {
@@ -43,9 +44,9 @@ func (usecase *profileUsecase) Update(ctx context.Context, profileDomain *Domain
 		// Jika profil tidak dalam mode edit, hanya update password
 		profileDomain := &Domain{
 			ID:       existingProfile.ID,
-			Name:     existingProfile.Name,
+			// Name:     existingProfile.Name,
 			Address:  existingProfile.Address,
-			Password: profileDomain.Password,
+			// Password: profileDomain.Password,
 		}
 
 		_, err := usecase.profileRepository.Update(ctx, profileDomain, id)

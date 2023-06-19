@@ -39,6 +39,12 @@ func (cl *ControllerList) RegisterRoutes(e *echo.Echo) {
 	users.POST("/logout", cl.AuthController.Logout)
 	users.GET("/customers", cl.AuthController.GetAllCustomers)
 
+	users.GET("/:id", cl.AuthController.GetByID)
+	users.PUT("/profiles/customer/:id", cl.AuthController.UpdateProfileCustomer)
+	users.PUT("/profiles/admin/:id", cl.AuthController.UpdateProfileAdmin)
+	users.PUT("/profiles/password/:id", cl.AuthController.ChangePassword)
+	users.DELETE("/customers/:id", cl.AuthController.DeleteCustomer)
+
 	transactions := e.Group("/transactions", echojwt.WithConfig(cl.JWTMiddleware))
 	transactions.Use(middlewares.VerifyToken)
 	transactions.GET("", cl.TransactionController.GetAll)

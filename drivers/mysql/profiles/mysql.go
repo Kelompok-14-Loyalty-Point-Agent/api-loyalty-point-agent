@@ -51,9 +51,8 @@ func (pr *profileRepository) Update(ctx context.Context, profileDomain *profiles
 
 	updatedProfile := FromDomain(&profile)
 	// Update data sesuai dengan profileDomain
-	updatedProfile.Name = profileDomain.Name
 	updatedProfile.Address = profileDomain.Address
-	updatedProfile.Password = profileDomain.Password
+	// updatedProfile.Password = profileDomain.Password
 
 	if err := pr.conn.WithContext(ctx).Save(&updatedProfile).Error; err != nil {
 		return profiles.Domain{}, err
