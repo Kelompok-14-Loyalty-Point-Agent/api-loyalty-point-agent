@@ -3,6 +3,7 @@ package routes
 import (
 	"api-loyalty-point-agent/app/middlewares"
 
+	profiles "api-loyalty-point-agent/controllers/profiles"
 	providers "api-loyalty-point-agent/controllers/providers"
 	stock_details "api-loyalty-point-agent/controllers/stock_details"
 	stock_transactions "api-loyalty-point-agent/controllers/stock_transactions"
@@ -24,6 +25,7 @@ type ControllerList struct {
 	StockDetailController      stock_details.StockDetailController
 	StockTransactionController stock_transactions.StockTransactionController
 	TransactionController      transactions.TransactionController
+	ProfileController          profiles.ProfileController
 }
 
 func (cl *ControllerList) RegisterRoutes(e *echo.Echo) {
@@ -79,4 +81,10 @@ func (cl *ControllerList) RegisterRoutes(e *echo.Echo) {
 	// admin.Use(middlewares.VerifyToken)
 	// users.GET("/stock", cl.AuthController.GetAllCustomers)
 
+	profiles := e.Group("/profiles", echojwt.WithConfig(cl.JWTMiddleware))
+	profiles.Use(middlewares.VerifyToken)
+	profiles.GET("", cl.ProfileController.GetAll)
+	profiles.GET("/:id", cl.ProfileController.GetByID)
+	profiles.PUT("/:id", cl.ProfileController.Update)
+	profiles.DELETE("/:id", cl.ProfileController.Delete)
 }

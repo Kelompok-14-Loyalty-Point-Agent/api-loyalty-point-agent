@@ -23,6 +23,9 @@ import (
 	_transactionUseCase "api-loyalty-point-agent/businesses/transactions"
 	_transactionController "api-loyalty-point-agent/controllers/transactions"
 
+	_profileUseCase "api-loyalty-point-agent/businesses/profiles"
+	_profileController "api-loyalty-point-agent/controllers/profiles"
+
 	_dbDriver "api-loyalty-point-agent/drivers/mysql"
 
 	_middleware "api-loyalty-point-agent/app/middlewares"
@@ -105,6 +108,10 @@ func main() {
 	transactionUsecase := _transactionUseCase.NewTransactionUseCase(transactionRepo, &configJWT)
 	transactionCtrl := _transactionController.NewTransactionController(transactionUsecase)
 
+	profileRepo := _driverFactory.NewProfileRepository(db)
+	profileUsecase := _profileUseCase.NewProfileUseCase(profileRepo, &configJWT)
+	profileCtrl := _profileController.NewProfileController(profileUsecase)
+
 	routesInit := _routes.ControllerList{
 		LoggerMiddleware:           configLogger.Init(),
 		JWTMiddleware:              configJWT.Init(),
@@ -114,6 +121,7 @@ func main() {
 		StockDetailController:      *stock_detailCtrl,
 		StockTransactionController: *stock_transactionCtrl,
 		TransactionController:      *transactionCtrl,
+		ProfileController:          *profileCtrl,
 	}
 
 	handleSwagger := echoSwagger.WrapHandler
