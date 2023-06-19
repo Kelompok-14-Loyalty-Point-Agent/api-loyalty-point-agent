@@ -232,8 +232,10 @@ func (ur *userRepository) ChangePassword(ctx context.Context, userDomain *users.
 
 
 	if err != nil {
-		updatedUser.Password = string(newPassword)
+		return users.Domain{}, err
 	}
+
+	updatedUser.Password = string(newPassword)
 
 	if err := ur.conn.WithContext(ctx).Save(&updatedUser).Error; err != nil {
 		return users.Domain{}, err
