@@ -8,6 +8,7 @@ import (
 	"api-loyalty-point-agent/drivers/mysql/stocks"
 	"api-loyalty-point-agent/drivers/mysql/transactions"
 	"api-loyalty-point-agent/drivers/mysql/users"
+	"time"
 
 	"os"
 
@@ -227,18 +228,18 @@ func SeedStockDetail(db *gorm.DB) {
 func SeedStock(db *gorm.DB) error {
 	// Data stocks
 	stocksData := []stocks.Stock{
-		{Type: "data", TotalStock: 45, ProviderID: 1},
-		{Type: "credit", TotalStock: 290000, ProviderID: 1},
-		{Type: "data", TotalStock: 0, ProviderID: 2},
-		{Type: "credit", TotalStock: 0, ProviderID: 2},
-		{Type: "data", TotalStock: 0, ProviderID: 3},
-		{Type: "credit", TotalStock: 0, ProviderID: 3},
-		{Type: "data", TotalStock: 0, ProviderID: 4},
-		{Type: "credit", TotalStock: 0, ProviderID: 4},
-		{Type: "data", TotalStock: 0, ProviderID: 5},
-		{Type: "credit", TotalStock: 0, ProviderID: 5},
-		{Type: "data", TotalStock: 0, ProviderID: 6},
-		{Type: "credit", TotalStock: 0, ProviderID: 6},
+		{Type: "data", TotalStock: 45, ProviderID: 1, LastTopUp: time.Now()},
+		{Type: "credit", TotalStock: 290000, ProviderID: 1, LastTopUp: time.Now()},
+		{Type: "data", TotalStock: 0, ProviderID: 2, LastTopUp: time.Now()},
+		{Type: "credit", TotalStock: 0, ProviderID: 2, LastTopUp: time.Now()},
+		{Type: "data", TotalStock: 0, ProviderID: 3, LastTopUp: time.Now()},
+		{Type: "credit", TotalStock: 0, ProviderID: 3, LastTopUp: time.Now()},
+		{Type: "data", TotalStock: 0, ProviderID: 4, LastTopUp: time.Now()},
+		{Type: "credit", TotalStock: 0, ProviderID: 4, LastTopUp: time.Now()},
+		{Type: "data", TotalStock: 0, ProviderID: 5, LastTopUp: time.Now()},
+		{Type: "credit", TotalStock: 0, ProviderID: 5, LastTopUp: time.Now()},
+		{Type: "data", TotalStock: 0, ProviderID: 6, LastTopUp: time.Now()},
+		{Type: "credit", TotalStock: 0, ProviderID: 6, LastTopUp: time.Now()},
 	}
 
 	var record stocks.Stock
