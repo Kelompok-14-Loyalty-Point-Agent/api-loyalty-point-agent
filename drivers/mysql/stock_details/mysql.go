@@ -96,7 +96,7 @@ func (cr *stock_detailRepository) Delete(ctx context.Context, id string) error {
 
 	deletedStockDetail := FromDomain(&stock_detail)
 
-	if err := cr.conn.WithContext(ctx).Unscoped().Delete(&deletedStockDetail).Error; err != nil {
+	if err = cr.conn.WithContext(ctx).Session(&gorm.Session{AllowGlobalUpdate: true}).Delete(&deletedStockDetail).Error; err != nil {
 		return err
 	}
 

@@ -96,6 +96,9 @@ func (cr *transactionRepository) Create(ctx context.Context, transactionDomain *
 		return transactions.Domain{}, err
 	}
 
+	record.StockID = stock_detail.StockID
+	record.Price = stock_detail.Price
+	
 	// product name
 	record.Product += strings.Title(stock.Type) + " " + provider.Name
 
