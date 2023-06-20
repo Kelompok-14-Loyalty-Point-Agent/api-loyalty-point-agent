@@ -21,6 +21,7 @@ type Domain struct {
 	TransactionMade    uint
 	MonthlyTransaction uint
 	TotalRedeem        uint
+	URL                string
 }
 type Usecase interface {
 	GetAll(ctx context.Context) ([]Domain, error)
