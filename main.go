@@ -65,6 +65,8 @@ func main() {
 
 	_dbDriver.SeedProvider(db)
 
+	_dbDriver.SeedStockDetail(db)
+
 	_dbDriver.SeedStock(db)
 
 	configJWT := _middleware.JWTConfig{

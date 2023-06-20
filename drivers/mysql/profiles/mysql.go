@@ -53,6 +53,7 @@ func (pr *profileRepository) Update(ctx context.Context, profileDomain *profiles
 	// Update data sesuai dengan profileDomain
 	updatedProfile.Address = profileDomain.Address
 	// updatedProfile.Password = profileDomain.Password
+	// updatedProfile.TransactionMade = profileDomain.TransactionMade + 1
 
 	if err := pr.conn.WithContext(ctx).Save(&updatedProfile).Error; err != nil {
 		return profiles.Domain{}, err
