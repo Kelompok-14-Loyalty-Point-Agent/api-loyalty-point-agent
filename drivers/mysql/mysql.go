@@ -87,7 +87,28 @@ func SeedAdmin(db *gorm.DB) {
 	if record.ID != 0 {
 		log.Printf("admin already exists\n")
 	} else {
+		filePath := "./assets/users/user.png"
+
+		file, err := os.Open(filePath)
+		if err != nil {
+			log.Fatalf("failed to create admin: %s\n", err.Error())
+		}
+
+		defer file.Close()
+
+		url, err := aws_driver.UploadFileToBucket("user.png", file)
+		if err != nil {
+			log.Fatalf("failed to create admin: %s\n", err.Error())
+		}
+
+		err = aws_driver.DownloadFileFromBucket(url, "./assets/users/")
+		if err != nil {
+			log.Fatalf("failed to create admin: %s\n", err.Error())
+		}
+
 		var profile profiles.Profile
+
+		profile.URL = url
 
 		result := db.Create(&profile)
 

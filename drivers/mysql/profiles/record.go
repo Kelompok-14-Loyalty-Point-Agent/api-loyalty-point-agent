@@ -22,6 +22,7 @@ type Profile struct {
 	TransactionMade    uint           `json:"count_transaction"`
 	MonthlyTransaction uint           `json:"monthly_transaction"`
 	TotalRedeem        uint           `json:"total_redeem"`
+	URL                string         `json:"url"`
 }
 
 func (record *Profile) ToDomain() profiles.Domain {
@@ -39,6 +40,7 @@ func (record *Profile) ToDomain() profiles.Domain {
 		TransactionMade:    record.TransactionMade,
 		TotalRedeem:        record.TotalRedeem,
 		MonthlyTransaction: record.MonthlyTransaction,
+		
 	}
 }
 

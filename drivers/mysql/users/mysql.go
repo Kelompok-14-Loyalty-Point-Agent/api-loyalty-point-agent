@@ -244,6 +244,24 @@ func (ur *userRepository) ChangePassword(ctx context.Context, userDomain *users.
 	return updatedUser.ToDomain(), nil
 }
 
+func (ur *userRepository) ChangePicture(ctx context.Context, filename string, id string) (string, string, error) {
+	var profile profiles.Profile
+
+	if err := ur.conn.WithContext(ctx).First(&profile, "id = ?", id).Error; err != nil {
+		return "", "", err
+	}
+
+	prev_url := profile.URL
+
+	profile.URL = filename
+
+	if err := ur.conn.WithContext(ctx).Save(&profile).Error; err != nil {
+		return "", "", err
+	}
+
+	return profile.URL, prev_url, nil
+}
+
 func (ur *userRepository) DeleteCustomer(ctx context.Context, id string) error {
 	user, err := ur.GetByID(ctx, id)
 

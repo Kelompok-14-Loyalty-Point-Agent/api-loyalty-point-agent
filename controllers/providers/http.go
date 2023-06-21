@@ -86,6 +86,18 @@ func (cc *ProviderController) DownloadFile(c echo.Context) error {
 	return controllers.NewResponse(c, http.StatusOK, "success", "downloaded data from bucket", "")
 }
 
+func (cc *ProviderController) DeleteFile(c echo.Context) error {
+	name := c.FormValue("filename")
+
+	err := aws_driver.DeleteFileFromBucket(name)
+
+	if err != nil {
+		return controllers.NewResponse(c, http.StatusBadRequest, "failed", err.Error(), "")
+	}
+
+	return controllers.NewResponse(c, http.StatusOK, "success", "downloaded data from bucket", "")
+}
+
 // func (cc *ProviderController) Create(c echo.Context) error {
 // 	name := c.FormValue("name")
 // 	file, err := c.FormFile("picture")

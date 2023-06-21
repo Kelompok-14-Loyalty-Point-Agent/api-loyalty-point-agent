@@ -30,6 +30,7 @@ type ControllerList struct {
 
 func (cl *ControllerList) RegisterRoutes(e *echo.Echo) {
 	e.Use(cl.LoggerMiddleware)
+	
 	auth := e.Group("auth")
 	auth.POST("/register", cl.AuthController.Register)
 	auth.POST("/login", cl.AuthController.Login)
@@ -43,6 +44,7 @@ func (cl *ControllerList) RegisterRoutes(e *echo.Echo) {
 	users.PUT("/profiles/customer/:id", cl.AuthController.UpdateProfileCustomer)
 	users.PUT("/profiles/admin/:id", cl.AuthController.UpdateProfileAdmin)
 	users.PUT("/profiles/password/:id", cl.AuthController.ChangePassword)
+	users.PUT("/profiles/picture/:id", cl.AuthController.ChangePicture)
 	users.DELETE("/customers/:id", cl.AuthController.DeleteCustomer)
 
 	transactions := e.Group("/transactions", echojwt.WithConfig(cl.JWTMiddleware))
@@ -61,6 +63,7 @@ func (cl *ControllerList) RegisterRoutes(e *echo.Echo) {
 	// download image from bucket
 	providers.GET("/image/download", cl.ProviderController.DownloadFile)
 	providers.GET("/:id", cl.ProviderController.GetByID)
+	providers.GET("/delete", cl.ProviderController.DeleteFile)
 
 	stocks := e.Group("/stocks", echojwt.WithConfig(cl.JWTMiddleware))
 	stocks.Use(middlewares.VerifyToken)
@@ -87,10 +90,13 @@ func (cl *ControllerList) RegisterRoutes(e *echo.Echo) {
 	// admin.Use(middlewares.VerifyToken)
 	// users.GET("/stock", cl.AuthController.GetAllCustomers)
 
-	profiles := e.Group("/profiles", echojwt.WithConfig(cl.JWTMiddleware))
-	profiles.Use(middlewares.VerifyToken)
-	profiles.GET("", cl.ProfileController.GetAll)
-	profiles.GET("/:id", cl.ProfileController.GetByID)
-	profiles.PUT("/:id", cl.ProfileController.Update)
-	profiles.DELETE("/:id", cl.ProfileController.Delete)
+	// profiles := e.Group("/profiles", echojwt.WithConfig(cl.JWTMiddleware))
+	// profiles.Use(middlewares.VerifyToken)
+	// profiles.GET("", cl.ProfileController.GetAll)
+	// profiles.GET("/:id", cl.ProfileController.GetByID)
+	// profiles.PUT("/:id", cl.ProfileController.Update)
+	// profiles.DELETE("/:id", cl.ProfileController.Delete)
+
+	images := e.Group("/images")
+	images.Static("/url", "./assets/users")
 }
