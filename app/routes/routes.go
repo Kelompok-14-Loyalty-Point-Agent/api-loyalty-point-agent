@@ -90,14 +90,13 @@ func (cl *ControllerList) RegisterRoutes(e *echo.Echo) {
 	// admin.Use(middlewares.VerifyToken)
 	// users.GET("/stock", cl.AuthController.GetAllCustomers)
 
-	profiles := e.Group("/profiles", echojwt.WithConfig(cl.JWTMiddleware))
-	profiles.Use(middlewares.VerifyToken)
-	profiles.GET("", cl.ProfileController.GetAll)
-	profiles.GET("/:id", cl.ProfileController.GetByID)
-	profiles.PUT("/:id", cl.ProfileController.Update)
-	profiles.DELETE("/:id", cl.ProfileController.Delete)
+	// profiles := e.Group("/profiles", echojwt.WithConfig(cl.JWTMiddleware))
+	// profiles.Use(middlewares.VerifyToken)
+	// profiles.GET("", cl.ProfileController.GetAll)
+	// profiles.GET("/:id", cl.ProfileController.GetByID)
+	// profiles.PUT("/:id", cl.ProfileController.Update)
+	// profiles.DELETE("/:id", cl.ProfileController.Delete)
 
 	images := e.Group("/images")
-	images.File("/user", "./assets/users/")
-	images.GET("/:url", cl.AuthController.ProvidePicture)
+	images.Static("/url", "./assets/users")
 }
