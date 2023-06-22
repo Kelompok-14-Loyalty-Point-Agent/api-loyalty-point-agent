@@ -104,6 +104,43 @@ func (cr *transactionRepository) Create(ctx context.Context, transactionDomain *
 	// point
 	record.Point = uint(stock_detail.Price) / 1000
 
+	// Mengambil data profil berdasarkan record.UserID
+	var profile profiles.Profile
+	if err := cr.conn.WithContext(ctx).First(&profile, "id = ?", record.UserID).Error; err != nil {
+		return transactions.Domain{}, err
+	}
+
+	// increment total transaksi pada profil
+	profile.TransactionMade += 1
+
+	// masukkan point ke profile
+	profile.Point = record.Point
+
+	// hitung transaksi per bulan pada profil
+	var records []Transaction
+
+	if err := cr.conn.WithContext(ctx).Preload("StockDetails").
+		Where("user_id = ? AND MONTH(created_at) = ?", record.UserID, time.Now().Month()).
+		Find(&records).Error; err != nil {
+		return transactions.Domain{}, err
+	}
+
+	profile.MonthlyTransaction = uint(len(records))
+
+	// update member berdasarkan jumlah transaksi yang dibuat
+	if profile.TransactionMade >= 5 && profile.TransactionMade <= 10 {
+		profile.Member = "silver"
+	} else if profile.TransactionMade >= 11 && profile.TransactionMade <= 15 {
+		profile.Member = "gold"
+	} else if profile.TransactionMade >= 16 {
+		profile.Member = "platinum"
+	}
+
+	// Simpan perubahan pada profil
+	if err := cr.conn.WithContext(ctx).Save(&profile).Error; err != nil {
+		return transactions.Domain{}, err
+	}
+
 	if err := cr.conn.WithContext(ctx).Save(&stock_detail).Error; err != nil {
 		return transactions.Domain{}, err
 	}
@@ -115,46 +152,6 @@ func (cr *transactionRepository) Create(ctx context.Context, transactionDomain *
 	if err := cr.conn.WithContext(ctx).Save(&record).Error; err != nil {
 		return transactions.Domain{}, err
 	}
-
-	// Mengambil data profil berdasarkan record.UserID
-	var profile profiles.Profile
-	if err := cr.conn.WithContext(ctx).First(&profile, "id = ?", record.UserID).Error; err != nil {
-		return transactions.Domain{}, err
-	}
-
-	// Increment total transaksi pada profil
-	profile.TransactionMade += 1
-
-	// // Dapatkan bulan dan tahun saat ini
-	// currentMonth := time.Now().Month()
-	// currentYear := time.Now().Year()
-
-	// // Lakukan query untuk menghitung total transaksi bulan ini
-	// var totalTransactionsThisMonth int64
-	// if err := cr.conn.WithContext(ctx).Model(&transactions.Domain{}).
-	// 	Joins("JOIN profiles ON transactions.user_id = profiles.id").
-	// 	Where("profiles.id = ? AND MONTH(transactions.created_at) = ? AND YEAR(transactions.created_at) = ?", record.UserID, currentMonth, currentYear).
-	// 	Count(&totalTransactionsThisMonth).Error; err != nil {
-	// 	return transactions.Domain{}, err
-	// }
-
-	// // Perbarui nilai TotalTransactionsThisMonth pada profil
-	// profile.MonthlyTransaction = uint(totalTransactionsThisMonth)
-
-	// Simpan perubahan pada profil
-	if err := cr.conn.WithContext(ctx).Save(&profile).Error; err != nil {
-		return transactions.Domain{}, err
-	}
-
-	var records []Transaction
-
-	if err := cr.conn.WithContext(ctx).Preload("StockDetails").
-		Where("user_id = ? AND MONTH(created_at) = ?", record.UserID, time.Now().Month()).
-		Find(&records).Error; err != nil {
-		return transactions.Domain{}, err
-	}
-
-	profile.MonthlyTransaction = uint(len(records))
 
 	return record.ToDomain(), nil
 }
