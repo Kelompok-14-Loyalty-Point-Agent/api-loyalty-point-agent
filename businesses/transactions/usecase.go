@@ -33,14 +33,11 @@ func (usecase *transactionUsecase) GetAllByUserID(ctx context.Context, userid st
 	return usecase.transactionRepository.GetAllByUserID(ctx, userid)
 }
 
+func (usecase *transactionUsecase) GetAllByUserIDSorted(ctx context.Context, userid string) ([]Domain, error) {
+	return usecase.transactionRepository.GetAllByUserIDSorted(ctx, userid)
+}
+
 func (usecase *transactionUsecase) UpdatePoint(ctx context.Context, transactionDomain *Domain, id string) (Domain, error) {
 	return usecase.transactionRepository.UpdatePoint(ctx, transactionDomain, id)
 }
 
-// func (usecase *transactionUsecase) GetTotalTransactionMade(ctx context.Context, userid string) (Domain, error) {
-// 	return usecase.transactionRepository.GetTotalTransactionMade(ctx, userid)
-// }
-
-// func (usecase *transactionUsecase) GetTotalTransactionMade(ctx context.Context) (map[string]int, error) {
-// 	return usecase.transactionRepository.GetTotalTransactionMade(ctx, totalTransactionMap, id)
-// }

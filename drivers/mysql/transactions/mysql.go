@@ -175,6 +175,22 @@ func (cr *transactionRepository) GetAllByUserID(ctx context.Context, userid stri
 	return transactions, nil
 }
 
+func (cr *transactionRepository) GetAllByUserIDSorted(ctx context.Context, userid string) ([]transactions.Domain, error) {
+	var records []Transaction
+
+	if err := cr.conn.WithContext(ctx).Preload("StockDetails").Order("created_at DESC").Find(&records, `user_id = ?`, userid).Error; err != nil {
+		return nil, err
+	}
+
+	transactions := []transactions.Domain{}
+
+	for _, transaction := range records {
+		transactions = append(transactions, transaction.ToDomain())
+	}
+
+	return transactions, nil
+}
+
 func (cr *transactionRepository) UpdatePoint(ctx context.Context, transactionDomain *transactions.Domain, id string) (transactions.Domain, error) {
 	transaction, err := cr.GetByID(ctx, id)
 
