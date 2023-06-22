@@ -10,6 +10,7 @@ import (
 	stocks "api-loyalty-point-agent/controllers/stocks"
 	transactions "api-loyalty-point-agent/controllers/transactions"
 	users "api-loyalty-point-agent/controllers/users"
+	voucher "api-loyalty-point-agent/controllers/voucher"
 
 	echojwt "github.com/labstack/echo-jwt/v4"
 
@@ -26,11 +27,12 @@ type ControllerList struct {
 	StockTransactionController stock_transactions.StockTransactionController
 	TransactionController      transactions.TransactionController
 	ProfileController          profiles.ProfileController
+	VoucherController          voucher.VoucherController
 }
 
 func (cl *ControllerList) RegisterRoutes(e *echo.Echo) {
 	e.Use(cl.LoggerMiddleware)
-	
+
 	auth := e.Group("auth")
 	auth.POST("/register", cl.AuthController.Register)
 	auth.POST("/login", cl.AuthController.Login)
@@ -47,6 +49,11 @@ func (cl *ControllerList) RegisterRoutes(e *echo.Echo) {
 	users.PUT("/profiles/password/:id", cl.AuthController.ChangePassword)
 	users.PUT("/profiles/picture/:id", cl.AuthController.ChangePicture)
 	users.DELETE("/customers/:id", cl.AuthController.DeleteCustomer)
+
+	voucher := e.Group("/voucher", echojwt.WithConfig(cl.JWTMiddleware))
+	voucher.Use(middlewares.VerifyToken)
+	voucher.GET("", cl.VoucherController.GetAll)
+	voucher.POST("", cl.VoucherController.RedeemVoucher)
 
 	transactions := e.Group("/transactions", echojwt.WithConfig(cl.JWTMiddleware))
 	transactions.Use(middlewares.VerifyToken)

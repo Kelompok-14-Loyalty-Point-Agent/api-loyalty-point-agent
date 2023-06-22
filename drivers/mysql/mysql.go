@@ -8,6 +8,7 @@ import (
 	"api-loyalty-point-agent/drivers/mysql/stocks"
 	"api-loyalty-point-agent/drivers/mysql/transactions"
 	"api-loyalty-point-agent/drivers/mysql/users"
+	"api-loyalty-point-agent/drivers/mysql/voucher"
 	"time"
 
 	"os"
@@ -55,7 +56,7 @@ func (config *DBConfig) InitDB() *gorm.DB {
 
 // perform migration
 func MigrateDB(db *gorm.DB) {
-	err := db.AutoMigrate(&profiles.Profile{}, &users.User{}, &providers.Provider{}, &stocks.Stock{}, &stock_details.StockDetail{}, &stock_transactions.StockTransaction{}, &transactions.Transaction{})
+	err := db.AutoMigrate(&profiles.Profile{}, &users.User{}, &providers.Provider{}, &stocks.Stock{}, &stock_details.StockDetail{}, &stock_transactions.StockTransaction{}, &transactions.Transaction{}, &voucher.Voucher{})
 
 	if err != nil {
 		log.Fatalf("failed to perform database migration: %s\n", err)
