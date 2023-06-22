@@ -4,7 +4,9 @@ import (
 	"api-loyalty-point-agent/businesses/transactions"
 	"errors"
 	"strings"
+	"time"
 
+	"api-loyalty-point-agent/drivers/mysql/profiles"
 	"api-loyalty-point-agent/drivers/mysql/providers"
 	"api-loyalty-point-agent/drivers/mysql/stock_details"
 	"api-loyalty-point-agent/drivers/mysql/stocks"
@@ -114,6 +116,46 @@ func (cr *transactionRepository) Create(ctx context.Context, transactionDomain *
 		return transactions.Domain{}, err
 	}
 
+	// Mengambil data profil berdasarkan record.UserID
+	var profile profiles.Profile
+	if err := cr.conn.WithContext(ctx).First(&profile, "id = ?", record.UserID).Error; err != nil {
+		return transactions.Domain{}, err
+	}
+
+	// Increment total transaksi pada profil
+	profile.TransactionMade += 1
+
+	// // Dapatkan bulan dan tahun saat ini
+	// currentMonth := time.Now().Month()
+	// currentYear := time.Now().Year()
+
+	// // Lakukan query untuk menghitung total transaksi bulan ini
+	// var totalTransactionsThisMonth int64
+	// if err := cr.conn.WithContext(ctx).Model(&transactions.Domain{}).
+	// 	Joins("JOIN profiles ON transactions.user_id = profiles.id").
+	// 	Where("profiles.id = ? AND MONTH(transactions.created_at) = ? AND YEAR(transactions.created_at) = ?", record.UserID, currentMonth, currentYear).
+	// 	Count(&totalTransactionsThisMonth).Error; err != nil {
+	// 	return transactions.Domain{}, err
+	// }
+
+	// // Perbarui nilai TotalTransactionsThisMonth pada profil
+	// profile.MonthlyTransaction = uint(totalTransactionsThisMonth)
+
+	// Simpan perubahan pada profil
+	if err := cr.conn.WithContext(ctx).Save(&profile).Error; err != nil {
+		return transactions.Domain{}, err
+	}
+
+	var records []Transaction
+
+	if err := cr.conn.WithContext(ctx).Preload("StockDetails").
+		Where("user_id = ? AND MONTH(created_at) = ?", record.UserID, time.Now().Month()).
+		Find(&records).Error; err != nil {
+		return transactions.Domain{}, err
+	}
+
+	profile.MonthlyTransaction = uint(len(records))
+
 	return record.ToDomain(), nil
 }
 
@@ -158,3 +200,15 @@ func (cr *transactionRepository) UpdatePoint(ctx context.Context, transactionDom
 
 	return updatedTransaction.ToDomain(), nil
 }
+
+// func (cr *transactionRepository) GetTotalTransactionMade(ctx context.Context, userid string) (transactions.Domain, error) {
+// 	var count int64
+// 	err := cr.conn.WithContext(ctx).Model(&Transaction{}).Where("user_id = ?", userid).Count(&count).Error
+// 	for _, transaction := range records {
+// 		transactions = append(transactions, transaction.ToDomain())
+// 	}
+// 	if err != nil {
+// 		return 0, err
+// 	}
+// 	return transactions, nil
+// }

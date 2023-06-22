@@ -2,9 +2,9 @@ package users
 
 import (
 	"api-loyalty-point-agent/businesses/users"
+	"api-loyalty-point-agent/drivers/mysql/profiles"
 	"api-loyalty-point-agent/drivers/mysql/stock_transactions"
 	"api-loyalty-point-agent/drivers/mysql/transactions"
-	"api-loyalty-point-agent/drivers/mysql/profiles"
 	"time"
 
 	"gorm.io/gorm"
@@ -36,7 +36,7 @@ func (rec *User) ToDomain() users.Domain {
 		Password:  rec.Password,
 		Role:      rec.Role,
 		ProfileID: rec.ProfileID,
-		Profile: rec.Profile.ToDomain(),
+		Profile:   rec.Profile.ToDomain(),
 	}
 }
 
@@ -51,6 +51,6 @@ func FromDomain(domain *users.Domain) *User {
 		Password:  domain.Password,
 		Role:      domain.Role,
 		ProfileID: domain.ProfileID,
-		Profile: *profiles.FromDomain(&domain.Profile),
+		Profile:   *profiles.FromDomain(&domain.Profile),
 	}
 }
