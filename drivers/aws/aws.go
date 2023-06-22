@@ -37,16 +37,17 @@ func UploadFileToBucket(filename string, src multipart.File) (string, error) {
 
 	client := s3.NewFromConfig(cfg)
 	uploader := manager.NewUploader(client)
+	filename = utils.GenerateUniqueFileName(filename)
 
-	result, err := uploader.Upload(context.TODO(), &s3.PutObjectInput{
+	_, err = uploader.Upload(context.TODO(), &s3.PutObjectInput{
 		Bucket: aws.String(bucket),
-		Key:    aws.String(utils.GenerateUniqueFileName(filename)),
+		Key:    aws.String(filename),
 		Body:   src,
 	})
 
 	log.Println("upload file to bucket")
 
-	return result.Location, nil
+	return filename, nil
 }
 
 func ReadAllFilesFromBucket() ([]string, error) {
@@ -113,6 +114,32 @@ func DownloadFileFromBucket(filename string, dst string) error {
 	}
 
 	log.Println("downloaded", file.Name(), numBytes, "bytes")
+
+	return nil
+}
+
+func DeleteFileFromBucket(filename string) error {
+	LoadEnv()
+
+	cfg, err := config.LoadDefaultConfig(context.TODO())
+
+	if err != nil {
+		log.Fatalf("error: %v\n", err)
+		return err
+	}
+
+	client := s3.NewFromConfig(cfg)
+	_, err = client.DeleteObject(context.TODO(), &s3.DeleteObjectInput{
+		Bucket: aws.String(bucket),
+		Key:    aws.String(filename),
+	})
+
+	if err != nil {
+		log.Fatalf("error: %v\n", err)
+		return err
+	}
+
+	log.Println("deleted file", filename, "from bucket")
 
 	return nil
 }

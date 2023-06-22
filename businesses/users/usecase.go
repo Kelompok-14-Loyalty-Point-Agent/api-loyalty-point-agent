@@ -57,6 +57,10 @@ func (usecase *userUsecase) ChangePassword(ctx context.Context, userDomain *Doma
 	return usecase.userRepository.ChangePassword(ctx, userDomain, id)
 }
 
+func (usecase *userUsecase) ChangePicture(ctx context.Context, filename string, id string) (string, string, error) {
+	return usecase.userRepository.ChangePicture(ctx, filename, id)
+}
+
 func (usecase *userUsecase) DeleteCustomer(ctx context.Context, id string) (error) {
 	return usecase.userRepository.DeleteCustomer(ctx, id)
 }

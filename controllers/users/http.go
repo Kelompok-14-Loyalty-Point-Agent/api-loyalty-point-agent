@@ -6,7 +6,9 @@ import (
 	"api-loyalty-point-agent/controllers"
 	"api-loyalty-point-agent/controllers/users/request"
 	"api-loyalty-point-agent/controllers/users/response"
+	"api-loyalty-point-agent/drivers/aws"
 	"net/http"
+	"os"
 
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/labstack/echo/v4"
@@ -219,6 +221,69 @@ func (ctrl *AuthController) ChangePassword(c echo.Context) error {
 	return controllers.NewResponse(c, http.StatusOK, "success", "password changed", response.FromDomain(user))
 }
 
+func (ctrl *AuthController) ChangePicture(c echo.Context) error {
+	var userID string = c.Param("id")
+	file, err := c.FormFile("file")
+
+	if err != nil {
+		return controllers.NewResponse(c, http.StatusBadRequest, "failed", "failed to upload file", "")
+	}
+
+	src, err := file.Open()
+	if err != nil {
+		return err
+	}
+	defer src.Close()
+
+	ctx := c.Request().Context()
+
+	url, err := aws_driver.UploadFileToBucket("user.png", src)
+
+	_, prev_url, err := ctrl.authUseCase.ChangePicture(ctx, url, userID)
+
+	if err != nil {
+		err = aws_driver.DeleteFileFromBucket(url)
+		return controllers.NewResponse(c, http.StatusBadRequest, "failed", err.Error(), "")
+	}
+
+	err = aws_driver.DownloadFileFromBucket(url, "./assets/users/")
+
+	if err != nil {
+		return controllers.NewResponse(c, http.StatusBadRequest, "failed", err.Error(), "")
+	}
+
+	if len(prev_url) != 0 {
+		prev_url = "./assets/users/" + prev_url
+
+		err = os.Remove(prev_url)
+
+		if err != nil {
+			return controllers.NewResponse(c, http.StatusBadRequest, "failed", err.Error(), "")
+		}
+
+		err = aws_driver.DeleteFileFromBucket(prev_url)
+		if err != nil {
+			return controllers.NewResponse(c, http.StatusBadRequest, "failed", err.Error(), "")
+		}
+	}
+
+	return controllers.NewResponse(c, http.StatusOK, "success", "change picture successfully", url)
+}
+
+func (ctrl *AuthController) ProvidePicture(c echo.Context) error {
+	var url string = c.Param("url")
+
+	file, err := os.Open("./assets/users/" + url)
+
+		if err != nil {
+			return controllers.NewResponse(c, http.StatusBadRequest, "failed", err.Error(), "")
+		}
+		
+	defer file.Close()
+	
+	return controllers.NewResponse(c, http.StatusOK, "success", "providing picture", " ")
+}
+
 func (ctrl *AuthController) DeleteCustomer(c echo.Context) error {
 	var userID string = c.Param("id")
 
@@ -232,4 +297,3 @@ func (ctrl *AuthController) DeleteCustomer(c echo.Context) error {
 
 	return controllers.NewResponse(c, http.StatusOK, "success", "customer deleted", "")
 }
-

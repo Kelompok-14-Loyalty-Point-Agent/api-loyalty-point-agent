@@ -28,7 +28,8 @@ type Usecase interface {
 	UpdateProfileCustomer(ctx context.Context, userDomain *Domain, id string) (Domain, error)
 	UpdateProfileAdmin(ctx context.Context, userDomain *Domain, id string) (Domain, error)
 	ChangePassword(ctx context.Context, userDomain *Domain, id string) (Domain, error)
-	DeleteCustomer(ctx context.Context, id string) error
+	ChangePicture(ctx context.Context, filename string, id string) (string, string, error)
+	DeleteCustomer(ctx context.Context, id string) (error)
 }
 type Repository interface {
 	GetAllCustomers(ctx context.Context) ([]Domain, error)
@@ -38,5 +39,6 @@ type Repository interface {
 	UpdateProfileCustomer(ctx context.Context, userDomain *Domain, id string) (Domain, error)
 	UpdateProfileAdmin(ctx context.Context, userDomain *Domain, id string) (Domain, error)
 	ChangePassword(ctx context.Context, userDomain *Domain, id string) (Domain, error)
-	DeleteCustomer(ctx context.Context, id string) error
+	ChangePicture(ctx context.Context, filename string, id string) (string, string, error)
+	DeleteCustomer(ctx context.Context, id string) (error)
 }

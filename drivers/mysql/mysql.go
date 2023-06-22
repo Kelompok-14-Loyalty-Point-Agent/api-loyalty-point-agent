@@ -1,13 +1,14 @@
 package mysql_driver
 
 import (
+	"api-loyalty-point-agent/drivers/mysql/profiles"
 	"api-loyalty-point-agent/drivers/mysql/providers"
 	"api-loyalty-point-agent/drivers/mysql/stock_details"
 	"api-loyalty-point-agent/drivers/mysql/stock_transactions"
 	"api-loyalty-point-agent/drivers/mysql/stocks"
 	"api-loyalty-point-agent/drivers/mysql/transactions"
 	"api-loyalty-point-agent/drivers/mysql/users"
-	"api-loyalty-point-agent/drivers/mysql/profiles"
+	"time"
 
 	"os"
 
@@ -63,12 +64,12 @@ func MigrateDB(db *gorm.DB) {
 
 func SeedAdmin(db *gorm.DB) {
 	var admin = users.User{
-		Name:     "admin",
-		Password: "admin123",
-		Email:    "admin@example.com",
-		Role:     "admin",
+		Name:      "admin",
+		Password:  "admin123",
+		Email:     "admin@example.com",
+		Role:      "admin",
 		ProfileID: 0,
-		Profile: profiles.Profile{},
+		Profile:   profiles.Profile{},
 	}
 
 	password, err := bcrypt.GenerateFromPassword([]byte(admin.Password), bcrypt.DefaultCost)
@@ -86,7 +87,28 @@ func SeedAdmin(db *gorm.DB) {
 	if record.ID != 0 {
 		log.Printf("admin already exists\n")
 	} else {
+		filePath := "./assets/users/user.png"
+
+		file, err := os.Open(filePath)
+		if err != nil {
+			log.Fatalf("failed to create admin: %s\n", err.Error())
+		}
+
+		defer file.Close()
+
+		url, err := aws_driver.UploadFileToBucket("user.png", file)
+		if err != nil {
+			log.Fatalf("failed to create admin: %s\n", err.Error())
+		}
+
+		err = aws_driver.DownloadFileFromBucket(url, "./assets/users/")
+		if err != nil {
+			log.Fatalf("failed to create admin: %s\n", err.Error())
+		}
+
 		var profile profiles.Profile
+
+		profile.URL = url
 
 		result := db.Create(&profile)
 
@@ -108,343 +130,154 @@ func SeedAdmin(db *gorm.DB) {
 }
 
 func SeedProvider(db *gorm.DB) {
-	var provider1 = providers.Provider{
-		Name: "Telkomsel",
-		URL:  "",
+	providersData := []providers.Provider{
+		{Name: "Telkomsel", URL: ""},
+		{Name: "XL", URL: ""},
+		{Name: "Smartfren", URL: ""},
+		{Name: "Indosat Ooredoo", URL: ""},
+		{Name: "Axis", URL: ""},
+		{Name: "3", URL: ""},
 	}
 
-	var provider2 = providers.Provider{
-		Name: "XL",
-		URL:  "",
-	}
-
-	var provider3 = providers.Provider{
-		Name: "Smartfren",
-		URL:  "",
-	}
-
-	var provider4 = providers.Provider{
-		Name: "Indosat Ooredoo",
-		URL:  "",
-	}
-
-	var provider5 = providers.Provider{
-		Name: "Axis",
-		URL:  "",
-	}
-
-	var provider6 = providers.Provider{
-		Name: "3",
-		URL:  "",
+	providerImages := []string{
+		"./assets/providers/tsel.png",
+		"./assets/providers/xl.png",
+		"./assets/providers/smartfren.png",
+		"./assets/providers/indosat.png",
+		"./assets/providers/axis.png",
+		"./assets/providers/3.png",
 	}
 
 	var record providers.Provider
-
-	_ = db.First(&record, "name = ?", provider1.Name)
+	_ = db.First(&record)
 
 	if record.ID != 0 {
 		log.Printf("provider already exists\n")
 	} else {
-		// tsel
-		filePath := "./assets/providers/tsel.png"
+		for i, provider := range providersData {
+			filePath := providerImages[i]
 
-		file, err := os.Open(filePath)
-		if err != nil {
-			log.Fatalf("failed to create provider: %s\n", err.Error())
+			file, err := os.Open(filePath)
+			if err != nil {
+				log.Fatalf("failed to create provider: %s\n", err.Error())
+			}
+			defer file.Close()
+
+			url, err := aws_driver.UploadFileToBucket(fmt.Sprintf("%s.png", provider.Name), file)
+			if err != nil {
+				log.Fatalf("failed to create provider: %s\n", err.Error())
+			}
+
+			provider.URL = url
+
+			result := db.Create(&provider)
+
+			if result.Error != nil {
+				log.Fatalf("failed to create provider: %s\n", err.Error())
+				break
+			}
 		}
 
-		defer file.Close()
-
-		url, err := aws_driver.UploadFileToBucket("tsel.png", file)
-		if err != nil {
-			log.Fatalf("failed to create provider: %s\n", err.Error())
-		}
-
-		provider1.URL = url
-
-		result := db.Create(&provider1)
-
-		if result.Error != nil {
-			log.Fatalf("failed to create provider: %s\n", err.Error())
-		}
-
-		// xl
-		filePath = "./assets/providers/xl.png"
-
-		file, err = os.Open(filePath)
-		if err != nil {
-			log.Fatalf("failed to create provider: %s\n", err.Error())
-		}
-		defer file.Close()
-
-		url, err = aws_driver.UploadFileToBucket("xl.png", file)
-		if err != nil {
-			log.Fatalf("failed to create provider: %s\n", err.Error())
-		}
-
-		provider2.URL = url
-
-		result = db.Create(&provider2)
-
-		if result.Error != nil {
-			log.Fatalf("failed to create provider: %s\n", err.Error())
-		}
-
-		// smartfren
-		filePath = "./assets/providers/smartfren.png"
-
-		file, err = os.Open(filePath)
-		if err != nil {
-			log.Fatalf("failed to create provider: %s\n", err.Error())
-		}
-		defer file.Close()
-
-		url, err = aws_driver.UploadFileToBucket("smartfren.png", file)
-		if err != nil {
-			log.Fatalf("failed to create provider: %s\n", err.Error())
-		}
-
-		provider3.URL = url
-
-		result = db.Create(&provider3)
-
-		if result.Error != nil {
-			log.Fatalf("failed to create provider: %s\n", err.Error())
-		}
-
-		// indosat ooredoo
-		filePath = "./assets/providers/indosat.png"
-
-		file, err = os.Open(filePath)
-		if err != nil {
-			log.Fatalf("failed to create provider: %s\n", err.Error())
-		}
-		defer file.Close()
-
-		url, err = aws_driver.UploadFileToBucket("indosat.png", file)
-		if err != nil {
-			log.Fatalf("failed to create provider: %s\n", err.Error())
-		}
-
-		provider4.URL = url
-
-		result = db.Create(&provider4)
-
-		if result.Error != nil {
-			log.Fatalf("failed to create provider: %s\n", err.Error())
-		}
-
-		// axis
-		filePath = "./assets/providers/axis.png"
-
-		file, err = os.Open(filePath)
-		if err != nil {
-			log.Fatalf("failed to create provider: %s\n", err.Error())
-		}
-		defer file.Close()
-
-		url, err = aws_driver.UploadFileToBucket("axis.png", file)
-		if err != nil {
-			log.Fatalf("failed to create provider: %s\n", err.Error())
-		}
-
-		provider5.URL = url
-
-		result = db.Create(&provider5)
-
-		if result.Error != nil {
-			log.Fatalf("failed to create provider: %s\n", err.Error())
-		}
-
-		// 3
-		filePath = "./assets/providers/3.png"
-
-		file, err = os.Open(filePath)
-		if err != nil {
-			log.Fatalf("failed to create provider: %s\n", err.Error())
-		}
-		defer file.Close()
-
-		url, err = aws_driver.UploadFileToBucket("3.png", file)
-		if err != nil {
-			log.Fatalf("failed to create provider: %s\n", err.Error())
-		}
-
-		provider6.URL = url
-
-		result = db.Create(&provider6)
-
-		if result.Error != nil {
-			log.Fatalf("failed to create provider: %s\n", err.Error())
-		}
-
-		log.Println("6 providers created")
+		log.Printf("%d providers created\n", len(providersData))
 	}
-
 }
 
-func SeedStock(db *gorm.DB) {
-	// tsel stock
-	var stock1 = stocks.Stock{
-		Type:       "data",
-		TotalStock: 0,
-		ProviderID: 1,
-		// LastTopUp:  time.Now(),
+func SeedStockDetail(db *gorm.DB) {
+	// Data stock details
+	stockDetailData := []stock_details.StockDetail{
+		{StockID: 1, Stock: 10000, Price: 12500, Quantity: 100},
+		{StockID: 2, Stock: 20000, Price: 22500, Quantity: 100},
+		{StockID: 3, Stock: 25000, Price: 27500, Quantity: 95},
+		{StockID: 2, Stock: 30000, Price: 32500, Quantity: 98},
+		{StockID: 2, Stock: 40000, Price: 42500, Quantity: 50},
+		{StockID: 2, Stock: 50000, Price: 52500, Quantity: 19},
+		{StockID: 2, Stock: 60000, Price: 62500, Quantity: 100},
+		{StockID: 4, Stock: 10000, Price: 14500, Quantity: 100},
+		{StockID: 6, Stock: 10000, Price: 12500, Quantity: 100},
+		{StockID: 4, Stock: 20000, Price: 22500, Quantity: 100},
+		{StockID: 4, Stock: 25000, Price: 27500, Quantity: 100},
+		{StockID: 4, Stock: 50000, Price: 52500, Quantity: 100},
+		{StockID: 4, Stock: 100000, Price: 101000, Quantity: 200},
+		{StockID: 6, Stock: 20000, Price: 22500, Quantity: 100},
+		{StockID: 6, Stock: 25000, Price: 27500, Quantity: 100},
+		{StockID: 6, Stock: 50000, Price: 52500, Quantity: 100},
+		{StockID: 8, Stock: 10000, Price: 14500, Quantity: 100},
+		{StockID: 10, Stock: 10000, Price: 12500, Quantity: 100},
+		{StockID: 1, Stock: 10, Price: 47000, Quantity: 100},
+		{StockID: 1, Stock: 20, Price: 79000, Quantity: 100},
+		{StockID: 3, Stock: 5, Price: 35000, Quantity: 100},
+		{StockID: 5, Stock: 5, Price: 40000, Quantity: 100},
+		{StockID: 7, Stock: 5, Price: 35000, Quantity: 100},
+		{StockID: 3, Stock: 15, Price: 60000, Quantity: 100},
+		{StockID: 5, Stock: 15, Price: 70000, Quantity: 100},
+		{StockID: 7, Stock: 15, Price: 60000, Quantity: 100},
+		{StockID: 3, Stock: 10, Price: 49500, Quantity: 100},
+		{StockID: 1, Stock: 25, Price: 100000, Quantity: 100},
+		{StockID: 9, Stock: 5, Price: 45000, Quantity: 100},
+		{StockID: 9, Stock: 10, Price: 50000, Quantity: 100},
 	}
 
-	var stock2 = stocks.Stock{
-		Type:       "credit",
-		TotalStock: 0,
-		ProviderID: 1,
-		// LastTopUp:  time.Now(),
-	}
+	err := db.Transaction(func(tx *gorm.DB) error {
+		// Panggil fungsi SeedStock di dalam transaksi
+		if err := SeedStock(tx); err != nil {
+			return err
+		}
 
-	// xl stock
-	var stock3 = stocks.Stock{
-		Type:       "data",
-		TotalStock: 0,
-		ProviderID: 2,
-		// LastTopUp:  time.Now(),
-	}
+		var record stock_details.StockDetail
+		_ = tx.First(&record)
 
-	var stock4 = stocks.Stock{
-		Type:       "credit",
-		TotalStock: 0,
-		ProviderID: 2,
-		// LastTopUp:  time.Now(),
-	}
+		if record.ID != 0 {
+			log.Printf("stock detail already exists\n")
+		} else {
+			for _, stock := range stockDetailData {
+				result := tx.Create(&stock)
+				if result.Error != nil {
+					return result.Error
+				}
+			}
+			log.Printf("%d stock detail created\n", len(stockDetailData))
+		}
 
-	// smartfren stock
-	var stock5 = stocks.Stock{
-		Type:       "data",
-		TotalStock: 0,
-		ProviderID: 3,
-	}
+		return nil
+	})
 
-	var stock6 = stocks.Stock{
-		Type:       "credit",
-		TotalStock: 0,
-		ProviderID: 3,
+	if err != nil {
+		log.Fatalf("failed to seed stock detail: %s\n", err.Error())
 	}
+}
 
-	// indosat stock
-	var stock7 = stocks.Stock{
-		Type:       "data",
-		TotalStock: 0,
-		ProviderID: 4,
-	}
-
-	var stock8 = stocks.Stock{
-		Type:       "credit",
-		TotalStock: 0,
-		ProviderID: 4,
-	}
-
-	// axis stock
-	var stock9 = stocks.Stock{
-		Type:       "data",
-		TotalStock: 0,
-		ProviderID: 5,
-	}
-
-	var stock10 = stocks.Stock{
-		Type:       "credit",
-		TotalStock: 0,
-		ProviderID: 5,
-	}
-
-	// 3 stock
-	var stock11 = stocks.Stock{
-		Type:       "data",
-		TotalStock: 0,
-		ProviderID: 6,
-	}
-
-	var stock12 = stocks.Stock{
-		Type:       "credit",
-		TotalStock: 0,
-		ProviderID: 6,
+func SeedStock(db *gorm.DB) error {
+	// Data stocks
+	stocksData := []stocks.Stock{
+		{Type: "data", TotalStock: 45, ProviderID: 1, LastTopUp: time.Now()},
+		{Type: "credit", TotalStock: 290000, ProviderID: 1, LastTopUp: time.Now()},
+		{Type: "data", TotalStock: 0, ProviderID: 2, LastTopUp: time.Now()},
+		{Type: "credit", TotalStock: 0, ProviderID: 2, LastTopUp: time.Now()},
+		{Type: "data", TotalStock: 0, ProviderID: 3, LastTopUp: time.Now()},
+		{Type: "credit", TotalStock: 0, ProviderID: 3, LastTopUp: time.Now()},
+		{Type: "data", TotalStock: 0, ProviderID: 4, LastTopUp: time.Now()},
+		{Type: "credit", TotalStock: 0, ProviderID: 4, LastTopUp: time.Now()},
+		{Type: "data", TotalStock: 0, ProviderID: 5, LastTopUp: time.Now()},
+		{Type: "credit", TotalStock: 0, ProviderID: 5, LastTopUp: time.Now()},
+		{Type: "data", TotalStock: 0, ProviderID: 6, LastTopUp: time.Now()},
+		{Type: "credit", TotalStock: 0, ProviderID: 6, LastTopUp: time.Now()},
 	}
 
 	var record stocks.Stock
-
 	_ = db.First(&record)
 
 	if record.ID != 0 {
 		log.Printf("stock already exists\n")
 	} else {
-		result := db.Create(&stock1)
-
-		if result.Error != nil {
-			log.Fatalf("failed to create stock1: %s\n", result.Error)
+		for _, stock := range stocksData {
+			result := db.Create(&stock)
+			if result.Error != nil {
+				return result.Error
+			}
 		}
 
-		result = db.Create(&stock2)
-
-		if result.Error != nil {
-			log.Fatalf("failed to create stock2: %s\n", result.Error)
-		}
-
-		result = db.Create(&stock3)
-
-		if result.Error != nil {
-			log.Fatalf("failed to create stock3: %s\n", result.Error)
-		}
-
-		result = db.Create(&stock4)
-
-		if result.Error != nil {
-			log.Fatalf("failed to create stock4: %s\n", result.Error)
-		}
-
-		result = db.Create(&stock5)
-
-		if result.Error != nil {
-			log.Fatalf("failed to create stock5: %s\n", result.Error)
-		}
-
-		result = db.Create(&stock6)
-
-		if result.Error != nil {
-			log.Fatalf("failed to create stock6: %s\n", result.Error)
-		}
-
-		result = db.Create(&stock7)
-
-		if result.Error != nil {
-			log.Fatalf("failed to create stock7: %s\n", result.Error)
-		}
-
-		result = db.Create(&stock8)
-
-		if result.Error != nil {
-			log.Fatalf("failed to create stock8: %s\n", result.Error)
-		}
-
-		result = db.Create(&stock9)
-
-		if result.Error != nil {
-			log.Fatalf("failed to create stock9: %s\n", result.Error)
-		}
-
-		result = db.Create(&stock10)
-
-		if result.Error != nil {
-			log.Fatalf("failed to create stock10: %s\n", result.Error)
-		}
-
-		result = db.Create(&stock11)
-
-		if result.Error != nil {
-			log.Fatalf("failed to create stock11: %s\n", result.Error)
-		}
-
-		result = db.Create(&stock12)
-
-		if result.Error != nil {
-			log.Fatalf("failed to create stock12: %s\n", result.Error)
-		}
-
-		log.Println("12 stocks created")
+		log.Printf("%d stocks created\n", len(stocksData))
 	}
+
+	return nil
 }
