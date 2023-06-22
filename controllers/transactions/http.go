@@ -93,6 +93,25 @@ func (cc *TransactionController) GetAllByUserID(c echo.Context) error {
 	return controllers.NewResponse(c, http.StatusOK, "success", "all transactions of an user", transactions)
 }
 
+func (cc *TransactionController) GetAllByUserIDSorted(c echo.Context) error {
+	var userID string = c.Param("id")
+	ctx := c.Request().Context()
+
+	transactionData, err := cc.transactionUsecase.GetAllByUserIDSorted(ctx, userID)
+
+	if err != nil {
+		return controllers.NewResponse(c, http.StatusInternalServerError, "failed", err.Error(), "")
+	}
+
+	transactions := []response.Transaction{}
+
+	for _, transaction := range transactionData {
+		transactions = append(transactions, response.FromDomain(transaction))
+	}
+
+	return controllers.NewResponse(c, http.StatusOK, "success", "all transactions of an user sorted by recent transaction", transactions)
+}
+
 func (cc *TransactionController) UpdatePoint(c echo.Context) error {
 	var transactionID string = c.Param("id")
 	input := request.TransactionPoint{}
@@ -116,15 +135,3 @@ func (cc *TransactionController) UpdatePoint(c echo.Context) error {
 
 	return controllers.NewResponse(c, http.StatusCreated, "success", "transaction point updated", response.FromDomain(transaction))
 }
-
-// func (cc *TransactionController) GetTotalTransactionMade(c echo.Context) error {
-// 	var userID string = c.Param("id")
-// 	ctx := c.Request().Context()
-
-// 	transactions, err := cc.transactionUsecase.GetTotalTransactionMade(ctx, userID)
-// 	if err != nil {
-// 		return controllers.NewResponse(c, http.StatusInternalServerError, "failed", err.Error(), "")
-// 	}
-
-// 	return controllers.NewResponse(c, http.StatusOK, "success", "total transactions made by user", transactions)
-// }

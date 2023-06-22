@@ -54,6 +54,7 @@ func (cl *ControllerList) RegisterRoutes(e *echo.Echo) {
 	transactions.GET("/:id", cl.TransactionController.GetByID)
 	transactions.POST("", cl.TransactionController.Create)
 	transactions.GET("/users/:id", cl.TransactionController.GetAllByUserID)
+	transactions.GET("/users/recent/:id", cl.TransactionController.GetAllByUserIDSorted)
 	transactions.PUT("/:id", cl.TransactionController.UpdatePoint)
 
 	providers := e.Group("/providers", echojwt.WithConfig(cl.JWTMiddleware))
