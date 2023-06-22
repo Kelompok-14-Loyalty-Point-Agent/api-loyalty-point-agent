@@ -3,6 +3,7 @@ package users
 import (
 	"api-loyalty-point-agent/businesses/users"
 	"api-loyalty-point-agent/drivers/mysql/profiles"
+	"errors"
 
 	"context"
 
@@ -269,7 +270,11 @@ func (ur *userRepository) DeleteCustomer(ctx context.Context, id string) error {
 
 	deletedUser := FromDomain(&user)
 
-	if err := ur.conn.WithContext(ctx).Unscoped().Delete(&deletedUser).Error; err != nil {
+	if deletedUser.Role != "customer"{
+		return errors.New("user is not a customer")
+	}
+
+	if err = ur.conn.WithContext(ctx).Session(&gorm.Session{AllowGlobalUpdate: true}).Delete(&deletedUser).Error; err != nil {
 		return err
 	}
 
@@ -279,7 +284,7 @@ func (ur *userRepository) DeleteCustomer(ctx context.Context, id string) error {
 		return err
 	}
 
-	if err := ur.conn.WithContext(ctx).Unscoped().Delete(&deletedProfile).Error; err != nil {
+	if err = ur.conn.WithContext(ctx).Session(&gorm.Session{AllowGlobalUpdate: true}).Delete(&deletedProfile).Error; err != nil {
 		return err
 	}
 
