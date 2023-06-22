@@ -28,6 +28,7 @@ type Domain struct {
 	Status         string
 	Description    string
 	UserID         uint
+	// TotalTransactionMade int64
 }
 
 type Usecase interface {
@@ -36,6 +37,7 @@ type Usecase interface {
 	Create(ctx context.Context, transactionDomain *Domain) (Domain, error)
 	GetAllByUserID(ctx context.Context, id string) ([]Domain, error)
 	UpdatePoint(ctx context.Context, transactionDomain *Domain, id string) (Domain, error)
+	// GetTotalTransactionMade(ctx context.Context, userid string) (Domain, error)
 }
 type Repository interface {
 	GetAll(ctx context.Context) ([]Domain, error)
@@ -43,4 +45,5 @@ type Repository interface {
 	Create(ctx context.Context, transactionDomain *Domain) (Domain, error)
 	GetAllByUserID(ctx context.Context, userid string) ([]Domain, error)
 	UpdatePoint(ctx context.Context, transactionDomain *Domain, id string) (Domain, error)
+	// GetTotalTransactionMade(ctx context.Context, userid string) (Domain, error)
 }

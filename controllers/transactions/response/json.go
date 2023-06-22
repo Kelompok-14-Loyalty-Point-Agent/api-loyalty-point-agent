@@ -27,6 +27,7 @@ type Transaction struct {
 	Status         string               `json:"status"`
 	Description    string               `json:"description"`
 	UserID         uint                 `json:"user_id"`
+	// TotalTransactionMade int64                `json:"total_transaction_made"`
 }
 
 func FromDomain(domain transactions.Domain) Transaction {

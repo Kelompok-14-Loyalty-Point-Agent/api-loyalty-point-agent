@@ -214,7 +214,6 @@ func (ur *userRepository) UpdateProfileAdmin(ctx context.Context, userDomain *us
 	return user.ToDomain(), nil
 }
 
-
 func (ur *userRepository) ChangePassword(ctx context.Context, userDomain *users.Domain, id string) (users.Domain, error) {
 	user, err := ur.GetByID(ctx, id)
 	if err != nil {
@@ -227,9 +226,8 @@ func (ur *userRepository) ChangePassword(ctx context.Context, userDomain *users.
 	if err := ur.conn.WithContext(ctx).Save(&updatedUser).Error; err != nil {
 		return users.Domain{}, err
 	}
-	
-	newPassword, err := bcrypt.GenerateFromPassword([]byte(userDomain.Password), bcrypt.DefaultCost)
 
+	newPassword, err := bcrypt.GenerateFromPassword([]byte(userDomain.Password), bcrypt.DefaultCost)
 
 	if err != nil {
 		return users.Domain{}, err
