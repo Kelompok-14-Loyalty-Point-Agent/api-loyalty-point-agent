@@ -223,7 +223,7 @@ func (ctrl *AuthController) ChangePassword(c echo.Context) error {
 
 func (ctrl *AuthController) ChangePicture(c echo.Context) error {
 	var userID string = c.Param("id")
-	file, err := c.FormFile("file")
+	file, err := c.FormFile("filename")
 
 	if err != nil {
 		return controllers.NewResponse(c, http.StatusBadRequest, "failed", "failed to upload file", "")
@@ -253,9 +253,9 @@ func (ctrl *AuthController) ChangePicture(c echo.Context) error {
 	}
 
 	if len(prev_url) != 0 {
-		prev_url = "./assets/users/" + prev_url
+		local_url := "./assets/users/" + prev_url
 
-		err = os.Remove(prev_url)
+		err = os.Remove(local_url)
 
 		if err != nil {
 			return controllers.NewResponse(c, http.StatusBadRequest, "failed", err.Error(), "")

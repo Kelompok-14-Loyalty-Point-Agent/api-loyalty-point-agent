@@ -40,7 +40,7 @@ func (record *Profile) ToDomain() profiles.Domain {
 		TransactionMade:    record.TransactionMade,
 		TotalRedeem:        record.TotalRedeem,
 		MonthlyTransaction: record.MonthlyTransaction,
-		
+		URL:                record.URL,
 	}
 }
 
@@ -59,5 +59,6 @@ func FromDomain(domain *profiles.Domain) *Profile {
 		TransactionMade:    domain.TransactionMade,
 		TotalRedeem:        domain.TotalRedeem,
 		MonthlyTransaction: domain.MonthlyTransaction,
+		URL:                domain.URL,
 	}
 }
