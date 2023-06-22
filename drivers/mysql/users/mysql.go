@@ -135,10 +135,6 @@ func (ur *userRepository) UpdateProfileCustomer(ctx context.Context, userDomain 
 	updatedProfiles.MonthlyTransaction = profile.MonthlyTransaction
 	updatedProfiles.Member = profile.Member
 
-	if user.Email != userDomain.Email {
-		user.Email = userDomain.Email
-	}
-
 	if profile.Address != userDomain.Profile.Address {
 		profile.Address = userDomain.Profile.Address
 		updatedProfiles.Address = profile.Address
@@ -157,6 +153,53 @@ func (ur *userRepository) UpdateProfileCustomer(ctx context.Context, userDomain 
 	if profile.Gender != userDomain.Profile.Gender {
 		profile.Gender = userDomain.Profile.Gender
 		updatedProfiles.Gender = profile.Gender
+	}
+
+	if err := ur.conn.WithContext(ctx).Save(&profile).Error; err != nil {
+		return users.Domain{}, err
+	}
+
+	if err := ur.conn.WithContext(ctx).Save(&user).Error; err != nil {
+		return users.Domain{}, err
+	}
+
+	user.Profile = *profiles.FromDomain(&updatedProfiles)
+
+	return user.ToDomain(), nil
+}
+
+func (ur *userRepository) UpdateProfileCustomerInAdmin(ctx context.Context, userDomain *users.Domain, id string) (users.Domain, error) {
+	var user User
+
+	if err := ur.conn.WithContext(ctx).Preload("Profile").First(&user, "id = ?", id).Error; err != nil {
+		return users.Domain{}, err
+	}
+
+	if user.Email != userDomain.Email {
+		user.Email = userDomain.Email
+	}
+
+	var profile profiles.Profile
+
+	if err := ur.conn.WithContext(ctx).First(&profile, "id = ?", id).Error; err != nil {
+		return users.Domain{}, err
+	}
+
+	updatedProfiles := profile.ToDomain()
+
+	updatedProfiles.Address = profile.Address
+	updatedProfiles.Age = profile.Age
+	updatedProfiles.Gender = profile.Gender
+	updatedProfiles.Point = profile.Point
+	updatedProfiles.Phone = profile.Phone
+	updatedProfiles.TransactionMade = profile.TransactionMade
+	updatedProfiles.TotalRedeem = profile.TotalRedeem
+	updatedProfiles.MonthlyTransaction = profile.MonthlyTransaction
+	updatedProfiles.Member = profile.Member
+
+	if profile.Phone != userDomain.Profile.Phone {
+		profile.Phone = userDomain.Profile.Phone
+		updatedProfiles.Phone = profile.Phone
 	}
 
 	if err := ur.conn.WithContext(ctx).Save(&profile).Error; err != nil {

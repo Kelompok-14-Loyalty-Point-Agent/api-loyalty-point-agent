@@ -42,6 +42,7 @@ func (cl *ControllerList) RegisterRoutes(e *echo.Echo) {
 
 	users.GET("/:id", cl.AuthController.GetByID)
 	users.PUT("/profiles/customer/:id", cl.AuthController.UpdateProfileCustomer)
+	users.PUT("/profiles/customer/edit/:id", cl.AuthController.UpdateProfileCustomerInAdmin)
 	users.PUT("/profiles/admin/:id", cl.AuthController.UpdateProfileAdmin)
 	users.PUT("/profiles/password/:id", cl.AuthController.ChangePassword)
 	users.PUT("/profiles/picture/:id", cl.AuthController.ChangePicture)

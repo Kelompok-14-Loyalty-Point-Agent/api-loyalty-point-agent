@@ -188,6 +188,30 @@ func (ctrl *AuthController) UpdateProfileCustomer(c echo.Context) error {
 	return controllers.NewResponse(c, http.StatusOK, "success", "customer updated", response.FromDomain(user))
 }
 
+func (ctrl *AuthController) UpdateProfileCustomerInAdmin(c echo.Context) error {
+	var userID string = c.Param("id")
+	input := request.CustomerProfileInAdmin{}
+
+	ctx := c.Request().Context()
+
+	if err := c.Bind(&input); err != nil {
+		return controllers.NewResponse(c, http.StatusBadRequest, "failed", "invalid request", "")
+	}
+
+	err := input.Validate()
+	if err!= nil{
+		return controllers.NewResponse(c, http.StatusBadRequest, "failed", err.Error(), "")
+	}
+
+	user, err := ctrl.authUseCase.UpdateProfileCustomerInAdmin(ctx, input.ToDomain(), userID)
+
+	if err != nil {
+		return controllers.NewResponse(c, http.StatusNotFound, "failed", err.Error(), "")
+	}
+
+	return controllers.NewResponse(c, http.StatusOK, "success", "customer updated", response.FromDomain(user))
+}
+
 func (ctrl *AuthController) UpdateProfileAdmin(c echo.Context) error {
 	var userID string = c.Param("id")
 	input := request.AdminProfile{}

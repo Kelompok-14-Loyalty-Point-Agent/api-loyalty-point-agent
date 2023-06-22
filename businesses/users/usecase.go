@@ -49,6 +49,10 @@ func (usecase *userUsecase) UpdateProfileCustomer(ctx context.Context, userDomai
 	return usecase.userRepository.UpdateProfileCustomer(ctx, userDomain, id)
 }
 
+func (usecase *userUsecase) UpdateProfileCustomerInAdmin(ctx context.Context, userDomain *Domain, id string) (Domain, error) {
+	return usecase.userRepository.UpdateProfileCustomerInAdmin(ctx, userDomain, id)
+}
+
 func (usecase *userUsecase) UpdateProfileAdmin(ctx context.Context, userDomain *Domain, id string) (Domain, error) {
 	return usecase.userRepository.UpdateProfileAdmin(ctx, userDomain, id)
 }
