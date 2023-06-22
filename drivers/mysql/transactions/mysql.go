@@ -117,7 +117,7 @@ func (cr *transactionRepository) Create(ctx context.Context, transactionDomain *
 	profile.TransactionMade += 1
 
 	// masukkan point ke profile
-	profile.Point = record.Point
+	profile.Point += record.Point
 
 	// hitung transaksi per bulan pada profil
 	var records []Transaction
