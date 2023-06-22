@@ -16,28 +16,33 @@ type UserLogin struct {
 
 // user registration with Name
 type UserRegistration struct {
-	Name     string `json:"name" validate:"required,nameNotEmpty"`
+	Name     string `json:"name" validate:"required,NotEmpty"`
 	Email    string `json:"email" validate:"required,email"`
 	Password string `json:"password" validate:"required"`
 	Role     string `json:"role"`
 }
 
 type CustomerProfile struct {
-	Name    string `json:"name"`
-	Email   string `json:"email"`
-	Address string `json:"address"`
-	Age     uint   `json:"age"`
-	Gender  string `json:"gender"`
-	Phone   string `json:"phone"`
+	Name    string `json:"name" validate:"NotEmpty"`
+	Email   string `json:"email" validate:"email"`
+	Address string `json:"address" validate:"NotEmpty"`
+	Age     uint   `json:"age" validate:"NotEmpty"`
+	Gender  string `json:"gender" validate:"NotEmpty"`
+	Phone   string `json:"phone" validate:"NotEmpty"`
 }
 
 type AdminProfile struct {
-	Name    string `json:"name"`
-	Address string `json:"address"`
+	Name    string `json:"name" validate:"NotEmpty"`
+	Address string `json:"address" validate:"NotEmpty"`
 }
 
 type InputPassword struct {
 	Password string `json:"password" validate:"required"`
+}
+
+type CustomerProfileInAdmin struct {
+	Email   string `json:"email" validate:"NotEmpty"`
+	Phone   string `json:"phone" validate:"NotEmpty"`
 }
 
 func (req *UserLogin) ToDomainLogin() *users.Domain {
@@ -48,7 +53,7 @@ func (req *UserLogin) ToDomainLogin() *users.Domain {
 	}
 }
 
-func (req *UserRegistration) ToDomainRegistration() *users.Domain {
+func (req *UserRegistration) ToDomain() *users.Domain {
 	return &users.Domain{
 		Name:     req.Name,
 		Email:    req.Email,
@@ -57,10 +62,10 @@ func (req *UserRegistration) ToDomainRegistration() *users.Domain {
 	}
 }
 
-func (req *CustomerProfile) ToDomainProfileCustomer() *users.Domain {
+func (req *CustomerProfile) ToDomain() *users.Domain {
 	return &users.Domain{
 		Name:  req.Name,
-		Email: req.Email,
+		Email: req.Email, 
 		Profile: profiles.Domain{
 			Address: req.Address,
 			Phone:   req.Phone,
@@ -70,7 +75,7 @@ func (req *CustomerProfile) ToDomainProfileCustomer() *users.Domain {
 	}
 }
 
-func (req *AdminProfile) ToDomainProfileAdmin() *users.Domain {
+func (req *AdminProfile) ToDomain() *users.Domain {
 	return &users.Domain{
 		Name:  req.Name,
 		Profile: profiles.Domain{
@@ -79,19 +84,21 @@ func (req *AdminProfile) ToDomainProfileAdmin() *users.Domain {
 	}
 }
 
-func (req *InputPassword) ToDomainProfilePassword() *users.Domain {
+func (req *InputPassword) ToDomain() *users.Domain {
 	return &users.Domain{
 		Password: req.Password,
 	}
 }
 
-func (req *UserLogin) ValidateLogin() error {
-	validate := validator.New()
-
-	err := validate.Struct(req)
-
-	return err
+func (req *CustomerProfileInAdmin) ToDomain() *users.Domain {
+	return &users.Domain{
+		Email:  req.Email,
+		Profile: profiles.Domain{
+			Phone: req.Phone,
+		},
+	}
 }
+
 
 func NotEmpty(fl validator.FieldLevel) bool {
 	inputData := fl.Field().String()
@@ -101,9 +108,53 @@ func NotEmpty(fl validator.FieldLevel) bool {
 	return inputData != ""
 }
 
-func (req *UserRegistration) ValidateRegistration() error {
+func (req *UserLogin) Validate() error {
 	validate := validator.New()
-	validate.RegisterValidation("nameNotEmpty", NotEmpty)
+
+	err := validate.Struct(req)
+
+	return err
+}
+
+func (req *UserRegistration) Validate() error {
+	validate := validator.New()
+	validate.RegisterValidation("NotEmpty", NotEmpty)
+
+	err := validate.Struct(req)
+
+	return err
+}
+
+func (req *CustomerProfile) Validate() error {
+	validate := validator.New()
+	validate.RegisterValidation("NotEmpty", NotEmpty)
+
+	err := validate.Struct(req)
+
+	return err
+}
+
+func (req *AdminProfile) Validate() error {
+	validate := validator.New()
+	validate.RegisterValidation("NotEmpty", NotEmpty)
+
+	err := validate.Struct(req)
+
+	return err
+}
+
+func (req *InputPassword) Validate() error {
+	validate := validator.New()
+	validate.RegisterValidation("NotEmpty", NotEmpty)
+
+	err := validate.Struct(req)
+
+	return err
+}
+
+func (req *CustomerProfileInAdmin) Validate() error {
+	validate := validator.New()
+	validate.RegisterValidation("NotEmpty", NotEmpty)
 
 	err := validate.Struct(req)
 

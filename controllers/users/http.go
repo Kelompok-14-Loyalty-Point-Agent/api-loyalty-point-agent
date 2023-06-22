@@ -74,13 +74,13 @@ func (ctrl *AuthController) Register(c echo.Context) error {
 		return controllers.NewResponse(c, http.StatusBadRequest, "failed", err.Error(), "")
 	}
 
-	err := userInput.ValidateRegistration()
+	err := userInput.Validate()
 
 	if err != nil {
 		return controllers.NewResponse(c, http.StatusBadRequest, "failed", err.Error(), "")
 	}
 
-	user, err := ctrl.authUseCase.Register(ctx, userInput.ToDomainRegistration())
+	user, err := ctrl.authUseCase.Register(ctx, userInput.ToDomain())
 
 	if err != nil {
 		return controllers.NewResponse(c, http.StatusInternalServerError, "failed", err.Error(), "")
@@ -109,7 +109,7 @@ func (ctrl *AuthController) Login(c echo.Context) error {
 		return controllers.NewResponse(c, http.StatusBadRequest, "failed", err.Error(), "")
 	}
 
-	err := userInput.ValidateLogin()
+	err := userInput.Validate()
 
 	if err != nil {
 		return controllers.NewResponse(c, http.StatusBadRequest, "failed", err.Error(), "")
@@ -174,7 +174,12 @@ func (ctrl *AuthController) UpdateProfileCustomer(c echo.Context) error {
 		return controllers.NewResponse(c, http.StatusBadRequest, "failed", "invalid request", "")
 	}
 
-	user, err := ctrl.authUseCase.UpdateProfileCustomer(ctx, input.ToDomainProfileCustomer(), userID)
+	err := input.Validate()
+	if err!= nil{
+		return controllers.NewResponse(c, http.StatusBadRequest, "failed", err.Error(), "")
+	}
+
+	user, err := ctrl.authUseCase.UpdateProfileCustomer(ctx, input.ToDomain(), userID)
 
 	if err != nil {
 		return controllers.NewResponse(c, http.StatusNotFound, "failed", err.Error(), "")
@@ -193,7 +198,12 @@ func (ctrl *AuthController) UpdateProfileAdmin(c echo.Context) error {
 		return controllers.NewResponse(c, http.StatusBadRequest, "failed", "invalid request", "")
 	}
 
-	user, err := ctrl.authUseCase.UpdateProfileAdmin(ctx, input.ToDomainProfileAdmin(), userID)
+	err := input.Validate()
+	if err!= nil{
+		return controllers.NewResponse(c, http.StatusBadRequest, "failed", err.Error(), "")
+	}
+
+	user, err := ctrl.authUseCase.UpdateProfileAdmin(ctx, input.ToDomain(), userID)
 
 	if err != nil {
 		return controllers.NewResponse(c, http.StatusNotFound, "failed", err.Error(), "")
@@ -212,7 +222,12 @@ func (ctrl *AuthController) ChangePassword(c echo.Context) error {
 		return controllers.NewResponse(c, http.StatusBadRequest, "failed", "invalid request", "")
 	}
 
-	user, err := ctrl.authUseCase.ChangePassword(ctx, input.ToDomainProfilePassword(), userID)
+	err := input.Validate()
+	if err!= nil{
+		return controllers.NewResponse(c, http.StatusBadRequest, "failed", err.Error(), "")
+	}
+
+	user, err := ctrl.authUseCase.ChangePassword(ctx, input.ToDomain(), userID)
 
 	if err != nil {
 		return controllers.NewResponse(c, http.StatusNotFound, "failed", err.Error(), "")
@@ -268,20 +283,6 @@ func (ctrl *AuthController) ChangePicture(c echo.Context) error {
 	}
 
 	return controllers.NewResponse(c, http.StatusOK, "success", "change picture successfully", url)
-}
-
-func (ctrl *AuthController) ProvidePicture(c echo.Context) error {
-	var url string = c.Param("url")
-
-	file, err := os.Open("./assets/users/" + url)
-
-		if err != nil {
-			return controllers.NewResponse(c, http.StatusBadRequest, "failed", err.Error(), "")
-		}
-		
-	defer file.Close()
-	
-	return controllers.NewResponse(c, http.StatusOK, "success", "providing picture", " ")
 }
 
 func (ctrl *AuthController) DeleteCustomer(c echo.Context) error {
