@@ -13,7 +13,7 @@ type Voucher struct {
 	// ID string `json:"id"`
 	Product string `json:"product"`
 	Benefit string `json:"benefit"`
-	Cost    uint   `json:"cost"`
+	Cost    float32   `json:"cost"`
 }
 
 func (req *Voucher) ToDomain() *voucher.Domain {

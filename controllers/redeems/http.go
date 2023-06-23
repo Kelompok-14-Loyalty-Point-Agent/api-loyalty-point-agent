@@ -3,7 +3,6 @@ package redeems
 import (
 	"api-loyalty-point-agent/businesses/redeems"
 	"api-loyalty-point-agent/controllers"
-	"api-loyalty-point-agent/controllers/redeems/request"
 	"api-loyalty-point-agent/controllers/redeems/response"
 	"net/http"
 
@@ -38,25 +37,16 @@ func (cc *RedeemsController) GetAll(c echo.Context) error {
 	return controllers.NewResponse(c, http.StatusOK, "success", "all redeem", redeems)
 }
 
-func (cc *RedeemsController) RedeemVoucher(c echo.Context) error {
-	input := request.Redeem{}
+func (ctrl *RedeemsController) GetByID(c echo.Context) error {
+	var redeemID string = c.Param("id")
+
 	ctx := c.Request().Context()
 
-	if err := c.Bind(&input); err != nil {
-		return controllers.NewResponse(c, http.StatusBadRequest, "failed", "validation failed", "")
-	}
-
-	err := input.Validate()
+	user, err := ctrl.transactionUsecase.GetByID(ctx, redeemID)
 
 	if err != nil {
-		return controllers.NewResponse(c, http.StatusBadRequest, "failed", "validation failed", "")
+		return controllers.NewResponse(c, http.StatusNotFound, "failed", err.Error(), "")
 	}
 
-	redeem, err := cc.transactionUsecase.RedeemVoucher(ctx, input.ToDomain())
-
-	if err != nil {
-		return controllers.NewResponse(c, http.StatusInternalServerError, "failed", "failed to create a redeem", "")
-	}
-
-	return controllers.NewResponse(c, http.StatusCreated, "success", "redeem created", response.FromDomain(redeem))
+	return controllers.NewResponse(c, http.StatusOK, "success", "get redeem by id", response.FromDomain(user))
 }

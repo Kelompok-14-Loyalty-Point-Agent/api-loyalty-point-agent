@@ -69,11 +69,11 @@ func main() {
 
 	_dbDriver.SeedAdmin(db)
 
+	_dbDriver.SeedCustomer(db)
+
 	_dbDriver.SeedProvider(db)
 
 	_dbDriver.SeedVoucher(db)
-
-	_dbDriver.SeedRedeem(db)
 
 	_dbDriver.SeedStockDetail(db)
 

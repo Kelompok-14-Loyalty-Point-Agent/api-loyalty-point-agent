@@ -21,10 +21,7 @@ func (usecase *redeemUsecase) GetAll(ctx context.Context) ([]Domain, error) {
 	return usecase.redeemRepository.GetAll(ctx)
 }
 
-// func (usecase *redeemUsecase) GetByID(ctx context.Context, id string) (Domain, error) {
-// 	return usecase.redeemRepository.GetByID(ctx, id)
-// }
-
-func (usecase *redeemUsecase) RedeemVoucher(ctx context.Context, transactionDomain *Domain) (Domain, error) {
-	return usecase.redeemRepository.RedeemVoucher(ctx, transactionDomain)
+func (usecase *redeemUsecase) GetByID(ctx context.Context, id string) (Domain, error) {
+	return usecase.redeemRepository.GetByID(ctx, id)
 }
+

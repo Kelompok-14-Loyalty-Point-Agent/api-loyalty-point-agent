@@ -1,12 +1,16 @@
 package vouchers
 
-import "api-loyalty-point-agent/businesses/vouchers"
+import (
+	"api-loyalty-point-agent/businesses/vouchers"
+	"api-loyalty-point-agent/drivers/mysql/redeems"
+)
 
 type Voucher struct {
-	ID      uint   `json:"id" gorm:"primaryKey"`
-	Product string `json:"product"`
-	Benefit string `json:"benefit"`
-	Cost    uint   `json:"cost"`
+	ID      uint             `json:"id" gorm:"primaryKey"`
+	Product string           `json:"product"`
+	Benefit string           `json:"benefit"`
+	Cost    float32          `json:"cost"`
+	Redeem  []redeems.Redeem `json:"-" gorm:"foreignKey:VoucherID"`
 }
 
 func (rec *Voucher) ToDomain() vouchers.Domain {

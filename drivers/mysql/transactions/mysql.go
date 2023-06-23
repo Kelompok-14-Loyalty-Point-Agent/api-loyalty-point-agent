@@ -10,6 +10,7 @@ import (
 	"api-loyalty-point-agent/drivers/mysql/providers"
 	"api-loyalty-point-agent/drivers/mysql/stock_details"
 	"api-loyalty-point-agent/drivers/mysql/stocks"
+	"api-loyalty-point-agent/utils"
 	"context"
 
 	"gorm.io/gorm"
@@ -105,7 +106,7 @@ func (cr *transactionRepository) Create(ctx context.Context, transactionDomain *
 	record.Product += strings.Title(stock.Type) + " " + provider.Name
 
 	// point
-	record.Point = uint(stock_detail.Price) / 1000
+	record.Point = float32(stock_detail.Price) / 1000
 
 	// Mengambil data profil berdasarkan record.UserID
 	var profile profiles.Profile
@@ -118,6 +119,7 @@ func (cr *transactionRepository) Create(ctx context.Context, transactionDomain *
 
 	// masukkan point ke profile
 	profile.Point += record.Point
+	utils.RoundFloat(float64(profile.Point), 1)
 
 	// hitung transaksi per bulan pada profil
 	var records []Transaction

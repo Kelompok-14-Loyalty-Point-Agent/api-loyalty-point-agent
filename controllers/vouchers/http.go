@@ -3,27 +3,28 @@ package vouchers
 import (
 	"api-loyalty-point-agent/businesses/vouchers"
 	"api-loyalty-point-agent/controllers"
-	"api-loyalty-point-agent/controllers/vouchers/request"
 	"api-loyalty-point-agent/controllers/vouchers/response"
+	_redeemRequest "api-loyalty-point-agent/controllers/redeems/request"
+	_redeemResponse "api-loyalty-point-agent/controllers/redeems/response"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
 )
 
 type VoucherController struct {
-	transactionUsecase vouchers.Usecase
+	voucherUsecase vouchers.Usecase
 }
 
-func NewVoucherController(transactionUC vouchers.Usecase) *VoucherController {
+func NewVoucherController(voucherUC vouchers.Usecase) *VoucherController {
 	return &VoucherController{
-		transactionUsecase: transactionUC,
+		voucherUsecase: voucherUC,
 	}
 }
 
 func (cc *VoucherController) GetAll(c echo.Context) error {
 	ctx := c.Request().Context()
 
-	voucherData, err := cc.transactionUsecase.GetAll(ctx)
+	voucherData, err := cc.voucherUsecase.GetAll(ctx)
 
 	if err != nil {
 		return controllers.NewResponse(c, http.StatusInternalServerError, "failed", "failed to fetch data", "")
@@ -38,12 +39,26 @@ func (cc *VoucherController) GetAll(c echo.Context) error {
 	return controllers.NewResponse(c, http.StatusOK, "success", "all voucher", vouchers)
 }
 
-func (cc *VoucherController) Create(c echo.Context) error {
-	input := request.Voucher{}
+func (ctrl *VoucherController) GetByID(c echo.Context) error {
+	var voucherID string = c.Param("id")
+
+	ctx := c.Request().Context()
+
+	user, err := ctrl.voucherUsecase.GetByID(ctx, voucherID)
+
+	if err != nil {
+		return controllers.NewResponse(c, http.StatusNotFound, "failed", err.Error(), "")
+	}
+
+	return controllers.NewResponse(c, http.StatusOK, "success", "get voucher by id", response.FromDomain(user))
+}
+
+func (cc *VoucherController) RedeemVoucher(c echo.Context) error {
+	input := _redeemRequest.Redeem{}
 	ctx := c.Request().Context()
 
 	if err := c.Bind(&input); err != nil {
-		return controllers.NewResponse(c, http.StatusBadRequest, "failed", "validation failed", "")
+		return controllers.NewResponse(c, http.StatusBadRequest, "failed", "invalid request failed", "")
 	}
 
 	err := input.Validate()
@@ -52,11 +67,11 @@ func (cc *VoucherController) Create(c echo.Context) error {
 		return controllers.NewResponse(c, http.StatusBadRequest, "failed", "validation failed", "")
 	}
 
-	voucher, err := cc.transactionUsecase.Create(ctx, input.ToDomain())
+	redeem, err := cc.voucherUsecase.RedeemVoucher(ctx, input.ToDomain())
 
 	if err != nil {
-		return controllers.NewResponse(c, http.StatusInternalServerError, "failed", "failed to create a voucher", "")
+		return controllers.NewResponse(c, http.StatusInternalServerError, "failed", err.Error(), "")
 	}
 
-	return controllers.NewResponse(c, http.StatusCreated, "success", "voucher created", response.FromDomain(voucher))
+	return controllers.NewResponse(c, http.StatusCreated, "success", "redeem created", _redeemResponse.FromDomain(redeem))
 }

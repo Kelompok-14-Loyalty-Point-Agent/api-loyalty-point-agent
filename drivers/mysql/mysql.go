@@ -132,6 +132,80 @@ func SeedAdmin(db *gorm.DB) {
 	}
 }
 
+func SeedCustomer(db *gorm.DB) {
+	var customer = users.User{
+		Name:      "customer_example",
+		Password:  "customer123",
+		Email:     "customer_example@example.com",
+		Role:      "customer",
+		ProfileID: 0,
+		Profile:   profiles.Profile{},
+	}
+
+	password, err := bcrypt.GenerateFromPassword([]byte(customer.Password), bcrypt.DefaultCost)
+
+	if err != nil {
+		log.Fatalf("failed to hash customer password: %s\n", err)
+	}
+
+	customer.Password = string(password)
+
+	var record users.User
+
+	_ = db.First(&record, "email = ?", customer.Email)
+
+	if record.ID != 0 {
+		log.Printf("customer already exists\n")
+	} else {
+		filePath := "./assets/users/user.png"
+
+		file, err := os.Open(filePath)
+		if err != nil {
+			log.Fatalf("failed to create customer: %s\n", err.Error())
+		}
+
+		defer file.Close()
+
+		url, err := aws_driver.UploadFileToBucket("user.png", file)
+		if err != nil {
+			log.Fatalf("failed to create customer: %s\n", err.Error())
+		}
+
+		err = aws_driver.DownloadFileFromBucket(url, "./assets/users/")
+		if err != nil {
+			log.Fatalf("failed to create customer: %s\n", err.Error())
+		}
+
+		var profile profiles.Profile
+
+		profile.URL = url
+		profile.Gender = "man"
+		profile.Address = "Summarecon BSD"
+		profile.Age = 25
+		profile.Member = "gold"
+		profile.MonthlyTransaction = 10
+		profile.TransactionMade = 10
+		profile.Point = float32(1000000)
+
+		result := db.Create(&profile)
+
+		if result.Error != nil {
+			log.Fatalf("failed to create customer's profile: %s\n", result.Error)
+		}
+
+		customer.ProfileID = profile.ID
+		customer.Profile = profile
+
+		result = db.Create(&customer)
+
+		if result.Error != nil {
+			log.Fatalf("failed to create customer: %s\n", result.Error)
+		}
+
+		log.Println("customer created")
+	}
+}
+
 func SeedProvider(db *gorm.DB) {
 	providersData := []providers.Provider{
 		{Name: "Telkomsel", URL: ""},
@@ -288,7 +362,7 @@ func SeedStock(db *gorm.DB) error {
 func SeedVoucher(db *gorm.DB) error {
 	// Data stocks
 	vouchersData := []vouchers.Voucher{
-		{Product: "Phone Balance", Benefit: "10000", Cost: 300},
+		{Product: "Phone Balance", Benefit: "Rp 10.000", Cost: 300},
 		{Product: "Internet Data", Benefit: "1GB", Cost: 600},
 	}
 
@@ -306,31 +380,6 @@ func SeedVoucher(db *gorm.DB) error {
 		}
 
 		log.Printf("%d voucher created\n", len(vouchersData))
-	}
-
-	return nil
-}
-
-func SeedRedeem(db *gorm.DB) error {
-	// Redeem Transaction
-	redeemsData := []redeems.Redeem{
-		{Phone: "081382815860", Cost: 300},
-	}
-
-	var record vouchers.Voucher
-	_ = db.First(&record)
-
-	if record.ID != 0 {
-		log.Printf("voucher already exists\n")
-	} else {
-		for _, stock := range redeemsData {
-			result := db.Create(&stock)
-			if result.Error != nil {
-				return result.Error
-			}
-		}
-
-		log.Printf("%d voucher created\n", len(redeemsData))
 	}
 
 	return nil

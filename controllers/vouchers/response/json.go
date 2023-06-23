@@ -8,7 +8,7 @@ type Voucher struct {
 	ID      uint   `json:"id" gorm:"primaryKey"`
 	Product string `json:"product"`
 	Benefit string `json:"benefit"`
-	Cost    uint   `json:"cost"`
+	Cost    float32   `json:"cost"`
 }
 
 func FromDomain(domain voucher.Domain) Voucher {

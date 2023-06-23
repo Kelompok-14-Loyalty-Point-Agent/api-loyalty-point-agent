@@ -21,10 +21,6 @@ func NewMySQLRepository(conn *gorm.DB) redeems.Repository {
 func (cr *redeemRepository) GetAll(ctx context.Context) ([]redeems.Domain, error) {
 	var records []Redeem
 
-	// if err := cr.conn.WithContext(ctx).Preload("User").Find(&records).Error; err != nil {
-	// 	return nil, err
-	// }
-
 	if err := cr.conn.WithContext(ctx).Find(&records).Error; err != nil {
 		return nil, err
 	}
@@ -38,21 +34,17 @@ func (cr *redeemRepository) GetAll(ctx context.Context) ([]redeems.Domain, error
 	return redeems, nil
 }
 
-// =========================================================
-func (cr *redeemRepository) RedeemVoucher(ctx context.Context, redeemsDomain *redeems.Domain) (redeems.Domain, error) {
-	record := FromDomain(redeemsDomain)
+func (ur *redeemRepository) GetByID(ctx context.Context, id string) (redeems.Domain, error) {
+	var redeem Redeem
 
-	result := cr.conn.WithContext(ctx).Create(&record)
-
-	if err := result.Error; err != nil {
+	if err := ur.conn.WithContext(ctx).First(&redeem, "id = ?", id).Error; err != nil {
 		return redeems.Domain{}, err
 	}
 
-	err := cr.conn.WithContext(ctx).Last(&record).Error
+	return redeem.ToDomain(), nil
 
-	if err != nil {
-		return redeems.Domain{}, err
-	}
-
-	return record.ToDomain(), nil
 }
+
+
+
+

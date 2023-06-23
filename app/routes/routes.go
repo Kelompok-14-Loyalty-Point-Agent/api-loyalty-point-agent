@@ -55,12 +55,13 @@ func (cl *ControllerList) RegisterRoutes(e *echo.Echo) {
 	vouchers := e.Group("/vouchers", echojwt.WithConfig(cl.JWTMiddleware))
 	vouchers.Use(middlewares.VerifyToken)
 	vouchers.GET("", cl.VoucherController.GetAll)
-	vouchers.POST("", cl.VoucherController.Create)
+	vouchers.GET("/:id", cl.VoucherController.GetByID)
+	vouchers.POST("/redeem", cl.VoucherController.RedeemVoucher)
 
 	redeems := e.Group("/redeems", echojwt.WithConfig(cl.JWTMiddleware))
 	redeems.Use(middlewares.VerifyToken)
 	redeems.GET("", cl.RedeemsController.GetAll)
-	redeems.POST("", cl.RedeemsController.RedeemVoucher)
+	redeems.GET("/:id", cl.RedeemsController.GetByID)
 
 	transactions := e.Group("/transactions", echojwt.WithConfig(cl.JWTMiddleware))
 	transactions.Use(middlewares.VerifyToken)

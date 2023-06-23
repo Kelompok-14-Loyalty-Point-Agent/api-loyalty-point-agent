@@ -322,3 +322,5 @@ func (ctrl *AuthController) DeleteCustomer(c echo.Context) error {
 
 	return controllers.NewResponse(c, http.StatusOK, "success", "customer deleted", "")
 }
+
+
