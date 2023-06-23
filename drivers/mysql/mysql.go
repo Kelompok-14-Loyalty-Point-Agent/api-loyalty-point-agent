@@ -186,6 +186,7 @@ func SeedCustomer(db *gorm.DB) {
 		profile.MonthlyTransaction = 10
 		profile.TransactionMade = 10
 		profile.Point = float32(1000000)
+		profile.Phone = "082189998231"
 
 		result := db.Create(&profile)
 
