@@ -212,6 +212,17 @@ func (cr *transactionRepository) UpdatePoint(ctx context.Context, transactionDom
 	updatedTransaction.StockDetails = stock_details.StockDetail(transaction.StockDetails)
 	updatedTransaction.StockDetails.Price = transaction.Price
 
+	var profile profiles.Profile
+	if err := cr.conn.WithContext(ctx).First(&profile, "id = ?", transaction.UserID).Error; err != nil {
+		return transactions.Domain{}, err
+	}
+
+	profile.Point = (profile.Point - transaction.Point) + transactionDomain.Point 
+
+	if err := cr.conn.WithContext(ctx).Save(&profile).Error; err != nil {
+		return transactions.Domain{}, err
+	}
+
 	if err := cr.conn.WithContext(ctx).Save(&updatedTransaction).Error; err != nil {
 		return transactions.Domain{}, err
 	}
@@ -219,14 +230,3 @@ func (cr *transactionRepository) UpdatePoint(ctx context.Context, transactionDom
 	return updatedTransaction.ToDomain(), nil
 }
 
-// func (cr *transactionRepository) GetTotalTransactionMade(ctx context.Context, userid string) (transactions.Domain, error) {
-// 	var count int64
-// 	err := cr.conn.WithContext(ctx).Model(&Transaction{}).Where("user_id = ?", userid).Count(&count).Error
-// 	for _, transaction := range records {
-// 		transactions = append(transactions, transaction.ToDomain())
-// 	}
-// 	if err != nil {
-// 		return 0, err
-// 	}
-// 	return transactions, nil
-// }
