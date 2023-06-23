@@ -1,17 +1,15 @@
-package voucher
+package redeems
 
 import (
 	"context"
+	"time"
 )
 
 type Domain struct {
-	ID    uint
-	Title string
-	Url   string
-	Cost  uint
-	Point uint
-	// Expired	uint
-	// Date_Exhange time.Time
+	ID        uint
+	CreatedAt time.Time
+	Phone     string
+	Cost      uint
 }
 
 type Usecase interface {

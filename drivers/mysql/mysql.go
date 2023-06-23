@@ -3,12 +3,13 @@ package mysql_driver
 import (
 	"api-loyalty-point-agent/drivers/mysql/profiles"
 	"api-loyalty-point-agent/drivers/mysql/providers"
+	"api-loyalty-point-agent/drivers/mysql/redeems"
 	"api-loyalty-point-agent/drivers/mysql/stock_details"
 	"api-loyalty-point-agent/drivers/mysql/stock_transactions"
 	"api-loyalty-point-agent/drivers/mysql/stocks"
 	"api-loyalty-point-agent/drivers/mysql/transactions"
 	"api-loyalty-point-agent/drivers/mysql/users"
-	"api-loyalty-point-agent/drivers/mysql/voucher"
+	"api-loyalty-point-agent/drivers/mysql/vouchers"
 	"time"
 
 	"os"
@@ -56,7 +57,7 @@ func (config *DBConfig) InitDB() *gorm.DB {
 
 // perform migration
 func MigrateDB(db *gorm.DB) {
-	err := db.AutoMigrate(&profiles.Profile{}, &users.User{}, &providers.Provider{}, &stocks.Stock{}, &stock_details.StockDetail{}, &stock_transactions.StockTransaction{}, &transactions.Transaction{}, &voucher.Voucher{})
+	err := db.AutoMigrate(&profiles.Profile{}, &users.User{}, &providers.Provider{}, &stocks.Stock{}, &stock_details.StockDetail{}, &stock_transactions.StockTransaction{}, &transactions.Transaction{}, &vouchers.Voucher{}, &redeems.Redeem{})
 
 	if err != nil {
 		log.Fatalf("failed to perform database migration: %s\n", err)
@@ -278,6 +279,32 @@ func SeedStock(db *gorm.DB) error {
 		}
 
 		log.Printf("%d stocks created\n", len(stocksData))
+	}
+
+	return nil
+}
+
+func SeedVoucher(db *gorm.DB) error {
+	// Data stocks
+	stocksData := []vouchers.Voucher{
+		{Product: "Phone Balance", Benefit: "10000", Cost: 300},
+		{Product: "Internet Data", Benefit: "1GB", Cost: 600},
+	}
+
+	var record vouchers.Voucher
+	_ = db.First(&record)
+
+	if record.ID != 0 {
+		log.Printf("voucher already exists\n")
+	} else {
+		for _, stock := range stocksData {
+			result := db.Create(&stock)
+			if result.Error != nil {
+				return result.Error
+			}
+		}
+
+		log.Printf("%d voucher created\n", len(stocksData))
 	}
 
 	return nil

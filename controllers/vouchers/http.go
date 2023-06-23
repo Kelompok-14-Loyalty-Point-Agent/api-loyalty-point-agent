@@ -1,24 +1,20 @@
-package voucher
+package vouchers
 
 import (
-	"api-loyalty-point-agent/businesses/voucher"
+	"api-loyalty-point-agent/businesses/vouchers"
 	"api-loyalty-point-agent/controllers"
-
-	// "api-loyalty-point-agent/controllers/voucher/response"
-	"api-loyalty-point-agent/controllers/voucher/request"
-
-	// "api-loyalty-point-agent/controllers/transactions/request"
-	"api-loyalty-point-agent/controllers/voucher/response"
+	"api-loyalty-point-agent/controllers/vouchers/request"
+	"api-loyalty-point-agent/controllers/vouchers/response"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
 )
 
 type VoucherController struct {
-	transactionUsecase voucher.Usecase
+	transactionUsecase vouchers.Usecase
 }
 
-func NewVoucherController(transactionUC voucher.Usecase) *VoucherController {
+func NewVoucherController(transactionUC vouchers.Usecase) *VoucherController {
 	return &VoucherController{
 		transactionUsecase: transactionUC,
 	}
@@ -42,7 +38,7 @@ func (cc *VoucherController) GetAll(c echo.Context) error {
 	return controllers.NewResponse(c, http.StatusOK, "success", "all voucher", vouchers)
 }
 
-func (cc *VoucherController) RedeemVoucher(c echo.Context) error {
+func (cc *VoucherController) Create(c echo.Context) error {
 	input := request.Voucher{}
 	ctx := c.Request().Context()
 
@@ -56,7 +52,7 @@ func (cc *VoucherController) RedeemVoucher(c echo.Context) error {
 		return controllers.NewResponse(c, http.StatusBadRequest, "failed", "validation failed", "")
 	}
 
-	voucher, err := cc.transactionUsecase.RedeemVoucher(ctx, input.ToDomain())
+	voucher, err := cc.transactionUsecase.Create(ctx, input.ToDomain())
 
 	if err != nil {
 		return controllers.NewResponse(c, http.StatusInternalServerError, "failed", "failed to create a voucher", "")

@@ -1,4 +1,4 @@
-package voucher
+package vouchers
 
 import (
 	"api-loyalty-point-agent/app/middlewares"
@@ -25,6 +25,6 @@ func (usecase *voucherUsecase) GetAll(ctx context.Context) ([]Domain, error) {
 // 	return usecase.voucherRepository.GetByID(ctx, id)
 // }
 
-func (usecase *voucherUsecase) RedeemVoucher(ctx context.Context, transactionDomain *Domain) (Domain, error) {
-	return usecase.voucherRepository.RedeemVoucher(ctx, transactionDomain)
+func (usecase *voucherUsecase) Create(ctx context.Context, transactionDomain *Domain) (Domain, error) {
+	return usecase.voucherRepository.Create(ctx, transactionDomain)
 }

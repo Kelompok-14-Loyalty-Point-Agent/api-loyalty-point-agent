@@ -1,7 +1,7 @@
-package voucher
+package vouchers
 
 import (
-	"api-loyalty-point-agent/businesses/voucher"
+	"api-loyalty-point-agent/businesses/vouchers"
 	"context"
 
 	"gorm.io/gorm"
@@ -11,23 +11,24 @@ type voucherRepository struct {
 	conn *gorm.DB
 }
 
-func NewMySQLRepository(conn *gorm.DB) voucher.Repository {
+func NewMySQLRepository(conn *gorm.DB) vouchers.Repository {
 	return &voucherRepository{
 		conn: conn,
 	}
 }
 
-func (cr *voucherRepository) GetAll(ctx context.Context) ([]voucher.Domain, error) {
+func (cr *voucherRepository) GetAll(ctx context.Context) ([]vouchers.Domain, error) {
 	var records []Voucher
 
-	// if err := cr.conn.WithContext(ctx).Preload("StockDetails").Find(&records).Error; err != nil {
+	// if err := cr.conn.WithContext(ctx).Preload("Profile").Find(&records).Error; err != nil {
 	// 	return nil, err
 	// }
+
 	if err := cr.conn.WithContext(ctx).Find(&records).Error; err != nil {
 		return nil, err
 	}
 
-	vouchers := []voucher.Domain{}
+	vouchers := []vouchers.Domain{}
 
 	for _, voucher := range records {
 		vouchers = append(vouchers, voucher.ToDomain())
@@ -36,19 +37,20 @@ func (cr *voucherRepository) GetAll(ctx context.Context) ([]voucher.Domain, erro
 	return vouchers, nil
 }
 
-func (cr *voucherRepository) RedeemVoucher(ctx context.Context, voucherDomain *voucher.Domain) (voucher.Domain, error) {
+// =========================================================
+func (cr *voucherRepository) Create(ctx context.Context, voucherDomain *vouchers.Domain) (vouchers.Domain, error) {
 	record := FromDomain(voucherDomain)
 
 	result := cr.conn.WithContext(ctx).Create(&record)
 
 	if err := result.Error; err != nil {
-		return voucher.Domain{}, err
+		return vouchers.Domain{}, err
 	}
 
 	err := cr.conn.WithContext(ctx).Last(&record).Error
 
 	if err != nil {
-		return voucher.Domain{}, err
+		return vouchers.Domain{}, err
 	}
 
 	return record.ToDomain(), nil

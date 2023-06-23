@@ -5,12 +5,13 @@ import (
 
 	profiles "api-loyalty-point-agent/controllers/profiles"
 	providers "api-loyalty-point-agent/controllers/providers"
+	redeems "api-loyalty-point-agent/controllers/redeems"
 	stock_details "api-loyalty-point-agent/controllers/stock_details"
 	stock_transactions "api-loyalty-point-agent/controllers/stock_transactions"
 	stocks "api-loyalty-point-agent/controllers/stocks"
 	transactions "api-loyalty-point-agent/controllers/transactions"
 	users "api-loyalty-point-agent/controllers/users"
-	voucher "api-loyalty-point-agent/controllers/voucher"
+	voucher "api-loyalty-point-agent/controllers/vouchers"
 
 	echojwt "github.com/labstack/echo-jwt/v4"
 
@@ -28,6 +29,7 @@ type ControllerList struct {
 	TransactionController      transactions.TransactionController
 	ProfileController          profiles.ProfileController
 	VoucherController          voucher.VoucherController
+	RedeemsController          redeems.RedeemsController
 }
 
 func (cl *ControllerList) RegisterRoutes(e *echo.Echo) {
@@ -50,10 +52,15 @@ func (cl *ControllerList) RegisterRoutes(e *echo.Echo) {
 	users.PUT("/profiles/picture/:id", cl.AuthController.ChangePicture)
 	users.DELETE("/customers/:id", cl.AuthController.DeleteCustomer)
 
-	voucher := e.Group("/voucher", echojwt.WithConfig(cl.JWTMiddleware))
-	voucher.Use(middlewares.VerifyToken)
-	voucher.GET("", cl.VoucherController.GetAll)
-	voucher.POST("", cl.VoucherController.RedeemVoucher)
+	vouchers := e.Group("/vouchers", echojwt.WithConfig(cl.JWTMiddleware))
+	vouchers.Use(middlewares.VerifyToken)
+	vouchers.GET("", cl.VoucherController.GetAll)
+	vouchers.POST("", cl.VoucherController.Create)
+
+	redeems := e.Group("/redeems", echojwt.WithConfig(cl.JWTMiddleware))
+	redeems.Use(middlewares.VerifyToken)
+	redeems.GET("", cl.RedeemsController.GetAll)
+	redeems.POST("", cl.RedeemsController.RedeemVoucher)
 
 	transactions := e.Group("/transactions", echojwt.WithConfig(cl.JWTMiddleware))
 	transactions.Use(middlewares.VerifyToken)
