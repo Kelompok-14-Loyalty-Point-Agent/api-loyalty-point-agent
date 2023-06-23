@@ -114,6 +114,6 @@ func (cl *ControllerList) RegisterRoutes(e *echo.Echo) {
 	// profiles.PUT("/:id", cl.ProfileController.Update)
 	// profiles.DELETE("/:id", cl.ProfileController.Delete)
 
-	images := e.Group("/images", echojwt.WithConfig(cl.JWTMiddleware))
+	images := e.Group("/images")
 	images.Static("/url", "./assets/users")
 }
