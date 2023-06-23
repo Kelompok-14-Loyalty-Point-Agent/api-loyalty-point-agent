@@ -23,7 +23,7 @@ type Transaction struct {
 	Price          float64              `json:"price"`
 	Product        string               `json:"product"`
 	Payment_method string               `json:"payment_method"`
-	Point          uint                 `json:"point"`
+	Point          float32              `json:"point"`
 	Status         string               `json:"status"`
 	Description    string               `json:"description"`
 	UserID         uint                 `json:"user_id"`

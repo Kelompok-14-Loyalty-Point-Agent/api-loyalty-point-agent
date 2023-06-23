@@ -3,6 +3,7 @@ package users
 import (
 	"api-loyalty-point-agent/businesses/users"
 	"api-loyalty-point-agent/drivers/mysql/profiles"
+	"api-loyalty-point-agent/drivers/mysql/redeems"
 	"api-loyalty-point-agent/drivers/mysql/stock_transactions"
 	"api-loyalty-point-agent/drivers/mysql/transactions"
 	"time"
@@ -21,6 +22,7 @@ type User struct {
 	Role             string                                `json:"role" gorm:"type:enum('admin', 'customer');default:'customer';not_null"`
 	StockTransaction []stock_transactions.StockTransaction `json:"-" gorm:"foreignKey:UserID"`
 	Transaction      []transactions.Transaction            `json:"-" gorm:"foreignKey:UserID"`
+	Redeem           []redeems.Redeem                      `json:"-" gorm:"foreignKey:UserID"`
 	ProfileID        uint                                  `json:"-" gorm:"uniqueIndex"`
 	Profile          profiles.Profile                      `json:"-" gorm:"foreignKey:ProfileID"`
 }

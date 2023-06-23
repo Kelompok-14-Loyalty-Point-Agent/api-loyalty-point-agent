@@ -6,6 +6,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	"math"
 
 	"github.com/google/uuid"
 	"github.com/spf13/viper"
@@ -35,6 +36,11 @@ func GenerateUniqueFileName(originalName string) string {
 	fileName = fileName + ext
 
 	return fileName
+}
+
+func RoundFloat(val float64, precision uint) float64 {
+    ratio := math.Pow(10, float64(precision))
+    return math.Round(val*ratio) / ratio
 }
 
 

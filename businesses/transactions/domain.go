@@ -24,7 +24,7 @@ type Domain struct {
 	Price          float64
 	Product        string
 	Payment_method string
-	Point          uint
+	Point          float32
 	Status         string
 	Description    string
 	UserID         uint

@@ -26,6 +26,12 @@ import (
 	_profileUseCase "api-loyalty-point-agent/businesses/profiles"
 	_profileController "api-loyalty-point-agent/controllers/profiles"
 
+	_voucherUseCase "api-loyalty-point-agent/businesses/vouchers"
+	_voucherController "api-loyalty-point-agent/controllers/vouchers"
+
+	_redeemsUseCase "api-loyalty-point-agent/businesses/redeems"
+	_redeemsController "api-loyalty-point-agent/controllers/redeems"
+
 	_dbDriver "api-loyalty-point-agent/drivers/mysql"
 
 	_middleware "api-loyalty-point-agent/app/middlewares"
@@ -63,7 +69,11 @@ func main() {
 
 	_dbDriver.SeedAdmin(db)
 
+	_dbDriver.SeedCustomer(db)
+
 	_dbDriver.SeedProvider(db)
+
+	_dbDriver.SeedVoucher(db)
 
 	_dbDriver.SeedStockDetail(db)
 
@@ -114,6 +124,14 @@ func main() {
 	profileUsecase := _profileUseCase.NewProfileUseCase(profileRepo, &configJWT)
 	profileCtrl := _profileController.NewProfileController(profileUsecase)
 
+	voucherRepo := _driverFactory.NewVoucherRepository(db)
+	voucherUsecase := _voucherUseCase.NewVoucherUseCase(voucherRepo, &configJWT)
+	voucherCtrl := _voucherController.NewVoucherController(voucherUsecase)
+
+	redeemsRepo := _driverFactory.NewRedeemRepository(db)
+	redeemsUsecase := _redeemsUseCase.NewRedeemUseCase(redeemsRepo, &configJWT)
+	redeemsCtrl := _redeemsController.NewRedeemController(redeemsUsecase)
+
 	routesInit := _routes.ControllerList{
 		LoggerMiddleware:           configLogger.Init(),
 		JWTMiddleware:              configJWT.Init(),
@@ -124,6 +142,8 @@ func main() {
 		StockTransactionController: *stock_transactionCtrl,
 		TransactionController:      *transactionCtrl,
 		ProfileController:          *profileCtrl,
+		VoucherController:          *voucherCtrl,
+		RedeemsController:          *redeemsCtrl,
 	}
 
 	handleSwagger := echoSwagger.WrapHandler

@@ -5,11 +5,13 @@ import (
 
 	profiles "api-loyalty-point-agent/controllers/profiles"
 	providers "api-loyalty-point-agent/controllers/providers"
+	redeems "api-loyalty-point-agent/controllers/redeems"
 	stock_details "api-loyalty-point-agent/controllers/stock_details"
 	stock_transactions "api-loyalty-point-agent/controllers/stock_transactions"
 	stocks "api-loyalty-point-agent/controllers/stocks"
 	transactions "api-loyalty-point-agent/controllers/transactions"
 	users "api-loyalty-point-agent/controllers/users"
+	voucher "api-loyalty-point-agent/controllers/vouchers"
 
 	echojwt "github.com/labstack/echo-jwt/v4"
 
@@ -26,11 +28,13 @@ type ControllerList struct {
 	StockTransactionController stock_transactions.StockTransactionController
 	TransactionController      transactions.TransactionController
 	ProfileController          profiles.ProfileController
+	VoucherController          voucher.VoucherController
+	RedeemsController          redeems.RedeemsController
 }
 
 func (cl *ControllerList) RegisterRoutes(e *echo.Echo) {
 	e.Use(cl.LoggerMiddleware)
-	
+
 	auth := e.Group("auth")
 	auth.POST("/register", cl.AuthController.Register)
 	auth.POST("/login", cl.AuthController.Login)
@@ -47,6 +51,17 @@ func (cl *ControllerList) RegisterRoutes(e *echo.Echo) {
 	users.PUT("/profiles/password/:id", cl.AuthController.ChangePassword)
 	users.PUT("/profiles/picture/:id", cl.AuthController.ChangePicture)
 	users.DELETE("/customers/:id", cl.AuthController.DeleteCustomer)
+
+	vouchers := e.Group("/vouchers", echojwt.WithConfig(cl.JWTMiddleware))
+	vouchers.Use(middlewares.VerifyToken)
+	vouchers.GET("", cl.VoucherController.GetAll)
+	vouchers.GET("/:id", cl.VoucherController.GetByID)
+	vouchers.POST("/redeem", cl.VoucherController.RedeemVoucher)
+
+	redeems := e.Group("/redeems", echojwt.WithConfig(cl.JWTMiddleware))
+	redeems.Use(middlewares.VerifyToken)
+	redeems.GET("", cl.RedeemsController.GetAll)
+	redeems.GET("/:id", cl.RedeemsController.GetByID)
 
 	transactions := e.Group("/transactions", echojwt.WithConfig(cl.JWTMiddleware))
 	transactions.Use(middlewares.VerifyToken)

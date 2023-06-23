@@ -17,14 +17,14 @@ type Transaction struct {
 	Price          float64              `json:"-"`
 	Product        string               `json:"-"`
 	Payment_method string               `json:"payment_method" validate:"required"`
-	Point          uint                 `json:"-"`
+	Point          float32              `json:"-"`
 	Status         string               `json:"-"`
 	Description    string               `json:"-"`
 	UserID         uint                 `json:"user_id" validate:"required"`
 }
 
 type TransactionPoint struct {
-	Point uint `json:"point" validate:"required"`
+	Point float32 `json:"point" validate:"required"`
 }
 
 func (req *Transaction) ToDomain() *transactions.Domain {

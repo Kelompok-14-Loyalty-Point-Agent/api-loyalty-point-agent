@@ -25,7 +25,7 @@ type Transaction struct {
 	Price          float64                   `json:"price"`
 	Product        string                    `json:"product"`
 	Payment_method string                    `json:"payment_method"`
-	Point          uint                      `json:"point"`
+	Point          float32                   `json:"point"`
 	Status         string                    `json:"status" gorm:"type:enum('success', 'failed', 'on-process');default:'success';not_null"`
 	Description    string                    `json:"description" gorm:"type:enum('top up');default:'top up';not_null"`
 	UserID         uint                      `json:"user_id"`

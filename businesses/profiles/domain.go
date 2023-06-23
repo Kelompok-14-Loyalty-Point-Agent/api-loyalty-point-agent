@@ -16,7 +16,7 @@ type Domain struct {
 	Age                uint
 	Gender             string
 	Phone              string
-	Point              uint
+	Point              float32
 	Member             string
 	TransactionMade    uint
 	MonthlyTransaction uint
