@@ -360,7 +360,7 @@ func SeedStock(db *gorm.DB) error {
 }
 
 func SeedVoucher(db *gorm.DB) error {
-	// Data stocks
+	// Data vouchers
 	vouchersData := []vouchers.Voucher{
 		{Product: "Phone Balance", Benefit: "Rp 10.000", Cost: 300},
 		{Product: "Internet Data", Benefit: "1GB", Cost: 600},
@@ -372,14 +372,40 @@ func SeedVoucher(db *gorm.DB) error {
 	if record.ID != 0 {
 		log.Printf("voucher already exists\n")
 	} else {
-		for _, stock := range vouchersData {
-			result := db.Create(&stock)
+		for _, voucher := range vouchersData {
+			result := db.Create(&voucher)
 			if result.Error != nil {
 				return result.Error
 			}
 		}
 
 		log.Printf("%d voucher created\n", len(vouchersData))
+	}
+
+	return nil
+}
+
+func SeedTransaction(db *gorm.DB) error {
+	// Data transactions
+	transactionData := []transactions.Transaction{
+		{Phone: "08198293845", StockDetailsID: 1, StockID: 1, Price: 50000, Payment_method: "Go Pay", Point: 49, Status: "success", Description: "top up", UserID: 2, Product: "Data Telkomsel"},
+		{Phone: "08198293845", StockDetailsID: 1, StockID: 2, Price: 22500, Payment_method: "Dana", Point: 22.4, Status: "success", Description: "top up", UserID: 2, Product: "Credit Telkomsel"},
+	}
+
+	var record transactions.Transaction
+	_ = db.First(&record)
+
+	if record.ID != 0 {
+		log.Printf("voucher already exists\n")
+	} else {
+		for _, transaction := range transactionData {
+			result := db.Create(&transaction)
+			if result.Error != nil {
+				return result.Error
+			}
+		}
+
+		log.Printf("%d voucher created\n", len(transactionData))
 	}
 
 	return nil
