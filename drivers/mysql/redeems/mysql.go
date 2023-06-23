@@ -1,7 +1,8 @@
 package redeems
 
 import (
-	redeems "api-loyalty-point-agent/businesses/redeems"
+	"api-loyalty-point-agent/businesses/redeems"
+
 	"context"
 
 	"gorm.io/gorm"
@@ -20,7 +21,7 @@ func NewMySQLRepository(conn *gorm.DB) redeems.Repository {
 func (cr *redeemRepository) GetAll(ctx context.Context) ([]redeems.Domain, error) {
 	var records []Redeem
 
-	// if err := cr.conn.WithContext(ctx).Preload("Profile").Find(&records).Error; err != nil {
+	// if err := cr.conn.WithContext(ctx).Preload("User").Find(&records).Error; err != nil {
 	// 	return nil, err
 	// }
 
@@ -28,18 +29,18 @@ func (cr *redeemRepository) GetAll(ctx context.Context) ([]redeems.Domain, error
 		return nil, err
 	}
 
-	vouchers := []redeems.Domain{}
+	redeems := []redeems.Domain{}
 
-	for _, voucher := range records {
-		vouchers = append(vouchers, voucher.ToDomain())
+	for _, redeem := range records {
+		redeems = append(redeems, redeem.ToDomain())
 	}
 
-	return vouchers, nil
+	return redeems, nil
 }
 
 // =========================================================
-func (cr *redeemRepository) RedeemVoucher(ctx context.Context, voucherDomain *redeems.Domain) (redeems.Domain, error) {
-	record := FromDomain(voucherDomain)
+func (cr *redeemRepository) RedeemVoucher(ctx context.Context, redeemsDomain *redeems.Domain) (redeems.Domain, error) {
+	record := FromDomain(redeemsDomain)
 
 	result := cr.conn.WithContext(ctx).Create(&record)
 

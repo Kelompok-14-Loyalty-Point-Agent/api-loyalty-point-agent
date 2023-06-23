@@ -1,6 +1,8 @@
 package redeems
 
 import (
+	// "api-loyalty-point-agent/businesses/users"
+
 	"context"
 	"time"
 )
@@ -10,6 +12,8 @@ type Domain struct {
 	CreatedAt time.Time
 	Phone     string
 	Cost      uint
+	//bukan
+	UserID uint
 }
 
 type Usecase interface {

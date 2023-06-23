@@ -10,6 +10,7 @@ import (
 	"api-loyalty-point-agent/drivers/mysql/transactions"
 	"api-loyalty-point-agent/drivers/mysql/users"
 	"api-loyalty-point-agent/drivers/mysql/vouchers"
+
 	"time"
 
 	"os"
@@ -286,7 +287,7 @@ func SeedStock(db *gorm.DB) error {
 
 func SeedVoucher(db *gorm.DB) error {
 	// Data stocks
-	stocksData := []vouchers.Voucher{
+	vouchersData := []vouchers.Voucher{
 		{Product: "Phone Balance", Benefit: "10000", Cost: 300},
 		{Product: "Internet Data", Benefit: "1GB", Cost: 600},
 	}
@@ -297,14 +298,39 @@ func SeedVoucher(db *gorm.DB) error {
 	if record.ID != 0 {
 		log.Printf("voucher already exists\n")
 	} else {
-		for _, stock := range stocksData {
+		for _, stock := range vouchersData {
 			result := db.Create(&stock)
 			if result.Error != nil {
 				return result.Error
 			}
 		}
 
-		log.Printf("%d voucher created\n", len(stocksData))
+		log.Printf("%d voucher created\n", len(vouchersData))
+	}
+
+	return nil
+}
+
+func SeedRedeem(db *gorm.DB) error {
+	// Redeem Transaction
+	redeemsData := []redeems.Redeem{
+		{Phone: "081382815860", Cost: 300},
+	}
+
+	var record vouchers.Voucher
+	_ = db.First(&record)
+
+	if record.ID != 0 {
+		log.Printf("voucher already exists\n")
+	} else {
+		for _, stock := range redeemsData {
+			result := db.Create(&stock)
+			if result.Error != nil {
+				return result.Error
+			}
+		}
+
+		log.Printf("%d voucher created\n", len(redeemsData))
 	}
 
 	return nil

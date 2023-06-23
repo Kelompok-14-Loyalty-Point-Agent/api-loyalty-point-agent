@@ -73,6 +73,8 @@ func main() {
 
 	_dbDriver.SeedVoucher(db)
 
+	_dbDriver.SeedRedeem(db)
+
 	_dbDriver.SeedStockDetail(db)
 
 	_dbDriver.SeedStock(db)
