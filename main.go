@@ -31,8 +31,6 @@ import (
 	_middleware "api-loyalty-point-agent/app/middlewares"
 	_routes "api-loyalty-point-agent/app/routes"
 
-	_ "api-loyalty-point-agent/docs"
-
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	echoSwagger "github.com/swaggo/echo-swagger"

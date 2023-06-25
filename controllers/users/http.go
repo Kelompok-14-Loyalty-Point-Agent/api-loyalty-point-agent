@@ -14,29 +14,16 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-// AuthController represents the controller for user authentication.
 type AuthController struct {
 	authUseCase users.Usecase
 }
 
-// NewAuthController creates a new instance of AuthController.
 func NewAuthController(authUC users.Usecase) *AuthController {
 	return &AuthController{
 		authUseCase: authUC,
 	}
 }
 
-// Get Get all users.
-// @Summary Retrieves all users data
-// @Description Retrieves all users data with the given details
-// @Tags users
-// @Accept json
-// @Produce json
-// @Security BearerToken
-// @Success 200 {object} controllers.Response[response.User] "success"
-// @Success 201 {object} controllers.Response[response.User] "success"
-// @Failure 400 {object} controllers.Response[string] "failed"
-// @Router /users/usersAll [get]
 func (ctrl *AuthController) GetAllCustomers(c echo.Context) error {
 	ctx := c.Request().Context()
 
@@ -55,17 +42,6 @@ func (ctrl *AuthController) GetAllCustomers(c echo.Context) error {
 	return controllers.NewResponse(c, http.StatusOK, "success", "all customers", users)
 }
 
-// Register registers a new user.
-// @Summary Register a new user
-// @Description Register a new user with the given details
-// @Tags users
-// @Accept json
-// @Produce json
-// @Param user body request.User true "example value for registration; email = admin@example.com, name = admin, password = admin123"
-// @Success 200 {object} controllers.Response[response.User] "success"
-// @Success 201 {object} controllers.Response[response.User] "success"
-// @Failure 400 {object} controllers.Response[string] "failed"
-// @Router /user/register [post]
 func (ctrl *AuthController) Register(c echo.Context) error {
 	userInput := request.UserRegistration{}
 	ctx := c.Request().Context()
@@ -89,18 +65,6 @@ func (ctrl *AuthController) Register(c echo.Context) error {
 	return controllers.NewResponse(c, http.StatusCreated, "success", "user registered", response.FromDomain(user))
 }
 
-// Login logs in a user.
-// @Summary Log in a user
-// @Description Log in a user with the given email and password
-// @Tags users
-// @Accept json
-// @Produce json
-// @Param user body request.User true "example value for login; email = admin@example.com, name = admin, password = admin123"
-// @Success 200 {object} controllers.Response[string] "success"
-// @Success 201 {object} controllers.Response[string] "success"
-// @Failure 400 {object} controllers.Response[string] "failed"
-// @Failure 401 {object} controllers.Response[string] "failed"
-// @Router /user/login [post]
 func (ctrl *AuthController) Login(c echo.Context) error {
 	userInput := request.UserLogin{}
 	ctx := c.Request().Context()
@@ -126,16 +90,6 @@ func (ctrl *AuthController) Login(c echo.Context) error {
 	return controllers.NewResponse(c, http.StatusOK, "success", "token created", token)
 }
 
-// Logout logs out a user.
-// @Summary Log out a user
-// @Description Log out a user by invalidating the token
-// @Tags users
-// @Accept json
-// @Produce json
-// @Security BearerToken
-// @Success 200 {object} controllers.Response[string] "success"
-// @Failure 401 {object} controllers.Response[string] "failed"
-// @Router /users/logout [post]
 func (ctrl *AuthController) Logout(c echo.Context) error {
 	token := c.Get("user").(*jwt.Token)
 
