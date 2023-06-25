@@ -29,7 +29,6 @@ type Transaction struct {
 	Status         string                    `json:"status" gorm:"type:enum('success', 'failed', 'on-process');default:'success';not_null"`
 	Description    string                    `json:"description" gorm:"type:enum('top up');default:'top up';not_null"`
 	UserID         uint                      `json:"user_id"`
-	// TotalTransactionMade int64                     `json:"total_transaction_made"`
 }
 
 func (rec *Transaction) ToDomain() transactions.Domain {

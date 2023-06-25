@@ -14,7 +14,6 @@ type UserLogin struct {
 	Role     string `json:"role"`
 }
 
-// user registration with Name
 type UserRegistration struct {
 	Name     string `json:"name" validate:"required,NotEmpty"`
 	Email    string `json:"email" validate:"required,email"`
@@ -104,7 +103,6 @@ func NotEmpty(fl validator.FieldLevel) bool {
 	inputData := fl.Field().String()
 	inputData = strings.TrimSpace(inputData)
 
-	// Periksa apakah data yang diinput kosong atau hanya berisi spasi
 	return inputData != ""
 }
 

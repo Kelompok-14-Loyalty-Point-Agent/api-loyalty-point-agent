@@ -1,6 +1,5 @@
 package redeems
 
-// penyebab Error 1452 (23000): Cannot add or update a child row: a foreign key constraint fails (`api_loyalty_point_agent_db`.`redeems`, CONSTRAINT `fk_redeems_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`))
 import (
 	"api-loyalty-point-agent/businesses/redeems"
 
