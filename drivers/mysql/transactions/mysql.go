@@ -101,7 +101,7 @@ func (cr *transactionRepository) Create(ctx context.Context, transactionDomain *
 
 	record.StockID = stock_detail.StockID
 	record.Price = stock_detail.Price
-	
+
 	// product name
 	record.Product += strings.Title(stock.Type) + " " + provider.Name
 
@@ -215,7 +215,7 @@ func (cr *transactionRepository) UpdatePoint(ctx context.Context, transactionDom
 		return transactions.Domain{}, err
 	}
 
-	profile.Point = (profile.Point - transaction.Point) + transactionDomain.Point 
+	profile.Point = (profile.Point - transaction.Point) + transactionDomain.Point
 
 	if err := cr.conn.WithContext(ctx).Save(&profile).Error; err != nil {
 		return transactions.Domain{}, err
@@ -227,4 +227,3 @@ func (cr *transactionRepository) UpdatePoint(ctx context.Context, transactionDom
 
 	return updatedTransaction.ToDomain(), nil
 }
-

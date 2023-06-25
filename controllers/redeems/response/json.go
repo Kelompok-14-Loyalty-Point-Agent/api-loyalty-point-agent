@@ -2,7 +2,6 @@ package response
 
 import (
 	"api-loyalty-point-agent/businesses/redeems"
-
 	"time"
 
 	"gorm.io/gorm"
