@@ -2,7 +2,6 @@ package stock_details
 
 import (
 	"api-loyalty-point-agent/businesses/stock_details"
-
 	"time"
 
 	"gorm.io/gorm"
@@ -21,14 +20,14 @@ type StockDetail struct {
 
 func (rec *StockDetail) ToDomain() stock_details.Domain {
 	return stock_details.Domain{
-		ID:         rec.ID,
-		CreatedAt:  rec.CreatedAt,
-		UpdatedAt:  rec.UpdatedAt,
-		DeletedAt:  rec.DeletedAt,
-		Stock:      rec.Stock,
-		Price:      rec.Price,
-		Quantity:   rec.Quantity,
-		StockID:    rec.StockID,
+		ID:        rec.ID,
+		CreatedAt: rec.CreatedAt,
+		UpdatedAt: rec.UpdatedAt,
+		DeletedAt: rec.DeletedAt,
+		Stock:     rec.Stock,
+		Price:     rec.Price,
+		Quantity:  rec.Quantity,
+		StockID:   rec.StockID,
 	}
 }
 

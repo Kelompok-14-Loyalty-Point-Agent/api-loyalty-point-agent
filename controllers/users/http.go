@@ -6,7 +6,7 @@ import (
 	"api-loyalty-point-agent/controllers"
 	"api-loyalty-point-agent/controllers/users/request"
 	"api-loyalty-point-agent/controllers/users/response"
-	"api-loyalty-point-agent/drivers/aws"
+	aws_driver "api-loyalty-point-agent/drivers/aws"
 	"net/http"
 	"os"
 
@@ -129,7 +129,7 @@ func (ctrl *AuthController) UpdateProfileCustomer(c echo.Context) error {
 	}
 
 	err := input.Validate()
-	if err!= nil{
+	if err != nil {
 		return controllers.NewResponse(c, http.StatusBadRequest, "failed", err.Error(), "")
 	}
 
@@ -153,7 +153,7 @@ func (ctrl *AuthController) UpdateProfileCustomerInAdmin(c echo.Context) error {
 	}
 
 	err := input.Validate()
-	if err!= nil{
+	if err != nil {
 		return controllers.NewResponse(c, http.StatusBadRequest, "failed", err.Error(), "")
 	}
 
@@ -177,7 +177,7 @@ func (ctrl *AuthController) UpdateProfileAdmin(c echo.Context) error {
 	}
 
 	err := input.Validate()
-	if err!= nil{
+	if err != nil {
 		return controllers.NewResponse(c, http.StatusBadRequest, "failed", err.Error(), "")
 	}
 
@@ -201,7 +201,7 @@ func (ctrl *AuthController) ChangePassword(c echo.Context) error {
 	}
 
 	err := input.Validate()
-	if err!= nil{
+	if err != nil {
 		return controllers.NewResponse(c, http.StatusBadRequest, "failed", err.Error(), "")
 	}
 
@@ -276,5 +276,3 @@ func (ctrl *AuthController) DeleteCustomer(c echo.Context) error {
 
 	return controllers.NewResponse(c, http.StatusOK, "success", "customer deleted", "")
 }
-
-

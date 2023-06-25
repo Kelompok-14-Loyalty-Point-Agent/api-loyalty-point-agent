@@ -3,11 +3,6 @@ package transactions
 import (
 	"api-loyalty-point-agent/businesses/transactions"
 	"api-loyalty-point-agent/drivers/mysql/stock_details"
-
-	// "api-loyalty-point-agent/drivers/mysql/stocks"
-
-	// "api-loyalty-point-agent/drivers/mysql/stocks"
-
 	"time"
 
 	"gorm.io/gorm"

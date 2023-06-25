@@ -1,9 +1,8 @@
 package request
 
 import (
-	"api-loyalty-point-agent/businesses/stocks"
-
 	"api-loyalty-point-agent/businesses/stock_details"
+	"api-loyalty-point-agent/businesses/stocks"
 	"api-loyalty-point-agent/businesses/transactions"
 
 	"github.com/go-playground/validator/v10"
