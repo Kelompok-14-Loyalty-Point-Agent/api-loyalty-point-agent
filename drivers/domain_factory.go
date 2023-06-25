@@ -4,9 +4,6 @@ import (
 	userDomain "api-loyalty-point-agent/businesses/users"
 	userDB "api-loyalty-point-agent/drivers/mysql/users"
 
-	providerDomain "api-loyalty-point-agent/businesses/providers"
-	providerDB "api-loyalty-point-agent/drivers/mysql/providers"
-
 	stock_detailDomain "api-loyalty-point-agent/businesses/stock_details"
 	stock_detailDB "api-loyalty-point-agent/drivers/mysql/stock_details"
 
@@ -19,9 +16,6 @@ import (
 	stock_transactionDomain "api-loyalty-point-agent/businesses/stock_transactions"
 	stock_transactionDB "api-loyalty-point-agent/drivers/mysql/stock_transactions"
 
-	profileDomain "api-loyalty-point-agent/businesses/profiles"
-	profileDB "api-loyalty-point-agent/drivers/mysql/profiles"
-
 	voucherDomain "api-loyalty-point-agent/businesses/vouchers"
 	voucherDB "api-loyalty-point-agent/drivers/mysql/vouchers"
 
@@ -33,10 +27,6 @@ import (
 
 func NewUserRepository(conn *gorm.DB) userDomain.Repository {
 	return userDB.NewMySQLRepository(conn)
-}
-
-func NewProviderRepository(conn *gorm.DB) providerDomain.Repository {
-	return providerDB.NewMySQLRepository(conn)
 }
 
 func NewStockDetailRepository(conn *gorm.DB) stock_detailDomain.Repository {
@@ -53,10 +43,6 @@ func NewTransactionRepository(conn *gorm.DB) transactionDomain.Repository {
 
 func NewStockTransactionRepository(conn *gorm.DB) stock_transactionDomain.Repository {
 	return stock_transactionDB.NewMySQLRepository(conn)
-}
-
-func NewProfileRepository(conn *gorm.DB) profileDomain.Repository {
-	return profileDB.NewMySQLRepository(conn)
 }
 
 func NewVoucherRepository(conn *gorm.DB) voucherDomain.Repository {
