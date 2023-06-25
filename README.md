@@ -1,13 +1,9 @@
 # api-loyalty-point-agent
 
-### Key Pair
-
-https://drive.google.com/file/d/1242WI-erRCbZGjgtHbMGi5yP8kSGbGqB/view?usp=share_link
-
 ### Connect to SSH
 
 ```
-ssh -i "capstoneAPI.pem" ec2-user@ec2-13-229-84-45.ap-southeast-1.compute.amazonaws.com
+ssh -i "capstoneAPI.pem" ec2-user@ec2-3-0-59-152.ap-southeast-1.compute.amazonaws.com
 ```
 
 ### Connect to MySQL through docker-compose
@@ -29,8 +25,43 @@ ssh -i "capstoneAPI.pem" ec2-user@ec2-13-229-84-45.ap-southeast-1.compute.amazon
 
 ### API IPv4 Adrress
 
-Use this link to test API:
+Use this link to test API (Currently):
 
-http://13.229.84.45
+https://3.0.59.152.nip.io
 
+
+### Local Use
+
+Without Docker:
+
+1. Change .env file (Based on your local mysql configure):
+    ```
+    DB_HOST="localhost" 
+    DB_PORT="3306"
+    DB_USERNAME="root"
+    DB_PASSWORD=""
+    DB_NAME="api_loyalty_point_agent_db"
+    ```
+
+2. Run this code in terminal:
+    ```
+    go run main.go
+    ```
+
+With Docker (**make user docker desktop is running**):
+
+1. Change .env file:
+    ```
+    DB_HOST="mysql" 
+    DB_PORT="3306"
+    DB_USERNAME="root"
+    DB_PASSWORD="root123"
+    DB_NAME="api_loyalty_point_agent_db"
+    ```
+
+2. Run this code in terminal:
+    ```
+    docker-compose up -d
+    ```
+    
 
