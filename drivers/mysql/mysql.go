@@ -184,7 +184,7 @@ func SeedCustomer(db *gorm.DB) {
 		profile.Member = "gold"
 		profile.MonthlyTransaction = 10
 		profile.TransactionMade = 10
-		profile.Point = float32(1000000)
+		profile.Point = float64(1000000)
 		profile.Phone = "082189998231"
 		profile.Name = customer.Name
 
@@ -263,36 +263,65 @@ func SeedProvider(db *gorm.DB) {
 func SeedStockDetail(db *gorm.DB) {
 	// Data stock details
 	stockDetailData := []stock_details.StockDetail{
-		{StockID: 1, Stock: 10000, Price: 12500, Quantity: 100},
-		{StockID: 2, Stock: 20000, Price: 22500, Quantity: 100},
-		{StockID: 3, Stock: 25000, Price: 27500, Quantity: 95},
-		{StockID: 2, Stock: 30000, Price: 32500, Quantity: 98},
-		{StockID: 2, Stock: 40000, Price: 42500, Quantity: 50},
-		{StockID: 2, Stock: 50000, Price: 52500, Quantity: 19},
-		{StockID: 2, Stock: 60000, Price: 62500, Quantity: 100},
+		{StockID: 2, Stock: 5000, Price: 9500, Quantity: 100},
+		{StockID: 2, Stock: 10000, Price: 14500, Quantity: 100},
+		{StockID: 2, Stock: 25000, Price: 27500, Quantity: 100},
+		{StockID: 2, Stock: 50000, Price: 52500, Quantity: 100},
+		{StockID: 2, Stock: 100000, Price: 102500, Quantity: 100},
+		{StockID: 1, Stock: 5, Price: 29500, Quantity: 100},
+		{StockID: 1, Stock: 10, Price: 54500, Quantity: 100},
+		{StockID: 1, Stock: 15, Price: 77500, Quantity: 100},
+		{StockID: 1, Stock: 25, Price: 102500, Quantity: 100},
+
+		{StockID: 4, Stock: 5000, Price: 9500, Quantity: 100},
 		{StockID: 4, Stock: 10000, Price: 14500, Quantity: 100},
-		{StockID: 6, Stock: 10000, Price: 12500, Quantity: 100},
-		{StockID: 4, Stock: 20000, Price: 22500, Quantity: 100},
 		{StockID: 4, Stock: 25000, Price: 27500, Quantity: 100},
 		{StockID: 4, Stock: 50000, Price: 52500, Quantity: 100},
-		{StockID: 4, Stock: 100000, Price: 101000, Quantity: 200},
-		{StockID: 6, Stock: 20000, Price: 22500, Quantity: 100},
+		{StockID: 4, Stock: 100000, Price: 102500, Quantity: 100},
+		{StockID: 3, Stock: 5, Price: 29500, Quantity: 100},
+		{StockID: 3, Stock: 10, Price: 54500, Quantity: 100},
+		{StockID: 3, Stock: 15, Price: 77500, Quantity: 100},
+		{StockID: 3, Stock: 25, Price: 102500, Quantity: 100},
+
+		{StockID: 6, Stock: 5000, Price: 9500, Quantity: 100},
+		{StockID: 6, Stock: 10000, Price: 14500, Quantity: 100},
 		{StockID: 6, Stock: 25000, Price: 27500, Quantity: 100},
 		{StockID: 6, Stock: 50000, Price: 52500, Quantity: 100},
+		{StockID: 6, Stock: 100000, Price: 102500, Quantity: 100},
+		{StockID: 5, Stock: 5, Price: 29500, Quantity: 100},
+		{StockID: 5, Stock: 10, Price: 54500, Quantity: 100},
+		{StockID: 5, Stock: 15, Price: 77500, Quantity: 100},
+		{StockID: 5, Stock: 25, Price: 102500, Quantity: 100},
+		
+		{StockID: 8, Stock: 5000, Price: 9500, Quantity: 100},
 		{StockID: 8, Stock: 10000, Price: 14500, Quantity: 100},
-		{StockID: 10, Stock: 10000, Price: 12500, Quantity: 100},
-		{StockID: 1, Stock: 10, Price: 47000, Quantity: 100},
-		{StockID: 1, Stock: 20, Price: 79000, Quantity: 100},
-		{StockID: 3, Stock: 5, Price: 35000, Quantity: 100},
-		{StockID: 5, Stock: 5, Price: 40000, Quantity: 100},
-		{StockID: 7, Stock: 5, Price: 35000, Quantity: 100},
-		{StockID: 3, Stock: 15, Price: 60000, Quantity: 100},
-		{StockID: 5, Stock: 15, Price: 70000, Quantity: 100},
-		{StockID: 7, Stock: 15, Price: 60000, Quantity: 100},
-		{StockID: 3, Stock: 10, Price: 49500, Quantity: 100},
-		{StockID: 1, Stock: 25, Price: 100000, Quantity: 100},
-		{StockID: 9, Stock: 5, Price: 45000, Quantity: 100},
-		{StockID: 9, Stock: 10, Price: 50000, Quantity: 100},
+		{StockID: 8, Stock: 25000, Price: 27500, Quantity: 100},
+		{StockID: 8, Stock: 50000, Price: 52500, Quantity: 100},
+		{StockID: 8, Stock: 100000, Price: 102500, Quantity: 100},
+		{StockID: 7, Stock: 5, Price: 29500, Quantity: 100},
+		{StockID: 7, Stock: 10, Price: 54500, Quantity: 100},
+		{StockID: 7, Stock: 15, Price: 77500, Quantity: 100},
+		{StockID: 7, Stock: 25, Price: 102500, Quantity: 100},
+
+		{StockID: 10, Stock: 5000, Price: 9500, Quantity: 100},
+		{StockID: 10, Stock: 10000, Price: 14500, Quantity: 100},
+		{StockID: 10, Stock: 25000, Price: 27500, Quantity: 100},
+		{StockID: 10, Stock: 50000, Price: 52500, Quantity: 100},
+		{StockID: 10, Stock: 100000, Price: 102500, Quantity: 100},
+		{StockID: 9, Stock: 5, Price: 29500, Quantity: 100},
+		{StockID: 9, Stock: 10, Price: 54500, Quantity: 100},
+		{StockID: 9, Stock: 15, Price: 77500, Quantity: 100},
+		{StockID: 9, Stock: 25, Price: 102500, Quantity: 100},
+		
+		{StockID: 12, Stock: 5000, Price: 9500, Quantity: 100},
+		{StockID: 12, Stock: 10000, Price: 14500, Quantity: 100},
+		{StockID: 12, Stock: 25000, Price: 27500, Quantity: 100},
+		{StockID: 12, Stock: 50000, Price: 52500, Quantity: 100},
+		{StockID: 12, Stock: 100000, Price: 102500, Quantity: 100},
+		{StockID: 11, Stock: 5, Price: 29500, Quantity: 100},
+		{StockID: 11, Stock: 10, Price: 54500, Quantity: 100},
+		{StockID: 11, Stock: 15, Price: 77500, Quantity: 100},
+		{StockID: 11, Stock: 25, Price: 102500, Quantity: 100},
 	}
 
 	err := db.Transaction(func(tx *gorm.DB) error {
@@ -327,18 +356,18 @@ func SeedStockDetail(db *gorm.DB) {
 func SeedStock(db *gorm.DB) error {
 	// Data stocks
 	stocksData := []stocks.Stock{
-		{Type: "data", TotalStock: 45, ProviderID: 1, LastTopUp: time.Now()},
-		{Type: "credit", TotalStock: 290000, ProviderID: 1, LastTopUp: time.Now()},
-		{Type: "data", TotalStock: 0, ProviderID: 2, LastTopUp: time.Now()},
-		{Type: "credit", TotalStock: 0, ProviderID: 2, LastTopUp: time.Now()},
-		{Type: "data", TotalStock: 0, ProviderID: 3, LastTopUp: time.Now()},
-		{Type: "credit", TotalStock: 0, ProviderID: 3, LastTopUp: time.Now()},
-		{Type: "data", TotalStock: 0, ProviderID: 4, LastTopUp: time.Now()},
-		{Type: "credit", TotalStock: 0, ProviderID: 4, LastTopUp: time.Now()},
-		{Type: "data", TotalStock: 0, ProviderID: 5, LastTopUp: time.Now()},
-		{Type: "credit", TotalStock: 0, ProviderID: 5, LastTopUp: time.Now()},
-		{Type: "data", TotalStock: 0, ProviderID: 6, LastTopUp: time.Now()},
-		{Type: "credit", TotalStock: 0, ProviderID: 6, LastTopUp: time.Now()},
+		{Type: "data", TotalStock: 100, ProviderID: 1, LastTopUp: time.Now()},
+		{Type: "credit", TotalStock: 1000000, ProviderID: 1, LastTopUp: time.Now()},
+		{Type: "data", TotalStock: 100, ProviderID: 2, LastTopUp: time.Now()},
+		{Type: "credit", TotalStock: 1000000, ProviderID: 2, LastTopUp: time.Now()},
+		{Type: "data", TotalStock: 100, ProviderID: 3, LastTopUp: time.Now()},
+		{Type: "credit", TotalStock: 1000000, ProviderID: 3, LastTopUp: time.Now()},
+		{Type: "data", TotalStock: 100, ProviderID: 4, LastTopUp: time.Now()},
+		{Type: "credit", TotalStock: 1000000, ProviderID: 4, LastTopUp: time.Now()},
+		{Type: "data", TotalStock: 100, ProviderID: 5, LastTopUp: time.Now()},
+		{Type: "credit", TotalStock: 1000000, ProviderID: 5, LastTopUp: time.Now()},
+		{Type: "data", TotalStock: 100, ProviderID: 6, LastTopUp: time.Now()},
+		{Type: "credit", TotalStock: 1000000, ProviderID: 6, LastTopUp: time.Now()},
 	}
 
 	var record stocks.Stock
@@ -389,8 +418,8 @@ func SeedVoucher(db *gorm.DB) error {
 func SeedTransaction(db *gorm.DB) error {
 	// Data transactions
 	transactionData := []transactions.Transaction{
-		{Phone: "08198293845", StockDetailsID: 1, StockID: 1, Price: 50000, Payment_method: "Go Pay", Point: 49, Status: "success", Description: "top up", UserID: 2, Product: "Data Telkomsel"},
-		{Phone: "08198293845", StockDetailsID: 1, StockID: 2, Price: 22500, Payment_method: "Dana", Point: 22.4, Status: "success", Description: "top up", UserID: 2, Product: "Credit Telkomsel"},
+		{Phone: "08198293845", StockDetailsID: 1, StockID: 1, Price: 9500, Payment_method: "Go Pay", Point: 9.4, Status: "success", Description: "top up", UserID: 2, Product: "Credit Telkomsel"},
+		{Phone: "08198293845", StockDetailsID: 2, StockID: 1, Price: 14500, Payment_method: "Dana", Point: 14.4, Status: "success", Description: "top up", UserID: 2, Product: "Credit Telkomsel"},
 	}
 
 	var record transactions.Transaction

@@ -16,7 +16,7 @@ type Domain struct {
 	Payment_method string
 	Phone          string
 	DateExchange   time.Time
-	Cost           float32
+	Cost           float64
 	UserID         uint
 	VoucherID      uint
 }

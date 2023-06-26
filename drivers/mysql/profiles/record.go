@@ -17,7 +17,7 @@ type Profile struct {
 	Age                uint           `json:"age"`
 	Gender             string         `json:"gender" gorm:"type:enum('man', 'woman', 'not-selected');default:''not-selected';not_null"`
 	Phone              string         `json:"phone"`
-	Point              float32        `json:"point"`
+	Point              float64        `json:"point"`
 	Member             string         `json:"member" gorm:"type:enum('bronze', 'silver', 'gold', 'platinum');default:'bronze';not_null"`
 	TransactionMade    uint           `json:"count_transaction"`
 	MonthlyTransaction uint           `json:"monthly_transaction"`

@@ -16,7 +16,7 @@ type Redeem struct {
 	PaymentMethod string         `json:"payment_method"`
 	Product       string         `json:"product"`
 	Phone         string         `json:"phone"`
-	Cost          float32        `json:"cost"`
+	Cost          float64        `json:"cost"`
 	UserID        uint           `json:"user_id"`
 	VoucherID     uint           `json:"voucher_id"`
 }

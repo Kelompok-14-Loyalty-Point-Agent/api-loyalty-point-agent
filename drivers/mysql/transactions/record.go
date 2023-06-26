@@ -2,7 +2,6 @@ package transactions
 
 import (
 	"api-loyalty-point-agent/businesses/transactions"
-	"api-loyalty-point-agent/drivers/mysql/stock_details"
 	"time"
 
 	"gorm.io/gorm"
@@ -15,12 +14,11 @@ type Transaction struct {
 	DeletedAt      gorm.DeletedAt            `json:"deleted_at" gorm:"index"`
 	Phone          string                    `json:"phone"`
 	StockDetailsID uint                      `json:"stock_details_id"`
-	StockDetails   stock_details.StockDetail `json:"Stock_details" gorm:"foreignKey:stock_details_id"`
 	StockID        uint                      `json:"stock_id"`
 	Price          float64                   `json:"price"`
 	Product        string                    `json:"product"`
 	Payment_method string                    `json:"payment_method"`
-	Point          float32                   `json:"point"`
+	Point          float64                   `json:"point"`
 	Status         string                    `json:"status" gorm:"type:enum('success', 'failed', 'on-process');default:'success';not_null"`
 	Description    string                    `json:"description" gorm:"type:enum('top up');default:'top up';not_null"`
 	UserID         uint                      `json:"user_id"`
@@ -35,7 +33,6 @@ func (rec *Transaction) ToDomain() transactions.Domain {
 		DeletedAt:      rec.DeletedAt,
 		Phone:          rec.Phone,
 		StockDetailsID: rec.StockDetailsID,
-		StockDetails:   rec.StockDetails.ToDomain(),
 		StockID:        rec.StockID,
 		Price:          rec.Price,
 		Product:        rec.Product,
