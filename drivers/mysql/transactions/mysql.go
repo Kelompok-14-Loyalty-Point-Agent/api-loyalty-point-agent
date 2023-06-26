@@ -101,27 +101,26 @@ func (cr *transactionRepository) Create(ctx context.Context, transactionDomain *
 
 	record.StockID = stock_detail.StockID
 	record.Price = stock_detail.Price
-	
+
 	// product name
 	record.Product += strings.Title(stock.Type) + " " + provider.Name
 
 	// point
 	record.Point = float32(stock_detail.Price) / 1000
 
-	// Mengambil data profil berdasarkan record.UserID
 	var profile profiles.Profile
 	if err := cr.conn.WithContext(ctx).First(&profile, "id = ?", record.UserID).Error; err != nil {
 		return transactions.Domain{}, err
 	}
 
-	// increment total transaksi pada profil
+	// transaction_made
 	profile.TransactionMade += 1
 
-	// masukkan point ke profile
+	// point to profile
 	profile.Point += record.Point
 	utils.RoundFloat(float64(profile.Point), 1)
 
-	// hitung transaksi per bulan pada profil
+	// monthly transaction
 	var records []Transaction
 
 	if err := cr.conn.WithContext(ctx).Preload("StockDetails").
@@ -132,7 +131,7 @@ func (cr *transactionRepository) Create(ctx context.Context, transactionDomain *
 
 	profile.MonthlyTransaction = uint(len(records))
 
-	// update member berdasarkan jumlah transaksi yang dibuat
+	// member
 	if profile.TransactionMade >= 5 && profile.TransactionMade <= 10 {
 		profile.Member = "silver"
 	} else if profile.TransactionMade >= 11 && profile.TransactionMade <= 15 {
@@ -141,7 +140,6 @@ func (cr *transactionRepository) Create(ctx context.Context, transactionDomain *
 		profile.Member = "platinum"
 	}
 
-	// Simpan perubahan pada profil
 	if err := cr.conn.WithContext(ctx).Save(&profile).Error; err != nil {
 		return transactions.Domain{}, err
 	}
@@ -217,7 +215,7 @@ func (cr *transactionRepository) UpdatePoint(ctx context.Context, transactionDom
 		return transactions.Domain{}, err
 	}
 
-	profile.Point = (profile.Point - transaction.Point) + transactionDomain.Point 
+	profile.Point = (profile.Point - transaction.Point) + transactionDomain.Point
 
 	if err := cr.conn.WithContext(ctx).Save(&profile).Error; err != nil {
 		return transactions.Domain{}, err
@@ -229,4 +227,3 @@ func (cr *transactionRepository) UpdatePoint(ctx context.Context, transactionDom
 
 	return updatedTransaction.ToDomain(), nil
 }
-

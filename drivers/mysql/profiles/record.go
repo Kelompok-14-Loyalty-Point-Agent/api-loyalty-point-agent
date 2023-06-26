@@ -2,7 +2,6 @@ package profiles
 
 import (
 	"api-loyalty-point-agent/businesses/profiles"
-	// "api-loyalty-point-agent/drivers/mysql/transactions"
 	"time"
 
 	"gorm.io/gorm"

@@ -33,7 +33,6 @@ type DBConfig struct {
 	DB_PORT     string
 }
 
-// connect to the database
 func (config *DBConfig) InitDB() *gorm.DB {
 	var err error
 
@@ -56,7 +55,6 @@ func (config *DBConfig) InitDB() *gorm.DB {
 	return db
 }
 
-// perform migration
 func MigrateDB(db *gorm.DB) {
 	err := db.AutoMigrate(&profiles.Profile{}, &users.User{}, &providers.Provider{}, &stocks.Stock{}, &stock_details.StockDetail{}, &stock_transactions.StockTransaction{}, &transactions.Transaction{}, &vouchers.Voucher{}, &redeems.Redeem{})
 

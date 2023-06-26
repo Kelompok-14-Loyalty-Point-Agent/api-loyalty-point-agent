@@ -1,23 +1,19 @@
 package request
 
 import (
-	voucher "api-loyalty-point-agent/businesses/vouchers"
-
-	// "api-loyalty-point-agent/businesses/stock_details"
-	// "api-loyalty-point-agent/businesses/transactions"
+	"api-loyalty-point-agent/businesses/vouchers"
 
 	"github.com/go-playground/validator/v10"
 )
 
 type Voucher struct {
-	// ID string `json:"id"`
-	Product string `json:"product"`
-	Benefit string `json:"benefit"`
-	Cost    float32   `json:"cost"`
+	Product string  `json:"product"`
+	Benefit string  `json:"benefit"`
+	Cost    float32 `json:"cost"`
 }
 
-func (req *Voucher) ToDomain() *voucher.Domain {
-	return &voucher.Domain{
+func (req *Voucher) ToDomain() *vouchers.Domain {
+	return &vouchers.Domain{
 		Product: req.Product,
 		Benefit: req.Benefit,
 		Cost:    req.Cost,

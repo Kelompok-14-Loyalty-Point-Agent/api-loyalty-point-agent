@@ -18,7 +18,6 @@ type JwtCustomClaims struct {
 	jwt.RegisteredClaims
 }
 
-// untuk menyimpan konfigurasi jwt
 type JWTConfig struct {
 	SecretKey       string
 	ExpiresDuration int
@@ -46,7 +45,6 @@ func (jwtConfig *JWTConfig) GenerateToken(userID int, userRole string) (string, 
 
 	rawToken := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
-	//mendapatkan token jwt dalam bentuk string
 	token, err := rawToken.SignedString([]byte(jwtConfig.SecretKey))
 
 	whitelist = append(whitelist, token)
@@ -59,8 +57,6 @@ func (jwtConfig *JWTConfig) GenerateToken(userID int, userRole string) (string, 
 }
 
 func GetUser(c echo.Context) (*JwtCustomClaims, error) {
-	// penyebab interface {} is nil, not *jwt.Token :')
-	// user := c.Get("user").(*jwt.Token)
 
 	user := c.Get("user").(*jwt.Token)
 
@@ -72,7 +68,6 @@ func GetUser(c echo.Context) (*JwtCustomClaims, error) {
 	return claims, nil
 }
 
-// menentukan token jwt valid atau tidak
 func VerifyToken(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		userData, err := GetUser(c)

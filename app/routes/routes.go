@@ -3,8 +3,6 @@ package routes
 import (
 	"api-loyalty-point-agent/app/middlewares"
 
-	profiles "api-loyalty-point-agent/controllers/profiles"
-	providers "api-loyalty-point-agent/controllers/providers"
 	redeems "api-loyalty-point-agent/controllers/redeems"
 	stock_details "api-loyalty-point-agent/controllers/stock_details"
 	stock_transactions "api-loyalty-point-agent/controllers/stock_transactions"
@@ -22,12 +20,10 @@ type ControllerList struct {
 	LoggerMiddleware           echo.MiddlewareFunc
 	JWTMiddleware              echojwt.Config
 	AuthController             users.AuthController
-	ProviderController         providers.ProviderController
 	StockController            stocks.StockController
 	StockDetailController      stock_details.StockDetailController
 	StockTransactionController stock_transactions.StockTransactionController
 	TransactionController      transactions.TransactionController
-	ProfileController          profiles.ProfileController
 	VoucherController          voucher.VoucherController
 	RedeemsController          redeems.RedeemsController
 }
@@ -72,16 +68,6 @@ func (cl *ControllerList) RegisterRoutes(e *echo.Echo) {
 	transactions.GET("/users/recent/:id", cl.TransactionController.GetAllByUserIDSorted)
 	transactions.PUT("/:id", cl.TransactionController.UpdatePoint)
 
-	providers := e.Group("/providers", echojwt.WithConfig(cl.JWTMiddleware))
-	providers.Use(middlewares.VerifyToken)
-	providers.GET("", cl.ProviderController.GetAll)
-	// read image from bucket
-	providers.GET("/read", cl.ProviderController.ReadFile)
-	// download image from bucket
-	providers.GET("/image/download", cl.ProviderController.DownloadFile)
-	providers.GET("/:id", cl.ProviderController.GetByID)
-	providers.GET("/delete", cl.ProviderController.DeleteFile)
-
 	stocks := e.Group("/stocks", echojwt.WithConfig(cl.JWTMiddleware))
 	stocks.Use(middlewares.VerifyToken)
 	stocks.GET("", cl.StockController.GetAll)
@@ -102,17 +88,6 @@ func (cl *ControllerList) RegisterRoutes(e *echo.Echo) {
 	stock_transaction.Use(middlewares.VerifyToken)
 	stock_transaction.GET("", cl.StockTransactionController.GetAll)
 	stock_transaction.GET("/:id", cl.StockTransactionController.GetByID)
-
-	// admin := e.Group("/admin", echojwt.WithConfig(cl.JWTMiddleware))
-	// admin.Use(middlewares.VerifyToken)
-	// users.GET("/stock", cl.AuthController.GetAllCustomers)
-
-	// profiles := e.Group("/profiles", echojwt.WithConfig(cl.JWTMiddleware))
-	// profiles.Use(middlewares.VerifyToken)
-	// profiles.GET("", cl.ProfileController.GetAll)
-	// profiles.GET("/:id", cl.ProfileController.GetByID)
-	// profiles.PUT("/:id", cl.ProfileController.Update)
-	// profiles.DELETE("/:id", cl.ProfileController.Delete)
 
 	images := e.Group("/images")
 	images.Static("/url", "./assets/users")

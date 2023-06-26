@@ -15,8 +15,8 @@ type Redeem struct {
 
 func (req *Redeem) ToDomain() *redeems.Domain {
 	return &redeems.Domain{
-		Phone: req.Phone,
-		UserID: req.UserID,
+		Phone:     req.Phone,
+		UserID:    req.UserID,
 		VoucherID: req.VoucherID,
 	}
 }
@@ -25,7 +25,6 @@ func NotEmpty(fl validator.FieldLevel) bool {
 	inputData := fl.Field().String()
 	inputData = strings.TrimSpace(inputData)
 
-	// Periksa apakah data yang diinput kosong atau hanya berisi spasi
 	return inputData != ""
 }
 

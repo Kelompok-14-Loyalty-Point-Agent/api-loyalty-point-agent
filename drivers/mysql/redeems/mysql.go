@@ -2,7 +2,6 @@ package redeems
 
 import (
 	"api-loyalty-point-agent/businesses/redeems"
-
 	"context"
 
 	"gorm.io/gorm"
@@ -44,7 +43,3 @@ func (ur *redeemRepository) GetByID(ctx context.Context, id string) (redeems.Dom
 	return redeem.ToDomain(), nil
 
 }
-
-
-
-

@@ -8,9 +8,6 @@ import (
 	_userUseCase "api-loyalty-point-agent/businesses/users"
 	_userController "api-loyalty-point-agent/controllers/users"
 
-	_providerUseCase "api-loyalty-point-agent/businesses/providers"
-	_providerController "api-loyalty-point-agent/controllers/providers"
-
 	_stockUseCase "api-loyalty-point-agent/businesses/stocks"
 	_stockController "api-loyalty-point-agent/controllers/stocks"
 
@@ -23,9 +20,6 @@ import (
 	_transactionUseCase "api-loyalty-point-agent/businesses/transactions"
 	_transactionController "api-loyalty-point-agent/controllers/transactions"
 
-	_profileUseCase "api-loyalty-point-agent/businesses/profiles"
-	_profileController "api-loyalty-point-agent/controllers/profiles"
-
 	_voucherUseCase "api-loyalty-point-agent/businesses/vouchers"
 	_voucherController "api-loyalty-point-agent/controllers/vouchers"
 
@@ -37,22 +31,11 @@ import (
 	_middleware "api-loyalty-point-agent/app/middlewares"
 	_routes "api-loyalty-point-agent/app/routes"
 
-	_ "api-loyalty-point-agent/docs"
-
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	echoSwagger "github.com/swaggo/echo-swagger"
 )
 
-// @title API Loyalty Point Agent
-// @version 1.0
-// @description Berikut API Loyalty Point Agent.
-// @termsOfService http://swagger.io/terms/
-
-// @host localhost:8080
-// @BasePath /
-
-// ini
 func main() {
 
 	configDB := _dbDriver.DBConfig{
@@ -102,10 +85,6 @@ func main() {
 	userUsecase := _userUseCase.NewUserUseCase(userRepo, &configJWT)
 	userCtrl := _userController.NewAuthController(userUsecase)
 
-	providerRepo := _driverFactory.NewProviderRepository(db)
-	providerUsecase := _providerUseCase.NewProviderUseCase(providerRepo, &configJWT)
-	providerCtrl := _providerController.NewProviderController(providerUsecase)
-
 	stockRepo := _driverFactory.NewStockRepository(db)
 	stockUsecase := _stockUseCase.NewStockUseCase(stockRepo, &configJWT)
 	stockCtrl := _stockController.NewStockController(stockUsecase)
@@ -122,10 +101,6 @@ func main() {
 	transactionUsecase := _transactionUseCase.NewTransactionUseCase(transactionRepo, &configJWT)
 	transactionCtrl := _transactionController.NewTransactionController(transactionUsecase)
 
-	profileRepo := _driverFactory.NewProfileRepository(db)
-	profileUsecase := _profileUseCase.NewProfileUseCase(profileRepo, &configJWT)
-	profileCtrl := _profileController.NewProfileController(profileUsecase)
-
 	voucherRepo := _driverFactory.NewVoucherRepository(db)
 	voucherUsecase := _voucherUseCase.NewVoucherUseCase(voucherRepo, &configJWT)
 	voucherCtrl := _voucherController.NewVoucherController(voucherUsecase)
@@ -139,21 +114,15 @@ func main() {
 		JWTMiddleware:              configJWT.Init(),
 		AuthController:             *userCtrl,
 		StockController:            *stockCtrl,
-		ProviderController:         *providerCtrl,
 		StockDetailController:      *stock_detailCtrl,
 		StockTransactionController: *stock_transactionCtrl,
 		TransactionController:      *transactionCtrl,
-		ProfileController:          *profileCtrl,
 		VoucherController:          *voucherCtrl,
 		RedeemsController:          *redeemsCtrl,
 	}
 
 	handleSwagger := echoSwagger.WrapHandler
 	e.GET("/swagger/*", handleSwagger)
-
-	// e.GET("/", func(c echo.Context) error {
-	// 	return c.String(http.StatusOK, "API Is Active")
-	// })
 
 	routesInit.RegisterRoutes(e)
 

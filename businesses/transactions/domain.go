@@ -1,11 +1,7 @@
 package transactions
 
 import (
-	stock_details "api-loyalty-point-agent/businesses/stock_details"
-
-	// stock_details "api-loyalty-point-agent/businesses/Stock_details"
-	// "api-loyalty-point-agent/businesses/stocks"
-
+	"api-loyalty-point-agent/businesses/stock_details"
 	"context"
 	"time"
 
@@ -37,7 +33,6 @@ type Usecase interface {
 	GetAllByUserID(ctx context.Context, id string) ([]Domain, error)
 	GetAllByUserIDSorted(ctx context.Context, id string) ([]Domain, error)
 	UpdatePoint(ctx context.Context, transactionDomain *Domain, id string) (Domain, error)
-	
 }
 type Repository interface {
 	GetAll(ctx context.Context) ([]Domain, error)

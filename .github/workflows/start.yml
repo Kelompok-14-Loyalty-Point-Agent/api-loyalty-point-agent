@@ -1,0 +1,13 @@
+name: Build and Start Docker Container
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Build and Start Docker Container
+      run: |
+        docker-compose -f "docker-compose.yml" up -d --build
