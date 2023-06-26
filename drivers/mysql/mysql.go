@@ -110,6 +110,7 @@ func SeedAdmin(db *gorm.DB) {
 		var profile profiles.Profile
 
 		profile.URL = url
+		profile.Name = admin.Name
 
 		result := db.Create(&profile)
 
@@ -185,6 +186,7 @@ func SeedCustomer(db *gorm.DB) {
 		profile.TransactionMade = 10
 		profile.Point = float32(1000000)
 		profile.Phone = "082189998231"
+		profile.Name = customer.Name
 
 		result := db.Create(&profile)
 

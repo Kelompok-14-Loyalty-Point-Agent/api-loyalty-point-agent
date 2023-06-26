@@ -40,6 +40,7 @@ func (ur *userRepository) GetAllCustomers(ctx context.Context) ([]users.Domain, 
 func (ur *userRepository) Register(ctx context.Context, userDomain *users.Domain) (users.Domain, error) {
 	var profile profiles.Profile
 
+	profile.Name = userDomain.Name
 	result := ur.conn.WithContext(ctx).Create(&profile)
 
 	if err := result.Error; err != nil {
@@ -109,10 +110,6 @@ func (ur *userRepository) UpdateProfileCustomer(ctx context.Context, userDomain 
 		return users.Domain{}, err
 	}
 
-	if user.Name != userDomain.Name {
-		user.Name = userDomain.Name
-	}
-
 	if user.Email != user.Email {
 		user.Email = userDomain.Email
 	}
@@ -123,8 +120,14 @@ func (ur *userRepository) UpdateProfileCustomer(ctx context.Context, userDomain 
 		return users.Domain{}, err
 	}
 
+	if user.Name != userDomain.Name {
+		user.Name = userDomain.Name
+		profile.Name = userDomain.Name
+	}
+
 	updatedProfiles := profile.ToDomain()
 
+	updatedProfiles.Name = profile.Name
 	updatedProfiles.Address = profile.Address
 	updatedProfiles.Age = profile.Age
 	updatedProfiles.Gender = profile.Gender
@@ -187,6 +190,7 @@ func (ur *userRepository) UpdateProfileCustomerInAdmin(ctx context.Context, user
 
 	updatedProfiles := profile.ToDomain()
 
+	updatedProfiles.Name = profile.Name
 	updatedProfiles.Address = profile.Address
 	updatedProfiles.Age = profile.Age
 	updatedProfiles.Gender = profile.Gender
@@ -238,6 +242,7 @@ func (ur *userRepository) UpdateProfileAdmin(ctx context.Context, userDomain *us
 
 	if user.Name != userDomain.Name {
 		user.Name = userDomain.Name
+		profile.Name = userDomain.Name
 	}
 
 	if profile.Address != userDomain.Profile.Address {

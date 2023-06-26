@@ -24,6 +24,7 @@ type Transaction struct {
 	Status         string                    `json:"status" gorm:"type:enum('success', 'failed', 'on-process');default:'success';not_null"`
 	Description    string                    `json:"description" gorm:"type:enum('top up');default:'top up';not_null"`
 	UserID         uint                      `json:"user_id"`
+	UserName       string                    `json:"customer_name"`
 }
 
 func (rec *Transaction) ToDomain() transactions.Domain {
@@ -43,6 +44,7 @@ func (rec *Transaction) ToDomain() transactions.Domain {
 		Status:         rec.Status,
 		Description:    rec.Description,
 		UserID:         rec.UserID,
+		UserName:       rec.UserName,
 	}
 }
 
@@ -62,5 +64,6 @@ func FromDomain(domain *transactions.Domain) *Transaction {
 		Status:         domain.Status,
 		Description:    domain.Description,
 		UserID:         domain.UserID,
+		UserName:       domain.UserName,
 	}
 }

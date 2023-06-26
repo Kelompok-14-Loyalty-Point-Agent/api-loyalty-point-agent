@@ -11,6 +11,7 @@ type Domain struct {
 	CreatedAt          time.Time
 	UpdatedAt          time.Time
 	DeletedAt          gorm.DeletedAt
+	Name               string
 	Address            string
 	Age                uint
 	Gender             string

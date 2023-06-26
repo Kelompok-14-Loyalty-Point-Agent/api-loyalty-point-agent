@@ -36,7 +36,18 @@ func (cr *transactionRepository) GetAll(ctx context.Context) ([]transactions.Dom
 	transactions := []transactions.Domain{}
 
 	for _, transaction := range records {
-		transactions = append(transactions, transaction.ToDomain())
+
+		var profile profiles.Profile
+		_ = cr.conn.WithContext(ctx).First(&profile, "id = ?", transaction.UserID).Error
+		
+		domainTransaction := transaction.ToDomain()
+		domainTransaction.UserName = profile.Name
+		domainTransaction.URL = profile.URL
+		domainTransaction.Member = profile.Member
+
+		if len(domainTransaction.UserName) != 0 {
+			transactions = append(transactions, domainTransaction)
+		}
 	}
 
 	return transactions, nil
@@ -49,7 +60,17 @@ func (cr *transactionRepository) GetByID(ctx context.Context, id string) (transa
 		return transactions.Domain{}, err
 	}
 
-	return transaction.ToDomain(), nil
+	var profile profiles.Profile
+		if err := cr.conn.WithContext(ctx).First(&profile, "id = ?", transaction.UserID).Error; err != nil {
+			return transactions.Domain{}, err
+	}
+
+	domainTransaction := transaction.ToDomain()
+	domainTransaction.UserName = profile.Name
+	domainTransaction.URL = profile.URL
+	domainTransaction.Member = profile.Member
+
+	return domainTransaction, nil
 }
 
 func (cr *transactionRepository) Create(ctx context.Context, transactionDomain *transactions.Domain) (transactions.Domain, error) {
@@ -107,6 +128,7 @@ func (cr *transactionRepository) Create(ctx context.Context, transactionDomain *
 
 	// point
 	record.Point = float32(stock_detail.Price) / 1000
+
 
 	var profile profiles.Profile
 	if err := cr.conn.WithContext(ctx).First(&profile, "id = ?", record.UserID).Error; err != nil {
@@ -215,8 +237,12 @@ func (cr *transactionRepository) UpdatePoint(ctx context.Context, transactionDom
 		return transactions.Domain{}, err
 	}
 
-	profile.Point = (profile.Point - transaction.Point) + transactionDomain.Point
-
+	if (profile.Point - transaction.Point) + transactionDomain.Point < 0 {
+		return transactions.Domain{}, errors.New("user already spent their points, updating their point is not valid right now")
+	}else{
+		profile.Point = (profile.Point - transaction.Point) + transactionDomain.Point
+	}
+	
 	if err := cr.conn.WithContext(ctx).Save(&profile).Error; err != nil {
 		return transactions.Domain{}, err
 	}

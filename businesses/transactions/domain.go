@@ -24,6 +24,9 @@ type Domain struct {
 	Status         string
 	Description    string
 	UserID         uint
+	UserName       string
+	Member         string
+	URL            string
 }
 
 type Usecase interface {
