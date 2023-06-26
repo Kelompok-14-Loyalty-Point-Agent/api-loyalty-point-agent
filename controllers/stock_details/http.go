@@ -1,12 +1,14 @@
 package stock_details
 
 import (
+	"api-loyalty-point-agent/app/middlewares"
 	"api-loyalty-point-agent/businesses/stock_details"
 	"api-loyalty-point-agent/controllers"
 	"api-loyalty-point-agent/controllers/stock_details/request"
 	"api-loyalty-point-agent/controllers/stock_details/response"
 	"net/http"
 
+	"github.com/golang-jwt/jwt/v4"
 	"github.com/labstack/echo/v4"
 )
 
@@ -22,6 +24,13 @@ func NewStockDetailController(stock_detailUC stock_details.Usecase) *StockDetail
 
 func (cc *StockDetailController) GetAll(c echo.Context) error {
 	ctx := c.Request().Context()
+	token := c.Get("user").(*jwt.Token)
+
+	isListed := middlewares.CheckToken(token.Raw)
+
+	if !isListed {
+		return controllers.NewResponse(c, http.StatusUnauthorized, "failed", "invalid token", isListed)
+	}
 
 	stock_detailsData, err := cc.stock_detailUsecase.GetAll(ctx)
 
@@ -41,6 +50,13 @@ func (cc *StockDetailController) GetAll(c echo.Context) error {
 func (cc *StockDetailController) GetByID(c echo.Context) error {
 	var stock_detailID string = c.Param("id")
 	ctx := c.Request().Context()
+	token := c.Get("user").(*jwt.Token)
+
+	isListed := middlewares.CheckToken(token.Raw)
+
+	if !isListed {
+		return controllers.NewResponse(c, http.StatusUnauthorized, "failed", "invalid token", isListed)
+	}
 
 	stock_detail, err := cc.stock_detailUsecase.GetByID(ctx, stock_detailID)
 
@@ -54,6 +70,13 @@ func (cc *StockDetailController) GetByID(c echo.Context) error {
 func (cc *StockDetailController) Create(c echo.Context) error {
 	input := request.StockDetail{}
 	ctx := c.Request().Context()
+	token := c.Get("user").(*jwt.Token)
+
+	isListed := middlewares.CheckToken(token.Raw)
+
+	if !isListed {
+		return controllers.NewResponse(c, http.StatusUnauthorized, "failed", "invalid token", isListed)
+	}
 
 	if err := c.Bind(&input); err != nil {
 		return controllers.NewResponse(c, http.StatusBadRequest, "failed", "invalid request", "")
@@ -81,6 +104,13 @@ func (cc *StockDetailController) Create(c echo.Context) error {
 func (cc *StockDetailController) Update(c echo.Context) error {
 	var stock_detailID string = c.Param("id")
 	ctx := c.Request().Context()
+	token := c.Get("user").(*jwt.Token)
+
+	isListed := middlewares.CheckToken(token.Raw)
+
+	if !isListed {
+		return controllers.NewResponse(c, http.StatusUnauthorized, "failed", "invalid token", isListed)
+	}
 
 	input := request.StockDetail{}
 
@@ -106,6 +136,13 @@ func (cc *StockDetailController) Update(c echo.Context) error {
 func (cc *StockDetailController) Delete(c echo.Context) error {
 	var stock_detailID string = c.Param("id")
 	ctx := c.Request().Context()
+	token := c.Get("user").(*jwt.Token)
+
+	isListed := middlewares.CheckToken(token.Raw)
+
+	if !isListed {
+		return controllers.NewResponse(c, http.StatusUnauthorized, "failed", "invalid token", isListed)
+	}
 
 	err := cc.stock_detailUsecase.Delete(ctx, stock_detailID)
 
@@ -119,6 +156,13 @@ func (cc *StockDetailController) Delete(c echo.Context) error {
 func (cc *StockDetailController) GetAllByStockID(c echo.Context) error {
 	var stockID string = c.Param("id")
 	ctx := c.Request().Context()
+	token := c.Get("user").(*jwt.Token)
+
+	isListed := middlewares.CheckToken(token.Raw)
+
+	if !isListed {
+		return controllers.NewResponse(c, http.StatusUnauthorized, "failed", "invalid token", isListed)
+	}
 
 	stock_detailsData, err := cc.stock_detailUsecase.GetAllByStockID(ctx, stockID)
 
