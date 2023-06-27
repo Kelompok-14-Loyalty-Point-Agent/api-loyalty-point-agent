@@ -26,13 +26,6 @@ func NewAuthController(authUC users.Usecase) *AuthController {
 
 func (ctrl *AuthController) GetAllCustomers(c echo.Context) error {
 	ctx := c.Request().Context()
-	token := c.Get("user").(*jwt.Token)
-
-	isListed := middlewares.CheckToken(token.Raw)
-
-	if !isListed {
-		return controllers.NewResponse(c, http.StatusUnauthorized, "failed", "invalid token", isListed)
-	}
 
 	userData, err := ctrl.authUseCase.GetAllCustomers(ctx)
 
@@ -113,13 +106,6 @@ func (ctrl *AuthController) Logout(c echo.Context) error {
 
 func (ctrl *AuthController) GetByID(c echo.Context) error {
 	var userID string = c.Param("id")
-	token := c.Get("user").(*jwt.Token)
-
-	isListed := middlewares.CheckToken(token.Raw)
-
-	if !isListed {
-		return controllers.NewResponse(c, http.StatusUnauthorized, "failed", "invalid token", isListed)
-	}
 
 	ctx := c.Request().Context()
 

@@ -1,13 +1,11 @@
 package redeems
 
 import (
-	"api-loyalty-point-agent/app/middlewares"
 	"api-loyalty-point-agent/businesses/redeems"
 	"api-loyalty-point-agent/controllers"
 	"api-loyalty-point-agent/controllers/redeems/response"
 	"net/http"
 
-	"github.com/golang-jwt/jwt/v4"
 	"github.com/labstack/echo/v4"
 )
 
@@ -23,13 +21,6 @@ func NewRedeemController(transactionUC redeems.Usecase) *RedeemsController {
 
 func (cc *RedeemsController) GetAll(c echo.Context) error {
 	ctx := c.Request().Context()
-	token := c.Get("user").(*jwt.Token)
-
-	isListed := middlewares.CheckToken(token.Raw)
-
-	if !isListed {
-		return controllers.NewResponse(c, http.StatusUnauthorized, "failed", "invalid token", isListed)
-	}
 
 	redeemData, err := cc.transactionUsecase.GetAll(ctx)
 
@@ -48,14 +39,8 @@ func (cc *RedeemsController) GetAll(c echo.Context) error {
 
 func (ctrl *RedeemsController) GetByID(c echo.Context) error {
 	var redeemID string = c.Param("id")
+
 	ctx := c.Request().Context()
-	token := c.Get("user").(*jwt.Token)
-
-	isListed := middlewares.CheckToken(token.Raw)
-
-	if !isListed {
-		return controllers.NewResponse(c, http.StatusUnauthorized, "failed", "invalid token", isListed)
-	}
 
 	user, err := ctrl.transactionUsecase.GetByID(ctx, redeemID)
 
