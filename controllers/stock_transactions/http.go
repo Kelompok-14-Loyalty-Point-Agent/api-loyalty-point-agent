@@ -1,13 +1,11 @@
 package stock_transactions
 
 import (
-	"api-loyalty-point-agent/app/middlewares"
 	"api-loyalty-point-agent/businesses/stock_transactions"
 	"api-loyalty-point-agent/controllers"
 	"api-loyalty-point-agent/controllers/stock_transactions/response"
 	"net/http"
 
-	"github.com/golang-jwt/jwt/v4"
 	"github.com/labstack/echo/v4"
 )
 
@@ -23,13 +21,6 @@ func NewStockTransactionController(stock_transactionUC stock_transactions.Usecas
 
 func (cc *StockTransactionController) GetAll(c echo.Context) error {
 	ctx := c.Request().Context()
-	token := c.Get("user").(*jwt.Token)
-
-	isListed := middlewares.CheckToken(token.Raw)
-
-	if !isListed {
-		return controllers.NewResponse(c, http.StatusUnauthorized, "failed", "invalid token", isListed)
-	}
 
 	stock_transactionsData, err := cc.stock_transactionUsecase.GetAll(ctx)
 
@@ -49,13 +40,6 @@ func (cc *StockTransactionController) GetAll(c echo.Context) error {
 func (cc *StockTransactionController) GetByID(c echo.Context) error {
 	var stock_transactionID string = c.Param("id")
 	ctx := c.Request().Context()
-	token := c.Get("user").(*jwt.Token)
-
-	isListed := middlewares.CheckToken(token.Raw)
-
-	if !isListed {
-		return controllers.NewResponse(c, http.StatusUnauthorized, "failed", "invalid token", isListed)
-	}
 
 	stock_transaction, err := cc.stock_transactionUsecase.GetByID(ctx, stock_transactionID)
 

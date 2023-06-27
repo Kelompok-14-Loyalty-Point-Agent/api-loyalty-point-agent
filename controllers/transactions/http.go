@@ -1,14 +1,12 @@
 package transactions
 
 import (
-	"api-loyalty-point-agent/app/middlewares"
 	"api-loyalty-point-agent/businesses/transactions"
 	"api-loyalty-point-agent/controllers"
 	"api-loyalty-point-agent/controllers/transactions/request"
 	"api-loyalty-point-agent/controllers/transactions/response"
 	"net/http"
 
-	"github.com/golang-jwt/jwt/v4"
 	"github.com/labstack/echo/v4"
 )
 
@@ -24,13 +22,6 @@ func NewTransactionController(transactionUC transactions.Usecase) *TransactionCo
 
 func (cc *TransactionController) GetAll(c echo.Context) error {
 	ctx := c.Request().Context()
-	token := c.Get("user").(*jwt.Token)
-
-	isListed := middlewares.CheckToken(token.Raw)
-
-	if !isListed {
-		return controllers.NewResponse(c, http.StatusUnauthorized, "failed", "invalid token", isListed)
-	}
 
 	transactionData, err := cc.transactionUsecase.GetAll(ctx)
 
@@ -49,20 +40,12 @@ func (cc *TransactionController) GetAll(c echo.Context) error {
 
 func (cc *TransactionController) GetByID(c echo.Context) error {
 	var transactionID string = c.Param("id")
-	token := c.Get("user").(*jwt.Token)
 	ctx := c.Request().Context()
 
 	transaction, err := cc.transactionUsecase.GetByID(ctx, transactionID)
 
 	if err != nil {
 		return controllers.NewResponse(c, http.StatusNotFound, "failed", "transaction not found", "")
-	}
-	// cek token
-	isListed := middlewares.CheckToken(token.Raw)
-
-	if !isListed {
-		// response ketika token sudah tidak berlaku
-		return controllers.NewResponse(c, http.StatusUnauthorized, "failed", "invalid token", isListed)
 	}
 
 	return controllers.NewResponse(c, http.StatusOK, "success", "transaction found", response.FromDomainInAdmin(transaction))
@@ -71,13 +54,6 @@ func (cc *TransactionController) GetByID(c echo.Context) error {
 func (cc *TransactionController) Create(c echo.Context) error {
 	input := request.Transaction{}
 	ctx := c.Request().Context()
-	token := c.Get("user").(*jwt.Token)
-
-	isListed := middlewares.CheckToken(token.Raw)
-
-	if !isListed {
-		return controllers.NewResponse(c, http.StatusUnauthorized, "failed", "invalid token", isListed)
-	}
 
 	if err := c.Bind(&input); err != nil {
 		return controllers.NewResponse(c, http.StatusBadRequest, "failed", "invalid request", "")
@@ -101,13 +77,6 @@ func (cc *TransactionController) Create(c echo.Context) error {
 func (cc *TransactionController) GetAllByUserID(c echo.Context) error {
 	var userID string = c.Param("id")
 	ctx := c.Request().Context()
-	token := c.Get("user").(*jwt.Token)
-
-	isListed := middlewares.CheckToken(token.Raw)
-
-	if !isListed {
-		return controllers.NewResponse(c, http.StatusUnauthorized, "failed", "invalid token", isListed)
-	}
 
 	transactionData, err := cc.transactionUsecase.GetAllByUserID(ctx, userID)
 
@@ -127,13 +96,6 @@ func (cc *TransactionController) GetAllByUserID(c echo.Context) error {
 func (cc *TransactionController) GetAllByUserIDSorted(c echo.Context) error {
 	var userID string = c.Param("id")
 	ctx := c.Request().Context()
-	token := c.Get("user").(*jwt.Token)
-
-	isListed := middlewares.CheckToken(token.Raw)
-
-	if !isListed {
-		return controllers.NewResponse(c, http.StatusUnauthorized, "failed", "invalid token", isListed)
-	}
 
 	transactionData, err := cc.transactionUsecase.GetAllByUserIDSorted(ctx, userID)
 
@@ -154,13 +116,6 @@ func (cc *TransactionController) UpdatePoint(c echo.Context) error {
 	var transactionID string = c.Param("id")
 	input := request.TransactionPoint{}
 	ctx := c.Request().Context()
-	token := c.Get("user").(*jwt.Token)
-
-	isListed := middlewares.CheckToken(token.Raw)
-
-	if !isListed {
-		return controllers.NewResponse(c, http.StatusUnauthorized, "failed", "invalid token", isListed)
-	}
 
 	if err := c.Bind(&input); err != nil {
 		return controllers.NewResponse(c, http.StatusBadRequest, "failed", "invalid request", "")
