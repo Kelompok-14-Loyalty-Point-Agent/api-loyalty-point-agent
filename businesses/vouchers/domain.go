@@ -9,7 +9,7 @@ type Domain struct {
 	ID      uint
 	Product string
 	Benefit string
-	Cost    float32
+	Cost    float64
 }
 
 type Usecase interface {

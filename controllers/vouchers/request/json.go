@@ -9,7 +9,7 @@ import (
 type Voucher struct {
 	Product string  `json:"product"`
 	Benefit string  `json:"benefit"`
-	Cost    float32 `json:"cost"`
+	Cost    float64 `json:"cost"`
 }
 
 func (req *Voucher) ToDomain() *vouchers.Domain {

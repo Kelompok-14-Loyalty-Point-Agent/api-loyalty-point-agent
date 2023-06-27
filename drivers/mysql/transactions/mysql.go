@@ -29,14 +29,25 @@ func NewMySQLRepository(conn *gorm.DB) transactions.Repository {
 func (cr *transactionRepository) GetAll(ctx context.Context) ([]transactions.Domain, error) {
 	var records []Transaction
 
-	if err := cr.conn.WithContext(ctx).Preload("StockDetails").Find(&records).Error; err != nil {
+	if err := cr.conn.WithContext(ctx).Find(&records).Error; err != nil {
 		return nil, err
 	}
 
 	transactions := []transactions.Domain{}
 
 	for _, transaction := range records {
-		transactions = append(transactions, transaction.ToDomain())
+
+		var profile profiles.Profile
+		_ = cr.conn.WithContext(ctx).First(&profile, "id = ?", transaction.UserID).Error
+		
+		domainTransaction := transaction.ToDomain()
+		domainTransaction.UserName = profile.Name
+		domainTransaction.URL = profile.URL
+		domainTransaction.Member = profile.Member
+
+		if len(domainTransaction.UserName) != 0 {
+			transactions = append(transactions, domainTransaction)
+		}
 	}
 
 	return transactions, nil
@@ -45,11 +56,21 @@ func (cr *transactionRepository) GetAll(ctx context.Context) ([]transactions.Dom
 func (cr *transactionRepository) GetByID(ctx context.Context, id string) (transactions.Domain, error) {
 	var transaction Transaction
 
-	if err := cr.conn.WithContext(ctx).Preload("StockDetails").First(&transaction, "id = ?", id).Error; err != nil {
+	if err := cr.conn.WithContext(ctx).First(&transaction, "id = ?", id).Error; err != nil {
 		return transactions.Domain{}, err
 	}
 
-	return transaction.ToDomain(), nil
+	var profile profiles.Profile
+		if err := cr.conn.WithContext(ctx).First(&profile, "id = ?", transaction.UserID).Error; err != nil {
+			return transactions.Domain{}, err
+	}
+
+	domainTransaction := transaction.ToDomain()
+	domainTransaction.UserName = profile.Name
+	domainTransaction.URL = profile.URL
+	domainTransaction.Member = profile.Member
+
+	return domainTransaction, nil
 }
 
 func (cr *transactionRepository) Create(ctx context.Context, transactionDomain *transactions.Domain) (transactions.Domain, error) {
@@ -60,6 +81,8 @@ func (cr *transactionRepository) Create(ctx context.Context, transactionDomain *
 	if err := cr.conn.WithContext(ctx).First(&stock_detail, "id = ?", transactionDomain.StockDetailsID).Error; err != nil {
 		return transactions.Domain{}, err
 	}
+
+	record.StockDetailsID = stock_detail.ID
 
 	if stock_detail.Quantity-1 < 0 {
 		err := errors.New("run out of quantity")
@@ -89,7 +112,7 @@ func (cr *transactionRepository) Create(ctx context.Context, transactionDomain *
 		return transactions.Domain{}, err
 	}
 
-	if err := result.Preload("StockDetails").Last(&record).Error; err != nil {
+	if err := result.Last(&record).Error; err != nil {
 		return transactions.Domain{}, err
 	}
 
@@ -106,7 +129,8 @@ func (cr *transactionRepository) Create(ctx context.Context, transactionDomain *
 	record.Product += strings.Title(stock.Type) + " " + provider.Name
 
 	// point
-	record.Point = float32(stock_detail.Price) / 1000
+	record.Point = float64(stock_detail.Price) / 1000
+
 
 	var profile profiles.Profile
 	if err := cr.conn.WithContext(ctx).First(&profile, "id = ?", record.UserID).Error; err != nil {
@@ -123,7 +147,7 @@ func (cr *transactionRepository) Create(ctx context.Context, transactionDomain *
 	// monthly transaction
 	var records []Transaction
 
-	if err := cr.conn.WithContext(ctx).Preload("StockDetails").
+	if err := cr.conn.WithContext(ctx).
 		Where("user_id = ? AND MONTH(created_at) = ?", record.UserID, time.Now().Month()).
 		Find(&records).Error; err != nil {
 		return transactions.Domain{}, err
@@ -162,7 +186,7 @@ func (cr *transactionRepository) Create(ctx context.Context, transactionDomain *
 func (cr *transactionRepository) GetAllByUserID(ctx context.Context, userid string) ([]transactions.Domain, error) {
 	var records []Transaction
 
-	if err := cr.conn.WithContext(ctx).Preload("StockDetails").Find(&records, `user_id = ?`, userid).Error; err != nil {
+	if err := cr.conn.WithContext(ctx).Find(&records, `user_id = ?`, userid).Error; err != nil {
 		return nil, err
 	}
 
@@ -178,7 +202,7 @@ func (cr *transactionRepository) GetAllByUserID(ctx context.Context, userid stri
 func (cr *transactionRepository) GetAllByUserIDSorted(ctx context.Context, userid string) ([]transactions.Domain, error) {
 	var records []Transaction
 
-	if err := cr.conn.WithContext(ctx).Preload("StockDetails").Order("created_at DESC").Find(&records, `user_id = ?`, userid).Error; err != nil {
+	if err := cr.conn.WithContext(ctx).Order("created_at DESC").Find(&records, `user_id = ?`, userid).Error; err != nil {
 		return nil, err
 	}
 
@@ -206,16 +230,17 @@ func (cr *transactionRepository) UpdatePoint(ctx context.Context, transactionDom
 	}
 
 	updatedTransaction.Point = transactionDomain.Point
-	updatedTransaction.StockDetailsID = transactionDomain.StockDetailsID
-	updatedTransaction.StockDetails = stock_details.StockDetail(transaction.StockDetails)
-	updatedTransaction.StockDetails.Price = transaction.Price
 
 	var profile profiles.Profile
 	if err := cr.conn.WithContext(ctx).First(&profile, "id = ?", transaction.UserID).Error; err != nil {
 		return transactions.Domain{}, err
 	}
 
-	profile.Point = (profile.Point - transaction.Point) + transactionDomain.Point
+	if (profile.Point - transaction.Point) + transactionDomain.Point < 0 {
+		return transactions.Domain{}, errors.New("user already spent their points, updating their point is not valid right now")
+	}else{
+		profile.Point = (profile.Point - transaction.Point) + transactionDomain.Point
+	}
 
 	if err := cr.conn.WithContext(ctx).Save(&profile).Error; err != nil {
 		return transactions.Domain{}, err
@@ -225,5 +250,9 @@ func (cr *transactionRepository) UpdatePoint(ctx context.Context, transactionDom
 		return transactions.Domain{}, err
 	}
 
-	return updatedTransaction.ToDomain(), nil
+	domainTransaction := updatedTransaction.ToDomain()
+	domainTransaction.Member = profile.Member
+	domainTransaction.URL = profile.URL
+
+	return domainTransaction, nil
 }

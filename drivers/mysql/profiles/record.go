@@ -12,11 +12,12 @@ type Profile struct {
 	CreatedAt          time.Time      `json:"created_at"`
 	UpdatedAt          time.Time      `json:"updated_at"`
 	DeletedAt          gorm.DeletedAt `json:"deleted_at" gorm:"index"`
+	Name               string         `json:"name"`
 	Address            string         `json:"address"`
 	Age                uint           `json:"age"`
 	Gender             string         `json:"gender" gorm:"type:enum('man', 'woman', 'not-selected');default:''not-selected';not_null"`
 	Phone              string         `json:"phone"`
-	Point              float32        `json:"point"`
+	Point              float64        `json:"point"`
 	Member             string         `json:"member" gorm:"type:enum('bronze', 'silver', 'gold', 'platinum');default:'bronze';not_null"`
 	TransactionMade    uint           `json:"count_transaction"`
 	MonthlyTransaction uint           `json:"monthly_transaction"`
@@ -30,6 +31,7 @@ func (record *Profile) ToDomain() profiles.Domain {
 		CreatedAt:          record.CreatedAt,
 		UpdatedAt:          record.UpdatedAt,
 		DeletedAt:          record.DeletedAt,
+		Name:               record.Name,
 		Address:            record.Address,
 		Age:                record.Age,
 		Gender:             record.Gender,
@@ -49,6 +51,7 @@ func FromDomain(domain *profiles.Domain) *Profile {
 		CreatedAt:          domain.CreatedAt,
 		UpdatedAt:          domain.UpdatedAt,
 		DeletedAt:          domain.DeletedAt,
+		Name:               domain.Name,
 		Address:            domain.Address,
 		Age:                domain.Age,
 		Gender:             domain.Gender,

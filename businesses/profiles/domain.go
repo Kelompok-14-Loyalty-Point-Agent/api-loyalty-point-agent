@@ -11,11 +11,12 @@ type Domain struct {
 	CreatedAt          time.Time
 	UpdatedAt          time.Time
 	DeletedAt          gorm.DeletedAt
+	Name               string
 	Address            string
 	Age                uint
 	Gender             string
 	Phone              string
-	Point              float32
+	Point              float64
 	Member             string
 	TransactionMade    uint
 	MonthlyTransaction uint

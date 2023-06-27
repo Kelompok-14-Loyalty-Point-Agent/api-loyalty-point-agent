@@ -15,7 +15,7 @@ type Redeem struct {
 	Product       string         `json:"product"`
 	PaymentMethod string         `json:"payment_method"`
 	DateExchange  time.Time      `json:"date_exchange"`
-	Cost          float32        `json:"cost"`
+	Cost          float64        `json:"cost"`
 	UserID        uint           `json:"user_id"`
 }
 

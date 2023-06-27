@@ -29,10 +29,10 @@ func (cc *TransactionController) GetAll(c echo.Context) error {
 		return controllers.NewResponse(c, http.StatusInternalServerError, "failed", "failed to fetch data", "")
 	}
 
-	transactions := []response.Transaction{}
+	transactions := []response.TransactionInAdmin{}
 
 	for _, transaction := range transactionData {
-		transactions = append(transactions, response.FromDomain(transaction))
+		transactions = append(transactions, response.FromDomainInAdmin(transaction))
 	}
 
 	return controllers.NewResponse(c, http.StatusOK, "success", "all transactions", transactions)
@@ -48,7 +48,7 @@ func (cc *TransactionController) GetByID(c echo.Context) error {
 		return controllers.NewResponse(c, http.StatusNotFound, "failed", "transaction not found", "")
 	}
 
-	return controllers.NewResponse(c, http.StatusOK, "success", "transaction found", response.FromDomain(transaction))
+	return controllers.NewResponse(c, http.StatusOK, "success", "transaction found", response.FromDomainInAdmin(transaction))
 }
 
 func (cc *TransactionController) Create(c echo.Context) error {
@@ -133,5 +133,5 @@ func (cc *TransactionController) UpdatePoint(c echo.Context) error {
 		return controllers.NewResponse(c, http.StatusInternalServerError, "failed", err.Error(), "")
 	}
 
-	return controllers.NewResponse(c, http.StatusCreated, "success", "transaction point updated", response.FromDomain(transaction))
+	return controllers.NewResponse(c, http.StatusCreated, "success", "transaction point updated", response.FromDomainInAdmin(transaction))
 }
